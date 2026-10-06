@@ -73,7 +73,7 @@
   textarea, select {
     width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.7rem;
     font-family: 'Inter', sans-serif; font-size: 16px; color: var(--texto); background: var(--fundo-alt);
-    resize: vertical; min-height: 48px; line-height: 1.45;
+    resize: vertical; min-height: 110px; line-height: 1.5;
   }
   select { min-height: 48px; padding: 0.6rem 0.5rem; }
   textarea:focus, select:focus, input:focus { outline: 2px solid var(--amarelo); outline-offset: 1px; }
@@ -255,6 +255,13 @@
     .btn-ajuda { width: 40px; height: 40px; font-size: 1.05rem; }
     .modal-fechar { width: 40px; height: 40px; }
   }
+
+  /* ajustes do portal: largura, caixas de texto maiores e botão salvar */
+  .page, header.hero .hero-inner { max-width: var(--vd-largura, 1200px); }
+  header.hero p { max-width: 860px; }
+  .btn-salvar { background: var(--roxo); color: var(--branco); font-weight: 600; padding: 0.7rem 1.3rem; }
+  .btn-salvar:disabled { opacity: 0.7; cursor: default; transform: none; }
+  textarea { overflow: hidden; }
 </style>
 </head>
 <body>
@@ -338,12 +345,9 @@
   </section>
 
   <div class="barra-acoes no-print">
-    <button class="btn-primary" onclick="imprimirDocumento()">Imprimir / Salvar PDF</button>
-    <button class="btn-ghost" onclick="exportarJSON()">Baixar cópia (.json)</button>
-    <label class="btn-ghost" style="display:inline-flex;align-items:center;cursor:pointer;">Restaurar cópia (.json)
-      <input type="file" accept=".json" onchange="importarJSON(event)" style="display:none">
-    </label>
-    <span class="nota-backup">Suas respostas são salvas automaticamente. A cópia em .json é opcional, apenas um backup extra.</span>
+    <button type="button" class="btn-salvar" data-vd-salvar>Salvar respostas</button>
+    <button type="button" class="btn-ghost" onclick="imprimirDocumento()">Imprimir / Salvar PDF</button>
+    <span class="nota-backup">As respostas também são salvas automaticamente enquanto você escreve. Use o botão para enviar à planilha na hora.</span>
   </div>
 
 </div>
@@ -649,35 +653,6 @@ function imprimirDocumento() {
 window.addEventListener('beforeprint', ajustarParaImpressao);
 window.addEventListener('afterprint', restaurarAposImpressao);
 
-/* ======= Cópia de segurança em arquivo ======= */
-function exportarJSON() {
-  const s = VD.sessao();
-  const dados = Object.assign({ ferramenta: 'aula1', nome: s ? s.nome : '', turma: s ? s.turma : '' }, coletar(), { exportadoEm: new Date().toISOString() });
-  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const nomeArq = (dados.nome || 'aula1').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g,'-');
-  a.href = url; a.download = `comportamento-alvo-${nomeArq}.json`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-function importarJSON(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const dados = JSON.parse(e.target.result);
-      if (!confirm('Substituir as respostas atuais pelas do arquivo?')) return;
-      aplicar(dados);
-      ctl.salvarAgora();
-    } catch (err) {
-      alert('Não foi possível ler este arquivo. Verifique se é um .json exportado por esta mesma ferramenta.');
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
 
 /* ======= Salvamento automático (planilha + navegador) ======= */
 const ctl = VD.ferramenta({

@@ -5,7 +5,7 @@ Site estático (GitHub Pages) com os conteúdos e as atividades da disciplina. A
 ## Como funciona para o estudante
 
 1. Entra com o **nome (ou o nome do grupo)** e uma **palavra-chave**. No primeiro acesso, o portal pede para confirmar o cadastro (evita duplicatas por erro de digitação).
-2. Preenche as atividades. Tudo é salvo no navegador na hora e enviado à planilha alguns segundos depois. O indicador no topo mostra "Salvo na planilha às 14:32".
+2. Preenche as atividades. Tudo é salvo no navegador na hora e enviado à planilha alguns segundos depois. O indicador no topo mostra "Salvo na planilha às 14:32", e o botão **Salvar respostas** envia na hora. O guia de uso fica no botão **Como usar** da barra superior.
 3. Pode fechar e voltar de qualquer computador: entrando de novo, as respostas voltam.
 4. Em grupo, todos usam o mesmo nome e a mesma palavra-chave. Se dois membros editarem a mesma atividade ao mesmo tempo, o portal avisa e pergunta qual versão manter.
 5. A Aula 2 traz o comportamento-alvo da Aula 1 com um clique, e a Aula 3 traz a hipótese da Aula 2.
@@ -57,7 +57,7 @@ Publique a alteração no GitHub (pela interface web do GitHub, editando o arqui
 - **Remover um estudante/grupo** (cadastro de teste, duplicado por erro de digitação): menu *Portal da disciplina › Remover um estudante ou grupo…*.
 - **Estudante esqueceu a palavra-chave:** na planilha, menu *Exibir abas ocultas* › `_alunos`; apague a célula `hash_chave` da pessoa. A próxima palavra-chave que ela usar passa a valer.
 - **Nova turma no mesmo semestre:** use a mesma planilha; o campo "Turma" aparece no Painel. Para separar por completo, crie outra planilha + implantação e outro repositório/pasta.
-- **Sem planilha configurada:** o portal funciona em "modo local", com as respostas salvas só no navegador. Os botões "Baixar cópia (.json)" continuam disponíveis como backup em todas as atividades.
+- **Sem planilha configurada:** o portal funciona em "modo local", com as respostas salvas só no navegador.
 
 ## Atualizar conteúdos
 

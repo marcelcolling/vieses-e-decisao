@@ -43,7 +43,7 @@
     padding: 0.65rem 0.8rem; color: var(--branco); font-family: 'Inter', sans-serif; font-size: 16px; width: 100%;
   }
   .identifica select { color: var(--texto); background: rgba(255,255,255,0.92); }
-  .identifica textarea { min-height: 52px; resize: vertical; }
+  .identifica textarea { min-height: 96px; resize: vertical; }
   .identifica input::placeholder, .identifica textarea::placeholder { color: rgba(255,255,255,0.45); }
   .trazer-linha { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.4rem; padding-top: 1.2rem; border-top: 1px solid rgba(255,255,255,0.15); }
   .trazer-linha span { font-size: 0.82rem; color: rgba(255,255,255,0.75); }
@@ -73,7 +73,7 @@
     resize: vertical; line-height: 1.5;
   }
   select { min-height: 46px; }
-  textarea { min-height: 70px; }
+  textarea { min-height: 120px; }
   select:focus, textarea:focus, input:focus { outline: 2px solid var(--amarelo); outline-offset: 1px; }
 
   .funcoes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; margin: 1.2rem 0; }
@@ -192,6 +192,13 @@
     .east-icon, .modal-fechar, .func-check { min-width: 30px; }
     .modal-fechar { min-height: 40px; }
   }
+
+  /* ajustes do portal: largura, caixas de texto maiores e botão salvar */
+  .page, header.hero .hero-inner { max-width: var(--vd-largura, 1200px); }
+  header.hero p { max-width: 860px; }
+  .btn-salvar { background: var(--roxo); color: var(--branco); font-weight: 600; padding: 0.7rem 1.3rem; }
+  .btn-salvar:disabled { opacity: 0.7; cursor: default; transform: none; }
+  textarea { overflow: hidden; }
 </style>
 </head>
 <body>
@@ -306,10 +313,9 @@
   </section>
 
   <div class="barra-acoes no-print">
-    <button class="btn-primary" onclick="imprimirDocumento()">Imprimir / Salvar PDF</button>
-    <button class="btn-ghost" onclick="exportarJSON()">Baixar cópia (.json)</button>
-    <label class="btn-ghost">Restaurar cópia (.json)<input type="file" accept=".json" onchange="importarJSON(event)" style="display:none"></label>
-    <span class="nota-backup">Suas respostas são salvas automaticamente. A cópia em .json é opcional, apenas um backup extra.</span>
+    <button type="button" class="btn-salvar" data-vd-salvar>Salvar respostas</button>
+    <button type="button" class="btn-ghost" onclick="imprimirDocumento()">Imprimir / Salvar PDF</button>
+    <span class="nota-backup">As respostas também são salvas automaticamente enquanto você escreve. Use o botão para enviar à planilha na hora.</span>
   </div>
 
 </div>
@@ -715,35 +721,6 @@ function imprimirDocumento() { ajustarParaImpressao(); setTimeout(() => window.p
 window.addEventListener('beforeprint', ajustarParaImpressao);
 window.addEventListener('afterprint', restaurarAposImpressao);
 
-/* ============ CÓPIA DE SEGURANÇA ============ */
-function exportarJSON() {
-  const s = VD.sessao();
-  const dados = Object.assign({ ferramenta: 'aula3', nome: s ? s.nome : '', turma: s ? s.turma : '' }, coletar(), { exportadoEm: new Date().toISOString() });
-  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const nomeArq = (dados.nome || 'aula3').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g,'-');
-  a.href = url; a.download = `intervencao-bcw-east-${nomeArq}.json`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-function importarJSON(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const dados = JSON.parse(e.target.result);
-      if (!confirm('Substituir as respostas atuais pelas do arquivo?')) return;
-      aplicar(dados);
-      ctl.salvarAgora();
-    } catch (err) {
-      alert('Não foi possível ler este arquivo. Verifique se é um .json exportado por esta mesma ferramenta.');
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
 
 /* ============ MODAL ============ */
 function abrirModal(id) { document.getElementById(id).classList.add('aberto'); }

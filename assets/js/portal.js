@@ -263,11 +263,14 @@
           (crumb ? '<span class="vd-crumb">' + esc(crumb) + '</span>' : '') +
         '</div>' +
         '<div class="vd-right">' +
+          '<button type="button" class="vd-btn vd-btn-claro vd-ajuda" title="Como usar o portal"><span class="vd-ajuda-ico" aria-hidden="true">?</span><span class="vd-ajuda-txt">Como usar</span></button>' +
           '<span class="vd-status" data-estado="local" hidden><span class="vd-status-txt"></span></span>' +
+          '<button type="button" class="vd-btn vd-btn-amarelo vd-salvar" data-vd-salvar hidden>Salvar respostas</button>' +
           '<span class="vd-sessao"></span>' +
         '</div>' +
       '</div>';
     document.body.insertBefore(topbar, document.body.firstChild);
+    topbar.querySelector('.vd-ajuda').onclick = function () { abrirInstrucoes(); };
     renderSessaoTopbar();
     onSessao(renderSessaoTopbar);
     document.addEventListener('click', function (e) {
@@ -330,12 +333,13 @@
     return modal;
   }
   function fecharModal() { if (modal) modal.hidden = true; }
-  function abrirModal(html) {
+  function abrirModal(html, largo) {
     garantirModal();
+    modal.querySelector('.vd-modal-box').classList.toggle('vd-largo', !!largo);
     modal.querySelector('.vd-modal-corpo').innerHTML = html;
     modal.hidden = false;
     var primeiro = modal.querySelector('input, .vd-acoes .vd-btn');
-    if (primeiro) setTimeout(function () { primeiro.focus(); }, 30);
+    if (primeiro) setTimeout(function () { primeiro.focus({ preventScroll: true }); modal.querySelector('.vd-modal-box').scrollTop = 0; }, 30);
     return modal.querySelector('.vd-modal-corpo');
   }
 
@@ -408,6 +412,36 @@
     corpo.querySelector('[data-a=manter]').onclick = function () { fecharModal(); aoManter(); };
   }
 
+  /* ----- guia de uso ----- */
+  function abrirInstrucoes() {
+    var item = function (ico, titulo, txt) {
+      return '<li class="vd-guia-item"><span class="vd-guia-ico" aria-hidden="true">' + ico + '</span><div><strong>' + titulo + '</strong><p>' + txt + '</p></div></li>';
+    };
+    var corpo = abrirModal(
+      '<div class="vd-modal-eyebrow"><span class="vd-dot"></span>Guia rápido</div>' +
+      '<h3>Como usar o portal</h3>' +
+      '<p>Cada aula tem um <strong>material de leitura</strong> e/ou uma <strong>atividade</strong> para preencher. As atividades se encadeiam: o que você faz numa aula alimenta a seguinte.</p>' +
+      '<ol class="vd-guia">' +
+        item('1', 'Entre com nome e palavra-chave',
+          'Clique em <em>Entrar</em> e use o seu nome completo — ou o nome do grupo — e uma palavra-chave de pelo menos 4 caracteres. No primeiro acesso, o portal pede para confirmar o cadastro e a turma. Não use uma senha pessoal.') +
+        item('2', 'Leia e preencha',
+          'Na trilha, os cartões claros com <strong>📖 Leitura</strong> são materiais para ler; os botões roxos com <strong>✎ Atividade</strong> são as ferramentas para preencher. Os materiais <em>Conheça seus vieses</em> são complementares.') +
+        item('3', 'O salvamento é automático',
+          'Enquanto você escreve, as respostas são guardadas no navegador e enviadas à planilha da turma em poucos segundos. O indicador no topo mostra o estado: <span class="vd-cor ok">●</span> salvo na planilha, <span class="vd-cor pend">●</span> enviando, <span class="vd-cor erro">●</span> sem conexão (fica no navegador e o portal tenta de novo sozinho). O botão <strong>Salvar respostas</strong> envia na hora, se quiser garantir.') +
+        item('4', 'Continue de qualquer computador',
+          'Entre com o mesmo nome e a mesma palavra-chave: suas respostas voltam exatamente como estavam.') +
+        item('5', 'Em grupo',
+          'Todos os membros usam o mesmo nome de grupo e a mesma palavra-chave. Combinem quem digita: se duas pessoas editarem a mesma atividade ao mesmo tempo, o portal avisa e pergunta qual versão manter.') +
+        item('6', 'Reaproveite o que já fez',
+          'Na Aula 2, o botão <em>Trazer da Aula 1</em> traz o comportamento-alvo escolhido. Na Aula 3, <em>Trazer da Aula 2</em> traz a barreira priorizada. Cada atividade também pode ser impressa ou salva em PDF.') +
+        item('?', 'Esqueceu a palavra-chave?', 'Fale com o professor: ele pode redefini-la.') +
+      '</ol>' +
+      '<div class="vd-acoes"><button type="button" class="vd-btn vd-btn-roxo" data-a="ok">Entendi</button></div>',
+      true
+    );
+    corpo.querySelector('[data-a=ok]').onclick = fecharModal;
+  }
+
   /* ---------------- controlador de atividade ---------------- */
   /*
    * cfg = { id, titulo, coletar(): objeto, aplicar(objeto|null), resumo(objeto): [[seção, campo, resposta]],
@@ -431,6 +465,7 @@
       ultimo = serial();
       atualizarIdentificacaoImpressa();
       mostrarStatus();
+      agendarAlturas();
     }
     function salvarLocal() {
       var s = serial();
@@ -508,7 +543,39 @@
     if (emPlanilha()) sincronizar();
     if (!sessao && cfg.pedirLogin !== false) setTimeout(function () { if (!sessao) abrirLogin(); }, 400);
 
-    var api_ = { alterado: alterado, salvarAgora: function () { clearTimeout(tLocal); if (salvarLocal()) { mostrarStatus(); enviar(cfg.id); } }, recarregar: carregarNaTela };
+    /* "Salvar respostas": usa o mesmo envio do salvamento automático, só que imediatamente */
+    function salvarAgora() {
+      clearTimeout(tLocal);
+      salvarLocal();
+      if (!sessao) { abrirLogin(); return Promise.resolve({ ok: false, semSessao: true }); }
+      if (!emPlanilha()) { mostrarStatus(); toast('Respostas salvas neste navegador.'); return Promise.resolve({ ok: true, local: true }); }
+      var reg = registro(cfg.id);
+      if (!reg) { toast('Ainda não há respostas para salvar.'); return Promise.resolve({ ok: true }); }
+      if (!reg.pendente) { reg.pendente = true; gravarRegistro(cfg.id, reg); }
+      clearTimeout(tRemoto); tRemoto = null; ultimoEnvio = Date.now();
+      return enviar(cfg.id).then(function (res) {
+        if (res && res.ok) toast('Respostas salvas na planilha ' + fmtHora(res.atualizado) + '.');
+        else if (res && !res.conflito && !res.sessaoInvalida) toast('Não foi possível falar com a planilha agora. As respostas estão guardadas neste navegador e serão enviadas automaticamente.');
+        return res;
+      });
+    }
+    function ligarBotaoSalvar(b) {
+      if (b._vdLigado) return;
+      b._vdLigado = true;
+      b.hidden = false;
+      var original = b.textContent;
+      b.addEventListener('click', function () {
+        b.disabled = true;
+        b.textContent = 'Salvando…';
+        salvarAgora().then(function (res) {
+          b.textContent = res && res.ok && !res.semSessao ? '✓ Salvo' : original;
+          setTimeout(function () { b.textContent = original; b.disabled = false; }, res && res.ok ? 1800 : 0);
+        });
+      });
+    }
+    if (cfg.topbar !== false) document.querySelectorAll('[data-vd-salvar]').forEach(ligarBotaoSalvar);
+
+    var api_ = { alterado: alterado, salvarAgora: salvarAgora, recarregar: carregarNaTela };
     controladores[cfg.id] = api_;
     return api_;
   }
@@ -573,6 +640,32 @@
   function onSessao(f) { ouvSessao.push(f); }
   function onStatus(f) { ouvStatus.push(f); }
 
+  /* ---------- caixas de texto crescem conforme o conteúdo (a altura mínima vem do CSS) ---------- */
+  function autoAltura(ta) {
+    if (!ta || ta.tagName !== 'TEXTAREA' || ta.closest('.vd-modal')) return;
+    if (ta.offsetParent === null && getComputedStyle(ta).display === 'none') return;
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + 2) + 'px';
+  }
+  function autoAlturaTodas() { document.querySelectorAll('textarea').forEach(autoAltura); }
+  var tAlt = null;
+  function agendarAlturas() { cancelAnimationFrame(tAlt); tAlt = requestAnimationFrame(autoAlturaTodas); }
+  document.addEventListener('input', function (e) { autoAltura(e.target); }, true);
+  window.addEventListener('resize', agendarAlturas);
+  window.addEventListener('afterprint', agendarAlturas);
+  if (window.MutationObserver) {
+    new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        var n = muts[i].addedNodes;
+        for (var j = 0; j < n.length; j++) {
+          if (n[j].nodeType === 1 && (n[j].tagName === 'TEXTAREA' || (n[j].querySelector && n[j].querySelector('textarea')))) { agendarAlturas(); return; }
+        }
+      }
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  }
+  document.addEventListener('DOMContentLoaded', agendarAlturas);
+  window.addEventListener('load', agendarAlturas);
+
   window.VD = {
     planilha: PLANILHA,
     raiz: RAIZ,
@@ -586,6 +679,7 @@
     sair: sair,
     sincronizar: sincronizar,
     abrirLogin: abrirLogin,
+    abrirInstrucoes: abrirInstrucoes,
     ferramenta: ferramenta,
     notas: notas,
     iniciarPagina: iniciarPagina,

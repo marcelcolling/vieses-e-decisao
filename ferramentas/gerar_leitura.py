@@ -374,6 +374,7 @@ MODELO = """<!DOCTYPE html>
   <div class="sidebar-badge"><span class="dot"></span><span>{selo}</span></div>
   <div class="sidebar-title">{titulo_curto}</div>
   <a class="nav-item nav-voltar" href="../index.html">← Voltar ao portal</a>
+  <a class="nav-item nav-ajuda" href="../index.html#ajuda">? Como usar o portal</a>
   <a class="nav-item" href="#intro">Início</a>
   {nav}
   <a class="nav-item nav-atividade" href="{url_ativ}">✎ Ir para a atividade</a>

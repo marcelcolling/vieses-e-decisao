@@ -215,7 +215,12 @@ a{ color:var(--purple); }
 <!-- portal-vd -->
 <link rel="stylesheet" href="../assets/css/portal.css">
 <style>
-  .nav-item.vd-voltar{ color:var(--amber); font-weight:600; }
+  .nav-item.vd-voltar, .nav-item.vd-ajuda-link{ color:var(--amber); font-weight:600; }
+  /* largura: o texto ocupa a área disponível ao lado do sumário */
+  .wrapper{ max-width:1180px !important; margin:0 4vw 0 calc(var(--sidebar-w) + 4vw) !important; }
+  .section p, .lens-panel p{ max-width:none !important; }
+  .hero-sub{ max-width:60ch !important; }
+  @media (max-width:980px){ .wrapper{ margin:0 auto !important; max-width:none !important; } }
   @media print{
     .section{ opacity:1 !important; transform:none !important; }
     #sidebar, #sidebar-toggle, #overlay, #progress-bar, #back-to-top{ display:none !important; }
@@ -235,6 +240,7 @@ a{ color:var(--purple); }
   <div class="sidebar-badge"><span class="dot"></span><span>Conheça seus vieses · 03</span></div>
   <div class="sidebar-title">Aversão à Perda</div>
   <a class="nav-item vd-voltar" href="../index.html">← Voltar ao portal</a>
+  <a class="nav-item vd-ajuda-link" href="../index.html#ajuda" onclick="if(window.VD){event.preventDefault();VD.abrirInstrucoes();}">? Como usar o portal</a>
   <a class="nav-item" href="#intro">Início</a>
   <a class="nav-item" href="#o-que-e">O que é o viés</a>
   <a class="nav-item" href="#como-funciona">Como funciona</a>
