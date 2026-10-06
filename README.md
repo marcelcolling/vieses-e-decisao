@@ -54,6 +54,7 @@ Publique a alteração no GitHub (pela interface web do GitHub, editando o arqui
 
 ## Tarefas do dia a dia
 
+- **Remover um estudante/grupo** (cadastro de teste, duplicado por erro de digitação): menu *Portal da disciplina › Remover um estudante ou grupo…*.
 - **Estudante esqueceu a palavra-chave:** na planilha, menu *Exibir abas ocultas* › `_alunos`; apague a célula `hash_chave` da pessoa. A próxima palavra-chave que ela usar passa a valer.
 - **Nova turma no mesmo semestre:** use a mesma planilha; o campo "Turma" aparece no Painel. Para separar por completo, crie outra planilha + implantação e outro repositório/pasta.
 - **Sem planilha configurada:** o portal funciona em "modo local", com as respostas salvas só no navegador. Os botões "Baixar cópia (.json)" continuam disponíveis como backup em todas as atividades.

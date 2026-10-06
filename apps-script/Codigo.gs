@@ -209,8 +209,7 @@ function montarAbaAluno(a, regs) {
     cabecalhos.push(L.length + 1);
     L.push(['Seção', 'Campo', 'Resposta']);
     var linhas = (r.resumo && r.resumo.length) ? r.resumo : [['', '(sem resumo disponível)', '']];
-    // as células recebem formato "texto simples" antes de setValues: nada vira fórmula, data ou número
-    linhas.forEach(function (x) { L.push([String(x[0]), String(x[1]), String(x[2])]); });
+    linhas.forEach(function (x) { L.push([texto(x[0]), texto(x[1]), texto(x[2])]); });
     L.push(['', '', '']);
   });
   if (!regs.length) L.push(['Nenhuma atividade salva ainda.', '', '']);
@@ -244,23 +243,27 @@ function montarPainel() {
   var alunos = al.linhas.map(function (l) { var a = alunoDe(l); a.ultimo = Number(l[6]) || 0; return a; });
   alunos.sort(function (x, y) { return (x.turma + '|' + x.nome).localeCompare(y.turma + '|' + y.nome, 'pt'); });
 
+  var links = [];
   var corpo = alunos.map(function (a) {
     var por = {};
     (dados[a.id] || []).forEach(function (r) { por[r.ferramenta] = r; });
     var vieses = (dados[a.id] || []).filter(function (r) { return r.ferramenta.indexOf('vies-') === 0; }).length;
     var abaAluno = ss.getSheetByName(a.aba);
-    var nomeCel = abaAluno
-      ? '=HYPERLINK("#gid=' + abaAluno.getSheetId() + '","' + a.nome.replace(/"/g, '""') + '")'
-      : texto(a.nome);
+    // link de texto (sem fórmula): funciona em planilhas de qualquer idioma
+    var rt = SpreadsheetApp.newRichTextValue().setText(a.nome || '—');
+    if (abaAluno) rt = rt.setLinkUrl('#gid=' + abaAluno.getSheetId());
+    links.push([rt.build()]);
     function q(r) { return r ? '✓ ' + quando(r.atualizado, tz) : '—'; }
-    return [nomeCel, texto(a.turma || '—'), q(por.aula1), q(por.aula2), q(por.aula3), vieses ? vieses + ' material(is)' : '—', quando(a.ultimo, tz)];
+    return [texto(a.nome), texto(a.turma || '—'), q(por.aula1), q(por.aula2), q(por.aula3), vieses ? vieses + ' material(is)' : '—', quando(a.ultimo, tz)];
   });
 
   sh.getRange(1, 1, 1, cab.length).setValues([cab])
     .setFontWeight('bold').setBackground('#2C1E37').setFontColor('#FFFFFF').setWrap(true).setVerticalAlignment('middle');
   if (corpo.length) {
-    sh.getRange(2, 2, corpo.length, cab.length - 1).setNumberFormat('@');
-    sh.getRange(2, 1, corpo.length, cab.length).setValues(corpo).setVerticalAlignment('top');
+    var rg = sh.getRange(2, 1, corpo.length, cab.length);
+    rg.setNumberFormat('@');
+    rg.setValues(corpo).setVerticalAlignment('top');
+    sh.getRange(2, 1, corpo.length, 1).setRichTextValues(links);
   } else {
     sh.getRange(2, 1).setValue('Nenhum estudante cadastrado ainda.');
   }
@@ -276,9 +279,43 @@ function montarPainel() {
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Portal da disciplina')
     .addItem('Atualizar abas e painel agora', 'atualizarTudo')
+    .addItem('Remover um estudante ou grupo…', 'removerEstudante')
     .addSeparator()
     .addItem('Configurar (executar uma vez)', 'configurar')
     .addToUi();
+}
+
+/** Menu: apaga o cadastro, as respostas e a aba de um estudante/grupo (ex.: cadastros de teste ou duplicados). */
+function removerEstudante() {
+  var ui = SpreadsheetApp.getUi();
+  var r = ui.prompt('Remover estudante ou grupo', 'Digite o nome exatamente como aparece no Painel:', ui.ButtonSet.OK_CANCEL);
+  if (r.getSelectedButton() !== ui.Button.OK) return;
+  var id = normalizar(r.getResponseText());
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  var nome;
+  try {
+    var al = lerAlunos();
+    var i = acharAluno(al.linhas, id);
+    if (i < 0) { ui.alert('Ninguém com esse nome foi encontrado.'); return; }
+    var a = alunoDe(al.linhas[i]);
+    nome = a.nome;
+    if (ui.alert('Remover "' + a.nome + '"?', 'O cadastro, todas as respostas e a aba serão apagados. Não dá para desfazer.', ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
+    var sd = aba(ABA_DADOS, COLS_DADOS);
+    var n = sd.getLastRow() - 1;
+    if (n > 0) {
+      var ids = sd.getRange(2, 1, n, 1).getValues();
+      for (var k = ids.length - 1; k >= 0; k--) if (String(ids[k][0]) === id) sd.deleteRow(k + 2);
+    }
+    al.sh.deleteRow(i + 2);
+    var ss = planilha();
+    var abaAluno = ss.getSheetByName(a.aba);
+    if (abaAluno) ss.deleteSheet(abaAluno);
+  } finally {
+    lock.releaseLock();
+  }
+  montarPainel();
+  ss.toast('"' + nome + '" foi removido.', 'Portal da disciplina', 4);
 }
 
 /** Execute uma vez, pelo editor do Apps Script, antes de implantar. */
@@ -418,10 +455,13 @@ function ordenar(x, y) {
 
 function escreverTexto(range, valores) {
   range.setNumberFormat('@');
-  range.setValues(valores);
+  range.setValues(valores.map(function (linha) { return linha.map(texto); }));
 }
 
-/** Impede que respostas começando com =, +, - ou @ virem fórmulas. */
+/**
+ * Impede que respostas começando com =, +, - ou @ virem fórmulas.
+ * (Nos testes, o formato "texto simples" sozinho não impediu a fórmula; o apóstrofo inicial força texto.)
+ */
 function texto(v) {
   var s = String(v == null ? '' : v);
   return /^[=+\-@]/.test(s) ? "'" + s : s;
