@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Levantamento, Triangulação e Priorização de Barreiras — COM-B</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/portal.css">
+<style>
+  :root {
+    --roxo: #402C4F;
+    --roxo-tint: rgba(64,44,79,0.06);
+    --azul: #455066;
+    --azul-tint: rgba(69,80,102,0.08);
+    --fundo: #FCFCFA;
+    --fundo-alt: #F2EFEA;
+    --amarelo: #EFB93C;
+    --texto: #2A2432;
+    --texto-muted: #6b6478;
+    --branco: #FFFFFF;
+    --border: rgba(64,44,79,0.16);
+    --ok: rgba(52,160,107,0.35);
+    --ok-bg: rgba(52,160,107,0.1);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; }
+  html, body { overflow-x: hidden; max-width: 100%; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--fundo); color: var(--texto); line-height: 1.6; }
+  .page { max-width: 980px; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+  header.hero { background: var(--roxo); color: var(--branco); padding: clamp(2.2rem, 7vw, 3.5rem) 0 clamp(1.8rem, 5vw, 2.8rem); margin-bottom: 2.2rem; }
+  header.hero .hero-inner { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; }
+  header.hero .tag { display: inline-block; border: 1px solid rgba(239,185,60,0.5); color: var(--amarelo); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 100px; margin-bottom: 1.2rem; font-style: italic; }
+  header.hero h1 { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(1.5rem, 4vw, 2.3rem); margin: 0 0 0.6rem; line-height: 1.25; }
+  header.hero p { font-family: 'Fraunces', serif; font-style: italic; color: rgba(255,255,255,0.82); max-width: 680px; margin: 0; font-size: 1rem; }
+
+  .identifica { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.6rem; }
+  .identifica > div { flex: 1 1 200px; min-width: 0; }
+  .identifica.full > div { flex-basis: 100%; }
+  .identifica label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.65); display: block; margin-bottom: 0.35rem; font-style: italic; }
+  .identifica input[type="text"], .identifica textarea {
+    background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.28); border-radius: 8px;
+    padding: 0.65rem 0.8rem; color: var(--branco); font-family: 'Inter', sans-serif; font-size: 16px; width: 100%;
+  }
+  .identifica textarea { min-height: 52px; resize: vertical; }
+  .identifica input::placeholder, .identifica textarea::placeholder { color: rgba(255,255,255,0.45); }
+
+  .passo { margin-bottom: 3.2rem; }
+  .passo-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+  .passo-num { width: 40px; height: 40px; border-radius: 50%; background: var(--roxo); color: var(--branco); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 700; flex-shrink: 0; }
+  .passo-head h2 { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(1.15rem, 3vw, 1.4rem); color: var(--roxo); margin: 0; }
+  .passo-desc { font-family: 'Fraunces', serif; font-style: italic; color: var(--texto-muted); margin: 0 0 1.3rem 3.2rem; font-size: 0.94rem; }
+  @media (max-width: 560px) { .passo-desc { margin-left: 0; } }
+
+  p.corpo { font-size: 0.9rem; color: var(--texto-muted); line-height: 1.75; margin: 0 0 1rem; }
+  p.corpo strong { color: var(--texto); }
+  .ph { color: var(--roxo); font-weight: 600; font-style: italic; }
+
+  .callout { display: flex; gap: 0.9rem; background: var(--fundo-alt); border: 1px solid var(--border); border-left: 3px solid var(--roxo); border-radius: 0 12px 12px 0; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .callout.amarelo { border-left-color: var(--amarelo); }
+  .callout.azul { border-left-color: var(--azul); }
+  .callout-icon { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; background: var(--roxo); color: var(--branco); }
+  .callout.amarelo .callout-icon { background: var(--amarelo); color: var(--texto); }
+  .callout.azul .callout-icon { background: var(--azul); color: var(--branco); }
+  .callout-text { font-size: 0.85rem; color: var(--texto-muted); line-height: 1.7; }
+  .callout-text strong { color: var(--texto); }
+
+  .filtro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.2rem 0; }
+  @media (max-width: 860px) { .filtro-grid { grid-template-columns: 1fr; } }
+  .filtro-card { background: var(--branco); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .filtro-card .filtro-nome { font-family: 'Fraunces', serif; font-weight: 700; color: var(--roxo); font-size: 1.02rem; }
+  .filtro-card .filtro-pergunta { font-size: 0.86rem; color: var(--texto-muted); line-height: 1.65; flex-grow: 1; }
+  .filtro-card select { margin-top: auto; }
+
+  select, textarea, input[type="text"] {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.7rem;
+    font-family: 'Inter', sans-serif; font-size: 16px; color: var(--texto); background: var(--fundo-alt);
+    resize: vertical; line-height: 1.5;
+  }
+  select { min-height: 46px; }
+  textarea { min-height: 70px; }
+  select:focus, textarea:focus, input:focus { outline: 2px solid var(--amarelo); outline-offset: 1px; }
+
+  table.tabela-responsiva { width: 100%; border-collapse: collapse; background: var(--branco); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin: 1rem 0 1.4rem; }
+  table.tabela-responsiva th { background: var(--azul); color: var(--branco); text-align: left; font-size: 0.76rem; letter-spacing: 0.03em; text-transform: uppercase; padding: 0.65rem 0.85rem; font-weight: 600; }
+  table.tabela-responsiva td { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 0.84rem; color: var(--texto-muted); }
+  table.tabela-responsiva td strong { color: var(--texto); }
+  table.tabela-responsiva tr:last-child td { border-bottom: none; }
+  @media (max-width: 700px) {
+    table.tabela-responsiva thead { display: none; }
+    table.tabela-responsiva, table.tabela-responsiva tbody, table.tabela-responsiva tr, table.tabela-responsiva td { display: block; width: 100%; }
+    table.tabela-responsiva { border: none; background: transparent; }
+    table.tabela-responsiva tr { background: var(--branco); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.8rem; }
+    table.tabela-responsiva td { border-bottom: none; padding: 0.4rem 0; }
+    table.tabela-responsiva td[data-label]::before { content: attr(data-label); display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--azul); margin-bottom: 0.25rem; }
+  }
+
+  .accordion-item { border: 1px solid var(--border); border-radius: 14px; margin-bottom: 0.9rem; overflow: hidden; background: var(--branco); transition: opacity 0.25s, filter 0.25s; }
+  .accordion-item.dimmed { opacity: 0.55; }
+  .accordion-item.tem-evidencia { border-color: rgba(52,160,107,0.45); }
+  .accordion-header {
+    width: 100%; text-align: left; background: var(--fundo-alt); border: none; padding: 1rem 1.2rem;
+    font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 700; color: var(--texto); cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 44px;
+  }
+  .accordion-header .grupo-tag { font-family: 'Inter', sans-serif; font-style: italic; font-weight: 400; font-size: 0.72rem; color: var(--texto-muted); display: block; margin-top: 0.15rem; }
+  .accordion-header .marca-evidencia { font-family: 'Inter', sans-serif; font-style: normal; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #1f6b45; background: rgba(52,160,107,0.14); border-radius: 100px; padding: 0.15rem 0.55rem; margin-left: 0.4rem; vertical-align: middle; }
+  .accordion-icon { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--roxo); color: var(--branco); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: transform 0.25s; }
+  .accordion-item.open .accordion-icon { transform: rotate(45deg); }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .accordion-item.open .accordion-body { max-height: 3000px; }
+  .accordion-body-inner { padding: 1.2rem 1.2rem 1.4rem; }
+  .perguntas-lista { margin: 0 0 1rem; padding-left: 1.3rem; }
+  .perguntas-lista li { font-size: 0.85rem; color: var(--texto-muted); line-height: 1.65; margin-bottom: 0.5rem; }
+  .evidencia-label { font-size: 0.78rem; font-weight: 600; color: var(--azul); text-transform: uppercase; letter-spacing: 0.03em; display: block; margin-bottom: 0.4rem; }
+
+  .btn-ajuda-inline {
+    display: inline-flex; align-items: center; gap: 0.4rem; background: none; border: none; color: var(--azul);
+    font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; text-decoration: underline; margin-bottom: 0.8rem;
+  }
+
+  .score-row { display: grid; grid-template-columns: 1fr repeat(3, 90px) 70px; gap: 0.7rem; align-items: center; background: var(--branco); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.9rem; margin-bottom: 0.6rem; }
+  .score-row .score-nome { font-size: 0.87rem; color: var(--texto); font-weight: 600; }
+  .score-row select { min-height: 42px; font-size: 0.85rem; padding: 0.4rem; }
+  .score-total { text-align: center; font-family: 'Fraunces', serif; font-weight: 700; color: var(--roxo); font-size: 1.05rem; }
+  .score-labels { display: grid; grid-template-columns: 1fr repeat(3, 90px) 70px; gap: 0.7rem; padding: 0 0.9rem; margin-bottom: 0.5rem; }
+  .score-labels span { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--texto-muted); text-align: center; }
+  .score-labels span:first-child { text-align: left; }
+  .score-row .score-field label { display: none; }
+  @media (max-width: 700px) {
+    .score-row, .score-labels { grid-template-columns: 1fr; gap: 0.4rem; }
+    .score-labels { display: none !important; }
+    .score-row .score-field { display: flex; align-items: center; gap: 0.5rem; }
+    .score-row .score-field label { display: block; font-size: 0.72rem; text-transform: uppercase; color: var(--texto-muted); min-width: 90px; }
+    .score-total { text-align: left; padding-top: 0.3rem; border-top: 1px dashed var(--border); margin-top: 0.3rem; }
+  }
+
+  .ranking-medalha { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--amarelo); color: var(--texto); align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; margin-right: 0.5rem; }
+
+  .hipotese-box { background: var(--azul); color: var(--branco); border-radius: 16px; padding: 1.6rem 1.8rem; margin-top: 1.5rem; }
+  .hipotese-box h3 { font-family: 'Fraunces', serif; margin: 0 0 0.8rem; font-size: 1.1rem; }
+  .hipotese-box textarea { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.28); color: var(--branco); margin-bottom: 0.8rem; }
+  .hipotese-box textarea::placeholder { color: rgba(255,255,255,0.5); }
+  .hipotese-preview { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem 1.1rem; font-size: 0.88rem; line-height: 1.7; margin-top: 0.8rem; }
+  .hipotese-preview .vazio { font-style: italic; color: rgba(255,255,255,0.55); }
+  .hipotese-preview strong { color: var(--amarelo); }
+  .proximo { margin: 0.9rem 0 0; font-size: 0.84rem; color: rgba(255,255,255,0.8); }
+  .proximo a { color: var(--amarelo); font-weight: 600; }
+
+  button {
+    font-family: 'Inter', sans-serif; font-weight: 500; cursor: pointer; border: none; border-radius: 8px;
+    padding: 0.65rem 1.1rem; font-size: 0.85rem; transition: transform 0.15s, opacity 0.15s; min-height: 44px;
+  }
+  button:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--amarelo); color: var(--texto); }
+  .btn-ghost { background: var(--fundo-alt); color: var(--azul); border: 1px solid var(--border); }
+  .barra-acoes { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1rem; align-items: center; }
+  .barra-acoes .nota-backup { font-size: 0.8rem; color: var(--texto-muted); flex-basis: 100%; margin-top: 0.2rem; }
+  @media (max-width: 560px) { .barra-acoes button, .barra-acoes label { width: 100%; text-align: center; justify-content: center; } }
+  label.btn-ghost { display: inline-flex; align-items: center; cursor: pointer; padding: 0.65rem 1.1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; min-height: 44px; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,36,50,0.55); z-index: 500; align-items: center; justify-content: center; padding: 1.5rem; }
+  .modal-overlay.aberto { display: flex; }
+  .modal-box { background: var(--fundo); border-radius: 18px; max-width: 760px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 2rem 2.2rem; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  @media (max-width: 560px) { .modal-box { padding: 1.5rem 1.3rem; max-height: 92vh; } }
+  .modal-fechar { position: absolute; top: 1.1rem; right: 1.1rem; width: 40px; height: 40px; border-radius: 50%; background: var(--roxo-tint); color: var(--roxo); font-size: 1.1rem; padding: 0; }
+  .modal-box h3 { font-family: 'Fraunces', serif; color: var(--roxo); font-size: 1.25rem; margin: 0 0 1.2rem; }
+  .modal-box h4 { font-family: 'Fraunces', serif; font-size: 0.98rem; color: var(--azul); margin: 1.1rem 0 0.6rem; }
+  .modal-box p, .modal-box li { font-size: 0.85rem; color: var(--texto-muted); line-height: 1.65; }
+  .exemplo-tabela { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.82rem; }
+  .exemplo-tabela th, .exemplo-tabela td { border: 1px solid var(--border); padding: 0.5rem 0.6rem; text-align: center; }
+  .exemplo-tabela th { background: var(--azul); color: var(--branco); font-size: 0.72rem; }
+  .exemplo-tabela td:first-child { text-align: left; }
+
+  .impressao-caixa { display: none; }
+  @media print {
+    .no-print { display: none !important; }
+    html, body { font-size: 12px; }
+    header.hero { background: var(--roxo) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 1.4rem 0 1.1rem; margin-bottom: 1.2rem; }
+    body { background: white; overflow-x: visible; }
+    .passo { margin-bottom: 1.3rem; page-break-inside: avoid; break-inside: avoid; }
+    .accordion-body { max-height: none !important; }
+    .accordion-item { page-break-inside: avoid; break-inside: avoid; }
+    .accordion-icon { display: none; }
+    textarea, select, input[type="text"] { display: none !important; }
+    .impressao-caixa { display: block !important; white-space: pre-wrap; word-break: break-word; font-size: 10.5px; line-height: 1.4; color: var(--texto); padding: 0.3rem 0.4rem; border: 1px solid var(--border); border-radius: 5px; background: var(--fundo-alt); }
+    header.hero .impressao-caixa { background: rgba(255,255,255,0.14); color: var(--branco); border-color: rgba(255,255,255,0.35); }
+    .score-labels { display: none !important; }
+    .filtro-grid { grid-template-columns: 1fr !important; gap: 0.6rem; page-break-inside: avoid; }
+    .filtro-card { page-break-inside: avoid; break-inside: avoid; padding: 0.8rem 0.9rem; }
+    .score-row { grid-template-columns: 1fr !important; gap: 0.3rem; page-break-inside: avoid; break-inside: avoid; }
+    .score-row .score-field { display: flex; align-items: center; gap: 0.5rem; }
+    .score-row .score-field label { display: block; font-size: 0.68rem; text-transform: uppercase; color: var(--texto-muted); min-width: 80px; }
+    .score-total { text-align: left !important; padding-top: 0.25rem; border-top: 1px dashed var(--border); margin-top: 0.2rem; }
+  }
+
+  @media (max-width: 600px) {
+    .accordion-icon, .modal-fechar { min-width: 40px; min-height: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="tag">Etapa Explore · COM-B</div>
+    <h1>Levantamento, triangulação e priorização de barreiras</h1>
+    <p>Preencha as etapas abaixo para diagnosticar, de forma estruturada, por que o comportamento-alvo escolhido ainda não acontece.</p>
+    <div class="vd-print-id"></div>
+    <div class="identifica">
+      <div><label for="campoEquipe">Equipe / Área</label><input id="campoEquipe" type="text" placeholder="Ex.: Comercial, RH, Operações..."></div>
+    </div>
+    <div class="identifica full">
+      <div>
+        <label for="campoComportamento">Comportamento-alvo em diagnóstico</label>
+        <textarea id="campoComportamento" placeholder="Ex.: o atendente confirma verbalmente o pedido com o cliente antes de encaminhá-lo à cozinha, em 100% dos atendimentos de eventos acima de 20 pessoas" oninput="atualizarPlaceholders()"></textarea>
+        <div class="vd-trazer"><button type="button" class="vd-btn vd-btn-claro" onclick="trazerDaAula1()">↧ Trazer da Aula 1</button></div>
+        <div class="vd-picker" id="pickerAula1" hidden></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <section class="passo">
+    <p class="corpo">Este é um repertório do qual vocês escolhem o que for mais relevante — nenhum diagnóstico real usa as sessenta perguntas de uma vez. Três regras valem para tudo o que vem a seguir: <strong>não é um roteiro fixo</strong>; <strong>toda pergunta deve estar ancorada no comportamento concreto acima</strong>, não em uma versão genérica dele; e <strong>nivele a profundidade ao tempo disponível</strong> — para uma hipótese rápida, as perguntas-filtro do Passo 1 já orientam uma triagem; para uma decisão de maior impacto, vale percorrer as listas completas do Passo 2, triangulando com as fontes indicadas.</p>
+  </section>
+
+  <!-- PASSO 1: FILTRO -->
+  <section class="passo" id="passo1">
+    <div class="passo-head"><div class="passo-num">1</div><h2>Perguntas-filtro (nível 1)</h2></div>
+    <p class="passo-desc">Responda as três perguntas abaixo antes de qualquer outra coisa. Cada uma cobre um bloco inteiro do COM-B — se a resposta indicar que aquele bloco não é problema, vocês podem avançar mais rápido pelas duas seções de aprofundamento correspondentes no Passo 2, sem deixar de poder abri-las se quiserem.</p>
+
+    <div class="callout azul">
+      <div class="callout-icon">⚡</div>
+      <div class="callout-text">Esse método de duas camadas — filtrar em nível geral antes de aprofundar — otimiza o tempo disponível quando a equipe tem uma janela curta: a pergunta de nível mais alto direciona o aprofundamento só para onde há indício real de barreira, em vez de percorrer tudo com o mesmo nível de detalhe.</div>
+    </div>
+
+    <div class="filtro-grid">
+      <div class="filtro-card">
+        <div class="filtro-nome">Filtro de Capacidade</div>
+        <div class="filtro-pergunta">Vocês conseguiriam fazer <span class="ph">[o comportamento]</span> com mais facilidade se tivessem mais força/precisão física para isso, ou mais conhecimento e clareza sobre como fazer? Ou nenhuma dessas duas coisas é o que falta hoje?</div>
+        <select id="filtroCap" onchange="onFiltroChange('cap', this.value)" aria-label="Filtro de Capacidade">
+          <option value="">Ainda não avaliei</option>
+          <option value="sim">Sinaliza barreira aqui</option>
+          <option value="ambiguo">Ambíguo — vou aprofundar</option>
+          <option value="nao">Não sinaliza barreira</option>
+        </select>
+      </div>
+      <div class="filtro-card">
+        <div class="filtro-nome">Filtro de Oportunidade</div>
+        <div class="filtro-pergunta">Vocês conseguiriam fazer <span class="ph">[o comportamento]</span> com mais facilidade se o ambiente ao redor — tempo, recursos, o que os outros esperam ou aprovam — favorecesse mais? Ou o ambiente já é plenamente favorável?</div>
+        <select id="filtroOpo" onchange="onFiltroChange('opo', this.value)" aria-label="Filtro de Oportunidade">
+          <option value="">Ainda não avaliei</option>
+          <option value="sim">Sinaliza barreira aqui</option>
+          <option value="ambiguo">Ambíguo — vou aprofundar</option>
+          <option value="nao">Não sinaliza barreira</option>
+        </select>
+      </div>
+      <div class="filtro-card">
+        <div class="filtro-nome">Filtro de Motivação</div>
+        <div class="filtro-pergunta">Vocês fariam <span class="ph">[o comportamento]</span> com mais frequência se estivessem mais convencidos de que vale a pena, ou se um hábito/impulso automático não estivesse no caminho? Ou já querem e, na prática, já fazem sempre que podem?</div>
+        <select id="filtroMot" onchange="onFiltroChange('mot', this.value)" aria-label="Filtro de Motivação">
+          <option value="">Ainda não avaliei</option>
+          <option value="sim">Sinaliza barreira aqui</option>
+          <option value="ambiguo">Ambíguo — vou aprofundar</option>
+          <option value="nao">Não sinaliza barreira</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-icon">💬</div>
+      <div class="callout-text"><strong>Como ler a resposta:</strong> uma resposta que nega claramente a relevância do bloco inteiro autoriza avançar mais rápido pelas duas listas de aprofundamento daquele bloco. Uma resposta ambígua, ou que já aponta um subcomponente específico, já indica onde começar — por exemplo, dentro do bloco Capacidade, comecem por C Psicológica se a hesitação for sobre "não saber bem como fazer isso quando foge do padrão".</div>
+    </div>
+  </section>
+
+  <!-- PASSO 2: APROFUNDAMENTO -->
+  <section class="passo" id="passo2">
+    <div class="passo-head"><div class="passo-num">2</div><h2>Aprofundamento por subcomponente (nível 2)</h2></div>
+    <p class="passo-desc">Abra cada bloco para ver as dez perguntas de referência, a orientação de triangulação específica, e registrar a evidência encontrada.</p>
+
+    <table class="tabela-responsiva">
+      <thead><tr><th>Subcomponente COM-B</th><th>Domínios do TDF correspondentes</th></tr></thead>
+      <tbody>
+        <tr><td data-label="Subcomponente"><strong>C Física</strong></td><td data-label="Domínios TDF">Habilidades físicas</td></tr>
+        <tr><td data-label="Subcomponente"><strong>C Psicológica</strong></td><td data-label="Domínios TDF">Conhecimento; habilidades cognitivas e interpessoais; memória, atenção e processos de decisão; regulação comportamental</td></tr>
+        <tr><td data-label="Subcomponente"><strong>O Física</strong></td><td data-label="Domínios TDF">Contexto ambiental e recursos</td></tr>
+        <tr><td data-label="Subcomponente"><strong>O Social</strong></td><td data-label="Domínios TDF">Influências sociais</td></tr>
+        <tr><td data-label="Subcomponente"><strong>M Reflexiva</strong></td><td data-label="Domínios TDF">Papel social/profissional e identidade; crenças sobre capacidades; otimismo; crenças sobre consequências; intenções; metas</td></tr>
+        <tr><td data-label="Subcomponente"><strong>M Automática</strong></td><td data-label="Domínios TDF">Reforço; emoção</td></tr>
+      </tbody>
+    </table>
+
+    <div id="acordeaoSubcomponentes"></div>
+  </section>
+
+  <!-- PASSO 3: TRIANGULAÇÃO -->
+  <section class="passo" id="passo3">
+    <div class="passo-head"><div class="passo-num">3</div><h2>Princípio geral de triangulação</h2></div>
+    <p class="passo-desc">Além das orientações específicas de cada componente no Passo 2, três princípios valem para qualquer triangulação.</p>
+
+    <div class="callout">
+      <div class="callout-icon">🔺</div>
+      <div class="callout-text"><strong>Nunca feche um diagnóstico com uma fonte só.</strong> Toda resposta de entrevista é uma percepção, não um fato — e percepções carregam vieses previsíveis. Combine sempre pelo menos duas fontes de tipos diferentes: autorrelato de quem realiza o comportamento, observação direta, dados de desempenho, ou relato de um terceiro envolvido (par, cliente, subordinado).</div>
+    </div>
+    <div class="callout">
+      <div class="callout-icon">🎯</div>
+      <div class="callout-text"><strong>Escolha a fonte pela natureza do componente, não por conveniência.</strong> Componentes físicos e ambientais são mais bem verificados por observação e dado objetivo. Motivação automática exige observação comportamental, porque o autorrelato tende a racionalizar. Motivação reflexiva e conhecimento aceitam autorrelato com mais confiança, desde que testado.</div>
+    </div>
+    <div class="callout">
+      <div class="callout-icon">↔️</div>
+      <div class="callout-text"><strong>Quando as fontes divergem, a divergência é informação</strong> — não um problema a ser resolvido antes de diagnosticar. Um gestor que diz que o recurso está disponível e um funcionário que mostra, na prática, que não consegue acessá-lo não são um empate a ser descartado: essa divergência costuma apontar exatamente para onde está o problema real.</div>
+    </div>
+
+    <label class="evidencia-label" for="fontesUsadas" style="margin-top:1rem; display:block;">Quais fontes vocês usaram no total, ao longo do levantamento?</label>
+    <textarea id="fontesUsadas" placeholder="Ex.: entrevista com 4 atendentes, observação de dois turnos, dados de tempo médio de atendimento do sistema"></textarea>
+  </section>
+
+  <!-- PASSO 4: PRIORIZAÇÃO -->
+  <section class="passo" id="passo4">
+    <div class="passo-head">
+      <div class="passo-num">4</div><h2>Priorização do componente</h2>
+    </div>
+    <p class="passo-desc">Pontue de 0 a 3 cada componente para o qual vocês registraram evidência no Passo 2. A pontuação e o ranking abaixo se calculam sozinhos.</p>
+
+    <button class="btn-ajuda-inline no-print" onclick="abrirModal('modalCriterios')">Ver como pontuar cada critério (0 a 3) →</button>
+    <button class="btn-ajuda-inline no-print" onclick="abrirModal('modalExemplo')" style="margin-left:1.2rem;">Ver um exemplo aplicado →</button>
+
+    <div id="avisoSemEvidencia" class="callout amarelo">
+      <div class="callout-icon">✍️</div>
+      <div class="callout-text">Registrem evidência em pelo menos um subcomponente no Passo 2 para começar a pontuar aqui.</div>
+    </div>
+
+    <div class="score-labels" id="scoreLabels" style="display:none;">
+      <span>Componente</span><span>Frequência</span><span>Conflito</span><span>Intensidade</span><span>Total</span>
+    </div>
+    <div id="scoreLista"></div>
+
+    <div id="rankingResumo"></div>
+
+    <div class="callout" style="margin-top:1.2rem;">
+      <div class="callout-icon">⚖️</div>
+      <div class="callout-text"><strong>Critério de desempate:</strong> quando dois componentes somam pontuações próximas ou iguais, priorizem o que estiver mais "a montante" — Capacidade e Oportunidade antes de Motivação. A evidência empírica sobre o próprio modelo mostra que capacidade e oportunidade tendem a influenciar o comportamento através do efeito mediador da motivação, e raramente o caminho inverso se sustenta: resolver uma barreira estrutural empatada com uma de motivação tem boa chance de resolver as duas ao mesmo tempo.</div>
+    </div>
+
+    <div class="hipotese-box">
+      <h3>Fechando o Passo 4 — registrando a hipótese</h3>
+      <p style="font-size:0.85rem; color:rgba(255,255,255,0.8); margin-top:-0.4rem;">O resultado deste passo não é uma certeza — é uma hipótese estruturada e priorizada, que vai alimentar a etapa seguinte, de desenho de solução.</p>
+      <label for="hipoPorque" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; opacity:0.85; display:block; margin-bottom:0.4rem;">Porque (evidências específicas de frequência, conflito e intensidade)</label>
+      <textarea id="hipoPorque" placeholder="Descreva as evidências que sustentam essa escolha..." oninput="atualizarHipotese()"></textarea>
+      <label for="hipoErrado" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; opacity:0.85; display:block; margin-bottom:0.4rem;">Saberíamos que estamos errados se...</label>
+      <textarea id="hipoErrado" placeholder="O que vocês observariam que contradiria essa hipótese?" oninput="atualizarHipotese()"></textarea>
+      <div class="hipotese-preview" id="hipotesePreview"><span class="vazio">Pontue os componentes acima e preencha os dois campos para gerar a hipótese final.</span></div>
+      <p class="proximo no-print">Na <a href="aula-3-intervencao.html">atividade da Aula 3</a>, use o botão “Trazer da Aula 2” para partir desta hipótese.</p>
+    </div>
+  </section>
+
+  <div class="barra-acoes no-print">
+    <button class="btn-primary" onclick="imprimirDocumento()">Imprimir / Salvar PDF</button>
+    <button class="btn-ghost" onclick="exportarJSON()">Baixar cópia (.json)</button>
+    <label class="btn-ghost">Restaurar cópia (.json)<input type="file" accept=".json" onchange="importarJSON(event)" style="display:none"></label>
+    <span class="nota-backup">Suas respostas são salvas automaticamente. A cópia em .json é opcional, apenas um backup extra.</span>
+  </div>
+
+</div>
+
+<!-- MODAL CRITÉRIOS -->
+<div class="modal-overlay no-print" id="modalCriterios">
+  <div class="modal-box">
+    <button class="modal-fechar" onclick="fecharModal('modalCriterios')">✕</button>
+    <h3>Como pontuar cada critério</h3>
+    <p>Para cada componente que apresentou algum sinal de barreira no Passo 2, atribua uma pontuação de 0 a 3 em cada critério abaixo.</p>
+    <h4>Frequência — quantas fontes independentes convergem para esse componente?</h4>
+    <ul>
+      <li><strong>0</strong> — nenhuma evidência apontou para esse componente</li>
+      <li><strong>1</strong> — uma única fonte mencionou, isoladamente</li>
+      <li><strong>2</strong> — duas fontes de tipos diferentes convergem</li>
+      <li><strong>3</strong> — três ou mais fontes distintas convergem de forma consistente</li>
+    </ul>
+    <h4>Conflito — existe contradição não resolvida especificamente sobre esse componente?</h4>
+    <ul>
+      <li><strong>0</strong> — todas as fontes concordam sem tensão, o que geralmente sugere que esse componente não é a barreira</li>
+      <li><strong>1</strong> — uma pequena discrepância aparece, mas se explica facilmente</li>
+      <li><strong>2</strong> — há uma discrepância clara entre o que é dito e o que é observado</li>
+      <li><strong>3</strong> — existe uma contradição direta e não resolvida entre fontes</li>
+    </ul>
+    <h4>Intensidade — se esse componente fosse resolvido sozinho, o quanto isso moveria o comportamento?</h4>
+    <ul>
+      <li><strong>0</strong> — mesmo resolvendo, o comportamento provavelmente continuaria não acontecendo</li>
+      <li><strong>1</strong> — resolveria parcialmente, com efeito modesto</li>
+      <li><strong>2</strong> — provavelmente resolveria a maior parte do problema</li>
+      <li><strong>3</strong> — há razão forte para acreditar que resolver isso, sozinho, já destravaria o comportamento</li>
+    </ul>
+    <p>Some as três pontuações (máximo 9). O componente com a maior soma é o candidato prioritário.</p>
+  </div>
+</div>
+
+<!-- MODAL EXEMPLO -->
+<div class="modal-overlay no-print" id="modalExemplo">
+  <div class="modal-box">
+    <button class="modal-fechar" onclick="fecharModal('modalExemplo')">✕</button>
+    <h3>Um exemplo aplicado</h3>
+    <p>Comportamento-alvo: <em>"o vendedor atualiza o status do pedido no CRM em até duas horas após a negociação."</em> A coleta de evidência (entrevistas, observação de rotina e dados de log) resultou nesta pontuação:</p>
+    <table class="exemplo-tabela">
+      <tr><th>Componente</th><th>Frequência</th><th>Conflito</th><th>Intensidade</th><th>Total</th></tr>
+      <tr><td>C Psicológica</td><td>1</td><td>0</td><td>1</td><td><strong>2</strong></td></tr>
+      <tr><td>O Física</td><td>2</td><td>1</td><td>1</td><td><strong>4</strong></td></tr>
+      <tr><td>O Social</td><td>3</td><td>3</td><td>3</td><td><strong>9</strong></td></tr>
+      <tr><td>M Automática</td><td>2</td><td>1</td><td>2</td><td><strong>5</strong></td></tr>
+    </table>
+    <p>Todas as entrevistas, a observação das reuniões e os dados de adesão apontaram consistentemente para a mesma norma informal — atualizar o CRM em tempo real é visto, pelos vendedores mais experientes, como "controle excessivo da gestão" (frequência 3). Existe uma contradição direta entre o discurso oficial da empresa e o que a liderança informal do time realmente modela e tolera (conflito 3). E há forte razão para acreditar que, se essa norma mudasse, o comportamento se tornaria comum rapidamente, já que a equipe já sabe usar o sistema e tem o recurso disponível (intensidade 3).</p>
+    <p>O componente prioritário aqui é claramente <strong>oportunidade social</strong>, com folga sobre os demais — mesmo que capacidade psicológica e oportunidade física também tenham mostrado algum sinal, nenhum dos dois teria efeito relevante enquanto a norma social permanecer intacta.</p>
+  </div>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/portal.js"></script>
+<script>
+const esc = VD.esc;
+const PLACEHOLDER_PADRAO = '[o comportamento]';
+const FILTRO_ROTULO = { '': 'Ainda não avaliado', sim: 'Sinaliza barreira', ambiguo: 'Ambíguo — vai aprofundar', nao: 'Não sinaliza barreira' };
+
+const SUBCOMPONENTES = [
+  { id: 'cFisica', nome: 'C Física', subtitulo: 'capacidade física de execução', filtro: 'cap',
+    descricao: 'Habilidade motora, força, resistência física, destreza e coordenação — tudo que depende do corpo, não da mente, para executar a ação corretamente.',
+    triangulacao: 'Melhor verificado por observação direta — assista à execução ao vivo em vez de confiar apenas na descrição da pessoa. Cruze com dados de desempenho (erro, retrabalho) e a percepção de um colega ao lado, que costuma notar dificuldades físicas que a própria pessoa minimiza.',
+    perguntas: [
+      'Existe alguma etapa de {{comp}} que exige mais força, resistência ou precisão motora do que a pessoa consegue sustentar hoje?',
+      'Peça para a pessoa demonstrar, agora, como executaria {{comp}} — a demonstração ao vivo revela alguma dificuldade que a explicação verbal não mostrava?',
+      'A qualidade da execução piora visivelmente ao longo de um turno, ou quando repetida muitas vezes seguidas?',
+      'Existe alguma limitação sensorial (visão, audição, tato) que interfira na execução precisa de {{comp}}?',
+      'Quando {{comp}} sai errado, o erro está na parte física da execução — postura, força, ritmo, coordenação — ou em outro lugar?',
+      'Se fosse preciso treinar alguém do zero para executar {{comp}}, quais movimentos específicos exigiriam prática repetida antes de sair bem?',
+      'Existem adaptações improvisadas no ambiente de trabalho — posições, ferramentas alternativas — que sugerem que o corpo está compensando uma dificuldade física?',
+      'A pessoa sustenta {{comp}} em volume real de trabalho, ou só em ritmo reduzido de treino ou teste?',
+      'Quem, na mesma função, executa {{comp}} com mais precisão física — e o que essa pessoa desenvolveu que as demais ainda não desenvolveram?',
+      'Existe alguma condição de saúde, temporária ou permanente, comunicada ou não formalmente, que explique uma dificuldade específica desta pessoa e não de outras na mesma função?'
+    ]
+  },
+  { id: 'cPsicologica', nome: 'C Psicológica', subtitulo: 'conhecimento, memória e processos cognitivos', filtro: 'cap',
+    descricao: 'Saber o que fazer, como fazer na prática (não só descrever), e reconhecer quando a regra geral não se aplica — inclui memória, no sentido de recuperar a informação no momento certo, sob pressão real.',
+    triangulacao: 'Evite perguntar apenas "você sabe fazer isso?" — a resposta vem superestimada por desejabilidade social. Peça que a pessoa explique o procedimento em voz alta ou demonstre uma simulação. Cruze com a comparação entre desempenho em treinamento e em campo real.',
+    perguntas: [
+      'A pessoa consegue explicar, passo a passo, exatamente o que {{comp}} exige e como saber se foi bem feito?',
+      'A pessoa compreende, com as próprias palavras, por que cada etapa de {{comp}} existe — ou apenas segue os passos de forma mecânica, sem entender a lógica por trás?',
+      'Existe alguma parte de {{comp}} que a pessoa considera confusa ou que depende de interpretação situacional?',
+      'A pessoa recita corretamente o procedimento agora, com calma — e isso muda quando o cenário foge do padrão previsto?',
+      'Quando {{comp}} não acontece como deveria, a pessoa identifica por que deu errado, ou o motivo permanece nebuloso mesmo para ela?',
+      'Existem situações em que a regra geral de {{comp}} não se aplica — e a pessoa sabe reconhecer e se adaptar a essas exceções?',
+      'Se a pessoa tivesse que ensinar {{comp}} a um colega novo hoje, o que ensinaria que não está escrito em nenhum manual?',
+      'A pessoa consegue perceber sozinha, sem que ninguém aponte, quando está se desviando do padrão esperado de {{comp}} — ou só percebe o erro quando alguém de fora avisa?',
+      'A qualidade de execução varia amplamente entre pessoas do mesmo cargo e mesmo tempo de casa, sugerindo ausência de um padrão de conhecimento compartilhado?',
+      'Sob pressão de tempo, quais etapas de {{comp}} costumam ser as primeiras a serem esquecidas ou puladas?'
+    ]
+  },
+  { id: 'oFisica', nome: 'O Física', subtitulo: 'ambiente, tempo, recursos, espaço', filtro: 'opo',
+    descricao: 'Disponibilidade de equipamento, tempo, espaço físico, proximidade, acesso e infraestrutura — tudo que precisa estar fisicamente presente e acessível, independente de quem seja a pessoa.',
+    triangulacao: 'Componente menos dependente de percepção subjetiva — muitas vezes dá para confirmar diretamente se o recurso existe e está acessível. Combine com observação do fluxo real de trabalho e a comparação entre unidades/turnos com dotações de recursos diferentes.',
+    perguntas: [
+      'A pessoa tem, agora, todo o tempo, ferramenta, sistema e espaço necessários para realizar {{comp}} quando precisa?',
+      'O que, especificamente, falta no ambiente para que {{comp}} fosse mais fácil de executar?',
+      'Existe alguma situação em que a pessoa quer e sabe fazer {{comp}}, mas o recurso simplesmente não está disponível?',
+      'Com que frequência {{comp}} é feito de forma incompleta ou improvisada por falta de algum recurso específico?',
+      'O fluxo de trabalho atual cria atrito — passos extras, deslocamentos, esperas — que dificultam {{comp}}?',
+      'Existe um horário ou contexto em que {{comp}} seria visivelmente mais fácil de realizar do que é hoje — o que muda entre os dois cenários?',
+      'As informações necessárias chegam no momento certo e no formato certo, ou chegam atrasadas ou em lugar de difícil acesso?',
+      'Existem outras tarefas ou demandas que competem pelo mesmo tempo ou pelo mesmo recurso — e o que normalmente vence essa disputa?',
+      'O espaço físico ou o desenho do sistema digital favorece {{comp}} naturalmente, ou exige esforço extra para acontecer?',
+      'Comparando turnos, equipes ou unidades com dotações de recursos diferentes, a taxa de ocorrência de {{comp}} muda de forma consistente com essa diferença?'
+    ]
+  },
+  { id: 'oSocial', nome: 'O Social', subtitulo: 'normas, cultura, hierarquia', filtro: 'opo',
+    descricao: 'O que o grupo, os pares e as lideranças sinalizam — pelo exemplo, não pelo discurso — como aceitável, esperado ou punível.',
+    triangulacao: 'Perguntar diretamente "existe uma norma contra isso?" raramente funciona — normas costumam ser tácitas. Compare o comportamento observado quando a pessoa está sendo vista com o comportamento em privado, e entreviste mais de uma pessoa do mesmo grupo.',
+    perguntas: [
+      'Na equipe, {{comp}} é algo que as pessoas normalmente fazem, ou é mais a exceção — e é visto como valorizado, neutro ou mal visto?',
+      'A liderança direta modela {{comp}} com o próprio exemplo, ou apenas pede verbalmente que ele aconteça?',
+      'Existe algum risco social — crítica, julgamento, perda de status — associado a realizar {{comp}} neste grupo?',
+      'Se todos ao redor passassem a fazer {{comp}} amanhã, isso mudaria a disposição da pessoa para fazê-lo também?',
+      'Existem histórias, mesmo informais, sobre alguém que tentou {{comp}} e sofreu alguma consequência social por isso?',
+      'Há diferença entre o que a organização diz valorizar oficialmente e o que de fato reconhece e recompensa na prática, em relação a {{comp}}?',
+      'Existe algum subgrupo, time ou liderança informal em que {{comp}} é claramente mais comum — o que é diferente ali?',
+      'Quando alguém realiza {{comp}} de forma exemplar, isso é notado e comentado — ou passa em branco?',
+      'O comportamento muda visivelmente dependendo de quem está observando no momento?',
+      'Comparando departamentos ou equipes com recursos parecidos mas culturas diferentes, a diferença na taxa de {{comp}} aponta para a norma do grupo como variável determinante?'
+    ]
+  },
+  { id: 'mReflexiva', nome: 'M Reflexiva', subtitulo: 'avaliações conscientes e planos', filtro: 'mot',
+    descricao: 'Crenças sobre consequências, intenções, planos, metas, valores e identidade — tudo processado de forma deliberada, com a pessoa ciente de que está avaliando.',
+    triangulacao: 'O autorrelato é uma fonte relativamente confiável aqui — mas vale checar se a razão declarada se sustenta quando testada (perguntando "e se essa condição não existisse?") e cruzar com verificação documental do sistema formal de metas/avaliação.',
+    perguntas: [
+      'A pessoa acredita, de fato, que {{comp}} traz um resultado que vale o esforço?',
+      'A pessoa tem a intenção declarada de realizar {{comp}}, e pensa nisso com alguma frequência?',
+      'Os benefícios de {{comp}} são claros e concretos para a pessoa, ou parecem distantes e abstratos?',
+      'Existem metas ou prioridades concorrentes que a pessoa conscientemente coloca acima de {{comp}} — e por quê?',
+      'Como a pessoa avalia o custo (tempo, esforço, risco) de {{comp}} frente ao benefício esperado — essa conta muda dependendo do contexto?',
+      'A pessoa acredita que, se ela se esforçar em {{comp}}, o resultado positivo realmente vai se concretizar — ou desconfia que algo vai dar errado de qualquer forma, mesmo fazendo tudo certo?',
+      'A pessoa se identifica como alguém que naturalmente faz esse tipo de coisa, ou é algo que sempre exige esforço deliberado de lembrar?',
+      'Quando questionada com calma, a razão que a pessoa dá para não agir se mantém a mesma, ou muda quando essa razão é neutralizada hipoteticamente?',
+      'Existe conflito explícito e reconhecido entre {{comp}} e outra meta ou indicador pelo qual a pessoa também é avaliada?',
+      'Independentemente de conseguir executar bem na prática, a pessoa acredita que é capaz de fazer {{comp}}? Essa confiança em si mesma é alta, ou ela duvida da própria capacidade antes mesmo de tentar?'
+    ]
+  },
+  { id: 'mAutomatica', nome: 'M Automática', subtitulo: 'hábitos, emoções, impulsos', filtro: 'mot',
+    descricao: 'Processos que direcionam o comportamento sem deliberação: hábitos consolidados, reações emocionais e impulsos que disparam antes de qualquer avaliação consciente.',
+    triangulacao: 'O componente em que o autorrelato sozinho é menos confiável — a pessoa pode genuinamente acreditar que decidiu racionalmente algo que foi, na prática, um hábito vencendo. Observação comportamental direta e dados de recorrência são obrigatórios aqui.',
+    perguntas: [
+      'Realizar {{comp}} já é um hábito automático, ou ainda exige esforço consciente toda vez?',
+      'Existe algum desconforto, ansiedade ou tensão associado à situação — mesmo quando a pessoa sabe racionalmente que deveria agir?',
+      'Já aconteceu de a pessoa planejar fazer {{comp}} e simplesmente não fazer, sem nenhum impedimento concreto?',
+      'Sob pressão ou cansaço, qual é o padrão automático da pessoa — o comportamento desejado, ou outro?',
+      'Que emoção surge primeiro quando a pessoa pensa em {{comp}} — entusiasmo, neutralidade, desconforto, receio?',
+      'Existe alguma experiência passada, boa ou ruim, associada a essa situação, que ainda influencia a reação de hoje?',
+      'Se a pessoa estivesse completamente sobrecarregada, {{comp}} estaria entre os primeiros itens abandonados da lista?',
+      'Existem gatilhos específicos que automaticamente levam a pessoa a agir — ou a evitar agir — sem passar por deliberação consciente?',
+      'A pessoa já tentou conscientemente mudar esse padrão antes e não conseguiu sustentar — o que aconteceu no momento em que o esforço consciente perdeu?',
+      'Existe alguma recompensa imediata — alívio, economia de tempo, conforto — que o comportamento contrário oferece no curto prazo, tornando a escolha errada mais atraente na hora?'
+    ],
+    notaEspecial: 'Nota acadêmica: o TDF associa a este subcomponente apenas dois domínios (reforço e emoção) — um espaço mais estreito do que "hábito automático" costuma ocupar na descrição do próprio modelo COM-B, já que o domínio do TDF que tratava hábito e rotina diretamente foi incorporado à regulação comportamental (que no mapeamento oficial pertence à capacidade psicológica) quando o framework foi validado em 2012. As perguntas de hábito permanecem aqui porque é assim que o COM-B descreve motivação automática em sua formulação original, e é como o modelo é aplicado na prática.'
+  }
+];
+
+const GRUPO_DE_SUBCOMPONENTE = {};
+SUBCOMPONENTES.forEach(s => GRUPO_DE_SUBCOMPONENTE[s.id] = s.filtro);
+
+let estado = { evidencias: {}, scores: {} };
+
+function textoComComportamento(txt) {
+  const el = document.getElementById('campoComportamento');
+  const valor = el && el.value.trim() ? el.value.trim() : null;
+  return txt.replace(/\{\{comp\}\}/g, valor || PLACEHOLDER_PADRAO);
+}
+
+function renderAcordeao() {
+  const container = document.getElementById('acordeaoSubcomponentes');
+  container.innerHTML = SUBCOMPONENTES.map(s => `
+    <div class="accordion-item" id="acc-${s.id}" data-filtro="${s.filtro}">
+      <button type="button" class="accordion-header" onclick="toggleAccordion('${s.id}')">
+        <span>${s.nome} <span class="marca-evidencia" hidden>evidência registrada</span><span class="grupo-tag">${s.subtitulo}</span></span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-body-inner">
+          <p class="corpo">${s.descricao}</p>
+          <ol class="perguntas-lista">${s.perguntas.map(p => `<li class="pergunta-item" data-tpl="${encodeURIComponent(p)}">${esc(textoComComportamento(p))}</li>`).join('')}</ol>
+          <div class="callout azul"><div class="callout-icon">🔺</div><div class="callout-text"><strong>Como triangular:</strong> ${s.triangulacao}</div></div>
+          ${s.notaEspecial ? `<div class="callout amarelo"><div class="callout-icon">🎓</div><div class="callout-text">${s.notaEspecial}</div></div>` : ''}
+          <label class="evidencia-label" for="ev-${s.id}">Evidência encontrada</label>
+          <textarea id="ev-${s.id}" placeholder="Registre aqui o que vocês encontraram ao percorrer as perguntas acima..." oninput="onEvidenciaChange('${s.id}', this.value)">${esc(estado.evidencias[s.id] || '')}</textarea>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  marcarEvidencias();
+}
+
+function marcarEvidencias() {
+  SUBCOMPONENTES.forEach(s => {
+    const tem = (estado.evidencias[s.id] || '').trim().length > 0;
+    const item = document.getElementById('acc-' + s.id);
+    if (!item) return;
+    item.classList.toggle('tem-evidencia', tem);
+    item.querySelector('.marca-evidencia').hidden = !tem;
+  });
+}
+
+function toggleAccordion(id) {
+  document.getElementById('acc-' + id).classList.toggle('open');
+}
+
+function onFiltroChange(bloco, valor) {
+  SUBCOMPONENTES.filter(s => s.filtro === bloco).forEach(s => {
+    const el = document.getElementById('acc-' + s.id);
+    if (el) el.classList.toggle('dimmed', valor === 'nao');
+  });
+}
+
+function atualizarPlaceholders() {
+  const valor = document.getElementById('campoComportamento').value.trim();
+  document.querySelectorAll('.ph').forEach(el => { el.textContent = valor ? valor : PLACEHOLDER_PADRAO; });
+  document.querySelectorAll('.pergunta-item').forEach(li => {
+    li.textContent = textoComComportamento(decodeURIComponent(li.dataset.tpl));
+  });
+}
+
+function onEvidenciaChange(id, valor) {
+  estado.evidencias[id] = valor;
+  marcarEvidencias();
+  renderScoreLista();
+}
+
+function renderScoreLista() {
+  const lista = document.getElementById('scoreLista');
+  const labels = document.getElementById('scoreLabels');
+  const aviso = document.getElementById('avisoSemEvidencia');
+  const ativos = SUBCOMPONENTES.filter(s => (estado.evidencias[s.id] || '').trim().length > 0);
+
+  if (ativos.length === 0) {
+    lista.innerHTML = '';
+    labels.style.display = 'none';
+    aviso.style.display = 'flex';
+    document.getElementById('rankingResumo').innerHTML = '';
+    atualizarHipotese();
+    return;
+  }
+  aviso.style.display = 'none';
+  labels.style.display = 'grid';
+
+  // preserva o que já está na tela se a lista de componentes ativos não mudou (evita perder o foco)
+  const assinatura = ativos.map(s => s.id).join(',');
+  if (lista.dataset.assinatura !== assinatura) {
+    lista.dataset.assinatura = assinatura;
+    lista.innerHTML = ativos.map(s => {
+      const sc = estado.scores[s.id] || { freq: '', conflito: '', intensidade: '' };
+      return `
+      <div class="score-row" id="score-${s.id}">
+        <div class="score-nome">${s.nome}</div>
+        <div class="score-field"><label>Frequência</label>${selectScore(s.id, 'freq', sc.freq)}</div>
+        <div class="score-field"><label>Conflito</label>${selectScore(s.id, 'conflito', sc.conflito)}</div>
+        <div class="score-field"><label>Intensidade</label>${selectScore(s.id, 'intensidade', sc.intensidade)}</div>
+        <div class="score-total" id="total-${s.id}">${calcTotal(sc)}</div>
+      </div>`;
+    }).join('');
+  }
+  renderRanking();
+}
+
+function selectScore(id, campo, valorAtual) {
+  const opcoes = [0,1,2,3].map(n => `<option value="${n}" ${String(valorAtual)===String(n)?'selected':''}>${n}</option>`).join('');
+  return `<select onchange="onScoreChange('${id}','${campo}', this.value)" aria-label="${campo}"><option value="">–</option>${opcoes}</select>`;
+}
+
+function calcTotal(sc) {
+  const vals = [sc.freq, sc.conflito, sc.intensidade];
+  if (vals.some(v => v === '' || v === undefined || v === null)) return '—';
+  return vals.reduce((a,b) => a + Number(b), 0);
+}
+
+function onScoreChange(id, campo, valor) {
+  if (!estado.scores[id]) estado.scores[id] = { freq: '', conflito: '', intensidade: '' };
+  estado.scores[id][campo] = valor;
+  document.getElementById('total-' + id).textContent = calcTotal(estado.scores[id]);
+  renderRanking();
+}
+
+function grupoEstrutural(id) {
+  const filtro = GRUPO_DE_SUBCOMPONENTE[id];
+  return filtro === 'cap' || filtro === 'opo';
+}
+
+/* ranking puro: usado na tela e no resumo enviado à planilha */
+function rankingDe(evidencias, scores) {
+  return SUBCOMPONENTES
+    .filter(s => ((evidencias || {})[s.id] || '').trim().length > 0)
+    .map(s => ({ s, sc: (scores || {})[s.id] || {}, total: calcTotal((scores || {})[s.id] || {}) }))
+    .filter(x => x.total !== '—')
+    .sort((a, b) => {
+      if (b.total !== a.total) return b.total - a.total;
+      const aE = grupoEstrutural(a.s.id), bE = grupoEstrutural(b.s.id);
+      if (aE && !bE) return -1;
+      if (!aE && bE) return 1;
+      return 0;
+    });
+}
+
+function renderRanking() {
+  const comScore = rankingDe(estado.evidencias, estado.scores);
+  const resumoEl = document.getElementById('rankingResumo');
+  if (comScore.length === 0) { resumoEl.innerHTML = ''; atualizarHipotese(); return; }
+  resumoEl.innerHTML = `
+    <div class="hipotese-box" style="background: var(--roxo);">
+      <h3>Ranking</h3>
+      <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        ${comScore.map((x, i) => `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.08); border-radius:8px; padding:0.6rem 0.9rem;">
+            <span>${i===0 ? '<span class="ranking-medalha">1º</span>' : ''}${x.s.nome} <span style="opacity:0.7; font-style:italic; font-size:0.82rem;">— ${x.s.subtitulo}</span></span>
+            <strong>${x.total}/9</strong>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  atualizarHipotese();
+}
+
+function fraseHipotese(vencedor, porque, errado) {
+  return `"Nossa hipótese é que a barreira principal é ${vencedor.s.nome} (${vencedor.s.subtitulo}), com pontuação ${vencedor.total}/9 frente aos demais, porque ${porque} — e saberíamos que estamos errados se ${errado}."`;
+}
+
+function atualizarHipotese() {
+  const porque = (document.getElementById('hipoPorque').value || '').trim();
+  const errado = (document.getElementById('hipoErrado').value || '').trim();
+  const comScore = rankingDe(estado.evidencias, estado.scores);
+  const preview = document.getElementById('hipotesePreview');
+  if (comScore.length === 0 || !porque || !errado) {
+    preview.innerHTML = '<span class="vazio">Pontue os componentes acima e preencha os dois campos para gerar a hipótese final.</span>';
+    return;
+  }
+  const v = comScore[0];
+  preview.innerHTML = `"Nossa hipótese é que a barreira principal é <strong>${v.s.nome} (${v.s.subtitulo})</strong>, com pontuação ${v.total}/9 frente aos demais, porque ${esc(porque)} — e saberíamos que estamos errados se ${esc(errado)}."`;
+}
+
+function abrirModal(id) { document.getElementById(id).classList.add('aberto'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('aberto'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', (e) => { if (e.target === m) fecharModal(m.id); });
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.aberto').forEach(m => fecharModal(m.id)); });
+
+/* ======= Trazer o comportamento-alvo da Aula 1 ======= */
+function trazerDaAula1() {
+  const picker = document.getElementById('pickerAula1');
+  if (!picker.hidden) { picker.hidden = true; return; }
+  const d = VD.dados('aula1');
+  const comps = ((d && d.comportamentos) || []).filter(c => (c.alvo || '').trim());
+  if (!comps.length) {
+    picker.innerHTML = '<div class="vd-picker-vazio">Não encontramos comportamentos-alvo na sua atividade da Aula 1' +
+      (VD.sessao() ? '.' : ' — entre com seu nome e palavra-chave para acessar o que você salvou.') + '</div>';
+    picker.hidden = false;
+    return;
+  }
+  const prior = c => c.viabilidade === 'alta' && c.impacto === 'alto';
+  comps.sort((a, b) => Number(prior(b)) - Number(prior(a)));
+  picker.innerHTML = '<div class="vd-picker-titulo">Escolha o comportamento-alvo que vocês vão diagnosticar:</div>' +
+    comps.map((c, i) => `<button type="button" data-i="${i}">${prior(c) ? '<span class="vd-tag">Prioridade máxima</span><br>' : ''}${esc(c.alvo)}</button>`).join('');
+  picker.querySelectorAll('button').forEach(b => {
+    b.onclick = () => {
+      const campo = document.getElementById('campoComportamento');
+      const novo = comps[Number(b.dataset.i)].alvo;
+      if (campo.value.trim() && campo.value.trim() !== novo.trim() && !confirm('Substituir o comportamento-alvo já escrito?')) return;
+      campo.value = novo;
+      atualizarPlaceholders();
+      picker.hidden = true;
+      VD.alterado();
+    };
+  });
+  picker.hidden = false;
+}
+
+/* ======= Estado: coletar / aplicar / resumo ======= */
+function coletar() {
+  return {
+    equipe: document.getElementById('campoEquipe').value,
+    comportamento: document.getElementById('campoComportamento').value,
+    filtros: {
+      cap: document.getElementById('filtroCap').value,
+      opo: document.getElementById('filtroOpo').value,
+      mot: document.getElementById('filtroMot').value
+    },
+    evidencias: Object.assign({}, estado.evidencias),
+    fontesUsadas: document.getElementById('fontesUsadas').value,
+    scores: JSON.parse(JSON.stringify(estado.scores)),
+    hipoPorque: document.getElementById('hipoPorque').value,
+    hipoErrado: document.getElementById('hipoErrado').value
+  };
+}
+
+function aplicar(d) {
+  d = d || {};
+  document.getElementById('campoEquipe').value = d.equipe || '';
+  document.getElementById('campoComportamento').value = d.comportamento || '';
+  const f = d.filtros || {};
+  [['filtroCap', 'cap'], ['filtroOpo', 'opo'], ['filtroMot', 'mot']].forEach(([el, k]) => {
+    document.getElementById(el).value = ['sim', 'ambiguo', 'nao'].includes(f[k]) ? f[k] : '';
+  });
+  estado.evidencias = Object.assign({}, d.evidencias || {});
+  estado.scores = JSON.parse(JSON.stringify(d.scores || {}));
+  document.getElementById('fontesUsadas').value = d.fontesUsadas || '';
+  document.getElementById('hipoPorque').value = d.hipoPorque || '';
+  document.getElementById('hipoErrado').value = d.hipoErrado || '';
+  renderAcordeao();
+  ['cap', 'opo', 'mot'].forEach(k => onFiltroChange(k, (f[k] || '')));
+  atualizarPlaceholders();
+  document.getElementById('scoreLista').dataset.assinatura = '';
+  renderScoreLista();
+  atualizarHipotese();
+}
+
+function resumo(d) {
+  const R = [];
+  const f = d.filtros || {};
+  R.push(['Identificação', 'Equipe / Área', d.equipe || '—']);
+  R.push(['Identificação', 'Comportamento-alvo em diagnóstico', d.comportamento || '—']);
+  R.push(['Passo 1 · Perguntas-filtro', 'Capacidade', FILTRO_ROTULO[f.cap || ''] || '—']);
+  R.push(['Passo 1 · Perguntas-filtro', 'Oportunidade', FILTRO_ROTULO[f.opo || ''] || '—']);
+  R.push(['Passo 1 · Perguntas-filtro', 'Motivação', FILTRO_ROTULO[f.mot || ''] || '—']);
+  SUBCOMPONENTES.forEach(s => {
+    const ev = ((d.evidencias || {})[s.id] || '').trim();
+    if (ev) R.push(['Passo 2 · Evidências', s.nome + ' (' + s.subtitulo + ')', ev]);
+  });
+  R.push(['Passo 3 · Triangulação', 'Fontes usadas', d.fontesUsadas || '—']);
+  const rank = rankingDe(d.evidencias, d.scores);
+  rank.forEach((x, i) => {
+    R.push(['Passo 4 · Priorização', (i === 0 ? '1º · ' : '') + x.s.nome,
+      'Frequência ' + x.sc.freq + ' · Conflito ' + x.sc.conflito + ' · Intensidade ' + x.sc.intensidade + ' = ' + x.total + '/9']);
+  });
+  R.push(['Passo 4 · Hipótese', 'Porque', d.hipoPorque || '—']);
+  R.push(['Passo 4 · Hipótese', 'Saberíamos que estamos errados se', d.hipoErrado || '—']);
+  if (rank.length && (d.hipoPorque || '').trim() && (d.hipoErrado || '').trim()) {
+    R.push(['Resultado', 'Hipótese final', fraseHipotese(rank[0], d.hipoPorque.trim(), d.hipoErrado.trim())]);
+  }
+  return R;
+}
+
+/* ======= Impressão ======= */
+function ajustarParaImpressao() {
+  if (document.querySelector('.impressao-caixa')) return;
+  document.querySelectorAll('.page textarea, header textarea, header input[type="text"], .page select').forEach(el => {
+    const div = document.createElement('div');
+    div.className = 'impressao-caixa';
+    if (el.tagName === 'SELECT') {
+      const opt = el.options[el.selectedIndex];
+      div.textContent = opt && opt.value !== '' ? opt.text : '—';
+    } else {
+      div.textContent = (el.value && el.value.trim()) ? el.value : '—';
+    }
+    el.style.display = 'none';
+    el.insertAdjacentElement('afterend', div);
+  });
+  document.querySelectorAll('.accordion-item').forEach(el => el.classList.add('open'));
+}
+function restaurarAposImpressao() {
+  document.querySelectorAll('.impressao-caixa').forEach(div => div.remove());
+  document.querySelectorAll('textarea, select, input[type="text"]').forEach(el => { el.style.display = ''; });
+}
+function imprimirDocumento() {
+  ajustarParaImpressao();
+  setTimeout(() => window.print(), 60);
+}
+window.addEventListener('beforeprint', ajustarParaImpressao);
+window.addEventListener('afterprint', restaurarAposImpressao);
+
+/* ======= Cópia de segurança em arquivo ======= */
+function exportarJSON() {
+  const s = VD.sessao();
+  const dados = Object.assign({ ferramenta: 'aula2', nome: s ? s.nome : '', turma: s ? s.turma : '' }, coletar(), { exportadoEm: new Date().toISOString() });
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const nomeArq = (dados.nome || 'com-b').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g,'-');
+  a.href = url; a.download = `diagnostico-comb-${nomeArq}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importarJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (!confirm('Substituir as respostas atuais pelas do arquivo?')) return;
+      aplicar(dados);
+      ctl.salvarAgora();
+    } catch (err) {
+      alert('Não foi possível ler este arquivo. Verifique se é um .json exportado por esta mesma ferramenta.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+/* ======= Salvamento automático (planilha + navegador) ======= */
+const ctl = VD.ferramenta({
+  id: 'aula2',
+  titulo: 'Aula 2 · Levantamento, triangulação e priorização de barreiras',
+  crumb: 'Aula 2 · Atividade',
+  coletar, aplicar, resumo
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conheça seus vieses: Efeito Dunning-Kruger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#402C4F; --purple-deep:#2C1E37;
+  --navy:#455066; --navy-deep:#2E3646;
+  --paper:#FCFCFA; --paper-dim:#EFEEE7; --paper-line:rgba(64,44,79,0.14);
+  --amber:#EFB93C; --amber-ink:#5B4212;
+  --ink-on-dark:#FCFCFA; --dim-on-dark:rgba(252,252,250,0.7);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, sans-serif;
+  --sidebar-w:272px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:var(--font-body); background:var(--paper); color:var(--purple);
+  line-height:1.7; overflow-x:hidden; font-size:17px;
+}
+::selection{ background:var(--amber); color:var(--purple-deep); }
+a{ color:var(--purple); }
+:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; }
+
+/* ---------- PROGRESS BAR ---------- */
+#progress-bar{ position:fixed; top:0; left:0; height:3px; width:0%; background:var(--amber); z-index:1000; transition:width .1s linear; }
+
+/* ---------- SIDEBAR ---------- */
+#sidebar-toggle{
+  position:fixed; top:1.1rem; left:1rem; z-index:200; display:none;
+  background:var(--purple-deep); border:1px solid rgba(252,252,250,0.25);
+  color:var(--ink-on-dark); width:42px; height:42px; border-radius:10px;
+  cursor:pointer; align-items:center; justify-content:center; flex-direction:column; gap:4px;
+}
+#sidebar-toggle span{ display:block; width:18px; height:2px; background:var(--ink-on-dark); border-radius:2px; transition:transform .25s, opacity .25s; }
+#sidebar-toggle.active span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+#sidebar-toggle.active span:nth-child(2){ opacity:0; }
+#sidebar-toggle.active span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+#overlay{ display:none; position:fixed; inset:0; background:rgba(44,30,55,0.55); z-index:90; }
+
+#sidebar{
+  position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w);
+  background:var(--purple-deep); padding:2.2rem 0 2rem; z-index:100; overflow-y:auto;
+}
+.sidebar-badge{ display:flex; align-items:center; gap:0.6rem; padding:0 1.6rem 1.4rem; }
+.sidebar-badge .dot{ width:13px; height:13px; border-radius:50%; border:2px solid var(--amber); flex-shrink:0; }
+.sidebar-badge span{ font-family:var(--font-body); font-weight:700; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--dim-on-dark); }
+.sidebar-title{
+  font-family:var(--font-display); font-style:italic; font-weight:500; font-size:1.05rem;
+  color:var(--ink-on-dark); padding:0 1.6rem 1.3rem; border-bottom:1px solid rgba(252,252,250,0.14); margin-bottom:0.6rem;
+}
+.nav-item{
+  display:block; padding:0.6rem 1.6rem; color:var(--dim-on-dark); text-decoration:none;
+  font-size:0.87rem; font-weight:500; border-left:3px solid transparent;
+  transition:color .2s, background .2s, border-color .2s;
+}
+.nav-item:hover, .nav-item.active{ color:var(--ink-on-dark); background:rgba(252,252,250,0.06); border-left-color:var(--amber); }
+.nav-item.sub{ padding-left:2.6rem; font-size:0.82rem; }
+
+/* ---------- LAYOUT ---------- */
+.wrapper{ max-width:740px; margin:0 auto; padding:0 2rem 7rem; margin-left:calc(var(--sidebar-w) + 2vw); position:relative; }
+@media (max-width:980px){
+  #sidebar{ transform:translateX(-100%); transition:transform .4s cubic-bezier(.4,0,.2,1); }
+  #sidebar.open{ transform:translateX(0); }
+  #sidebar-toggle{ display:flex; }
+  .wrapper{ margin-left:auto; max-width:720px; padding:0 1.3rem 5rem; }
+}
+
+/* ---------- HERO ---------- */
+.hero{ padding:6rem 0 3.5rem; }
+.hero-tag{
+  display:inline-flex; align-items:center; gap:0.55rem; border:1px solid var(--paper-line);
+  border-radius:100px; padding:0.4rem 1rem 0.4rem 0.7rem; font-size:0.75rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); margin-bottom:2rem;
+}
+.hero-tag .dot{ width:9px; height:9px; border-radius:50%; background:var(--amber); }
+.hero h1{ font-family:var(--font-display); font-weight:700; font-size:clamp(2.8rem,7vw,4.6rem); line-height:1.03; color:var(--purple); }
+.hero-sub{ font-family:var(--font-display); font-style:italic; font-weight:400; font-size:clamp(1.15rem,2vw,1.4rem); color:var(--navy); max-width:34ch; margin-top:1.3rem; line-height:1.5; }
+.hero-meta{ display:flex; gap:2.4rem; flex-wrap:wrap; margin-top:2.8rem; padding-top:1.8rem; border-top:1px solid var(--paper-line); }
+.meta-item{ display:flex; flex-direction:column; gap:0.25rem; }
+.meta-label{ font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); opacity:0.7; }
+.meta-value{ font-size:0.92rem; font-weight:600; color:var(--purple); }
+
+/* ---------- SECTIONS ---------- */
+.section{ padding:3.6rem 0; border-top:1px solid var(--paper-line); opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+.section.in-view{ opacity:1; transform:translateY(0); }
+.section-eyebrow{ display:flex; align-items:center; gap:0.6rem; font-size:0.76rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber-ink); margin-bottom:0.9rem; }
+.section-eyebrow .dot{ width:8px; height:8px; border-radius:50%; border:2px solid var(--amber); }
+.section-title{ font-family:var(--font-display); font-weight:600; font-size:clamp(1.7rem,4vw,2.35rem); color:var(--purple); margin-bottom:1.3rem; line-height:1.15; }
+.section p{ font-size:1rem; color:var(--navy); line-height:1.8; margin-bottom:1.15rem; max-width:66ch; }
+.section p strong{ color:var(--purple); }
+.section h4.sub{ font-family:var(--font-display); font-weight:600; font-size:1.2rem; color:var(--purple); margin:1.6rem 0 0.7rem; }
+
+/* ---------- EXPERIMENTO (componente de assinatura) ---------- */
+.experiment{
+  background:var(--purple-deep); color:var(--ink-on-dark); border-radius:18px;
+  padding:2rem 2.1rem 2.2rem; margin:2rem 0; position:relative; overflow:hidden;
+}
+.experiment:before{ content:''; position:absolute; top:-40px; right:-40px; width:140px; height:140px; border-radius:50%; border:2px solid rgba(239,185,60,0.25); }
+.experiment-eyebrow{ font-size:0.74rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber); margin-bottom:0.7rem; }
+.experiment h4{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; margin-bottom:0.8rem; }
+.experiment p{ color:var(--dim-on-dark); font-size:0.94rem; max-width:none; }
+.experiment-prompt{ font-style:italic; color:var(--ink-on-dark); margin-top:1rem; }
+.reveal-btn{
+  margin-top:1.2rem; background:var(--amber); color:var(--amber-ink); border:none;
+  font-family:var(--font-body); font-weight:700; font-size:0.88rem; padding:0.7rem 1.3rem;
+  border-radius:8px; cursor:pointer; transition:transform .15s, background .15s;
+}
+.reveal-btn:hover{ background:#f5c968; transform:translateY(-1px); }
+.reveal-btn:disabled{ opacity:0.5; cursor:default; transform:none; }
+.reveal-result{
+  max-height:0; overflow:hidden; opacity:0; transition:max-height .5s ease, opacity .4s ease, margin-top .5s ease;
+}
+.reveal-result.open{ max-height:400px; opacity:1; margin-top:1.3rem; }
+.result-bars{ display:flex; gap:1.6rem; margin-top:1rem; }
+.result-bar-col{ display:flex; flex-direction:column; align-items:center; gap:0.5rem; flex:1; }
+.result-bar-track{ height:120px; width:100%; display:flex; align-items:flex-end; justify-content:center; }
+.result-bar{ width:100%; max-width:80px; background:var(--amber); border-radius:6px 6px 0 0; height:0; transition:height 1s cubic-bezier(.2,.8,.2,1); }
+.result-bar-label{ font-size:0.78rem; color:var(--dim-on-dark); text-align:center; }
+.result-bar-val{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; color:var(--ink-on-dark); }
+.result-note{ font-size:0.85rem; color:var(--dim-on-dark); border-top:1px solid rgba(252,252,250,0.14); padding-top:0.9rem; margin-top:1.1rem; }
+
+/* ---------- MECANISMO: DUAS COLUNAS ---------- */
+.mech-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin:1.6rem 0 2rem; }
+@media (max-width:680px){ .mech-grid{ grid-template-columns:1fr; } }
+.mech-card{ background:var(--paper-dim); border:1px solid var(--paper-line); border-radius:14px; padding:1.5rem 1.6rem; }
+.mech-card .mech-icon{ width:38px; height:38px; border-radius:50%; border:2px solid var(--navy); display:flex; align-items:center; justify-content:center; margin-bottom:0.9rem; }
+.mech-card h5{ font-family:var(--font-display); font-weight:600; font-size:1.08rem; color:var(--purple); margin-bottom:0.5rem; }
+.mech-card p{ font-size:0.9rem; color:var(--navy); max-width:none; margin-bottom:0; }
+
+/* ---------- QUATRO LENTES (abas) ---------- */
+.lens-tabs{ display:flex; gap:0.6rem; flex-wrap:wrap; margin:1.6rem 0 0; }
+.lens-btn{
+  display:flex; align-items:center; gap:0.55rem; font-family:var(--font-body); font-weight:700;
+  font-size:0.86rem; padding:0.65rem 1.1rem 0.65rem 0.7rem; background:var(--paper); border:1.5px solid var(--paper-line);
+  color:var(--navy); border-radius:100px; cursor:pointer; transition:border-color .15s, background .15s, color .15s;
+}
+.lens-btn .lens-icon{ width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--paper-dim); flex-shrink:0; }
+.lens-btn:hover{ border-color:var(--navy); }
+.lens-btn.active{ background:var(--purple); border-color:var(--purple); color:var(--paper); }
+.lens-btn.active .lens-icon{ background:rgba(252,252,250,0.15); }
+.lens-panels{ margin-top:1.5rem; }
+.lens-panel{ display:none; animation:fadeUp .4s ease; }
+.lens-panel.active{ display:block; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.lens-panel p{ font-size:1rem; }
+
+/* ---------- MÉTODOS ---------- */
+.methods-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:1.6rem; }
+@media (max-width:780px){ .methods-grid{ grid-template-columns:1fr; } }
+.method-col{ border-radius:16px; padding:1.7rem 1.8rem; }
+.method-col.defend{ background:var(--paper-dim); border:1px solid var(--paper-line); }
+.method-col.ethical{ background:var(--navy-deep); color:var(--ink-on-dark); }
+.method-col h4{ font-family:var(--font-display); font-weight:600; font-size:1.2rem; margin-bottom:0.3rem; }
+.method-col.defend h4{ color:var(--purple); }
+.method-col.ethical h4{ color:var(--ink-on-dark); }
+.method-col .method-eyebrow{ font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; }
+.method-col.defend .method-eyebrow{ color:var(--amber-ink); }
+.method-col.ethical .method-eyebrow{ color:var(--amber); }
+.method-item{ margin-top:1.1rem; padding-top:1.1rem; border-top:1px dashed rgba(64,44,79,0.18); }
+.method-col.ethical .method-item{ border-top-color:rgba(252,252,250,0.16); }
+.method-item:first-of-type{ border-top:none; margin-top:1rem; padding-top:0; }
+.method-item h5{ font-family:var(--font-body); font-weight:700; font-size:0.92rem; margin-bottom:0.35rem; }
+.method-col.defend .method-item h5{ color:var(--purple); }
+.method-col.ethical .method-item h5{ color:var(--ink-on-dark); }
+.method-item p{ font-size:0.88rem; margin-bottom:0; max-width:none; }
+.method-col.defend .method-item p{ color:var(--navy); }
+.method-col.ethical .method-item p{ color:var(--dim-on-dark); }
+
+/* ---------- ATENÇÃO (avisos) ---------- */
+.callout{
+  display:flex; gap:1rem; background:var(--paper-dim); border:1px solid var(--paper-line);
+  border-left:4px solid var(--amber); border-radius:0 12px 12px 0; padding:1.2rem 1.5rem; margin:1.6rem 0;
+}
+.callout-text{ font-size:0.92rem; color:var(--navy); line-height:1.65; }
+.callout-text strong{ color:var(--purple); }
+
+/* ---------- PERGUNTAS PARA A PRÁTICA ---------- */
+.reflexao-grid{ display:flex; flex-direction:column; gap:1.1rem; margin-top:1.6rem; }
+.reflexao-item{ background:var(--paper-dim); border:1px solid var(--paper-line); border-radius:14px; padding:1.4rem 1.6rem; }
+.reflexao-top{ display:flex; gap:1.1rem; }
+.reflexao-num{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; color:var(--amber-ink); opacity:0.55; flex-shrink:0; }
+.reflexao-top p{ font-size:0.96rem; color:var(--purple); margin-bottom:0; }
+.reflexao-note{
+  margin-top:0.9rem; margin-left:2.7rem; border:1.5px dashed var(--navy); border-radius:10px;
+  padding:0.8rem 1rem; min-height:60px; font-size:0.9rem; color:var(--purple); background:var(--paper);
+}
+.reflexao-note:empty:before{ content:'Clique aqui e escreva sua resposta...'; color:var(--navy); opacity:0.6; font-style:italic; }
+
+/* ---------- REFERÊNCIAS ---------- */
+.ref-list{ list-style:none; margin-top:1rem; }
+.ref-list li{ font-size:0.87rem; color:var(--navy); padding:0.85rem 0; border-bottom:1px solid var(--paper-line); display:flex; gap:1rem; }
+.ref-list li:last-child{ border-bottom:none; }
+.ref-num{ color:var(--amber-ink); font-weight:700; font-size:0.8rem; flex-shrink:0; }
+.ref-list em{ color:var(--purple); }
+
+#back-to-top{
+  position:fixed; bottom:2rem; right:2rem; width:46px; height:46px; background:var(--purple);
+  border:none; border-radius:12px; color:var(--paper); font-size:1.2rem; cursor:pointer;
+  display:none; align-items:center; justify-content:center; z-index:100; box-shadow:0 10px 30px -8px rgba(44,30,55,0.5);
+}
+#back-to-top:hover{ background:var(--purple-deep); }
+
+@media (prefers-reduced-motion: reduce){
+  .section, .reveal-result, .result-bar{ transition:none !important; }
+  .lens-panel{ animation:none !important; }
+}
+</style>
+<!-- portal-vd -->
+<link rel="stylesheet" href="../assets/css/portal.css">
+<style>
+  .nav-item.vd-voltar{ color:var(--amber); font-weight:600; }
+  @media print{
+    .section{ opacity:1 !important; transform:none !important; }
+    #sidebar, #sidebar-toggle, #overlay, #progress-bar, #back-to-top{ display:none !important; }
+    .wrapper{ margin:0 auto !important; }
+    .lens-panel{ display:block !important; }
+    .reveal-result{ max-height:none !important; opacity:1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<button id="sidebar-toggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+<div id="overlay"></div>
+
+<nav id="sidebar">
+  <div class="sidebar-badge"><span class="dot"></span><span>Conheça seus vieses · 04</span></div>
+  <div class="sidebar-title">Dunning-Kruger</div>
+  <a class="nav-item vd-voltar" href="../index.html">← Voltar ao portal</a>
+  <a class="nav-item" href="#intro">Início</a>
+  <a class="nav-item" href="#o-que-e">O que é o viés</a>
+  <a class="nav-item" href="#como-funciona">Como funciona</a>
+  <a class="nav-item" href="#quatro-lentes">Onde aparece</a>
+  <a class="nav-item sub" href="#quatro-lentes">→ Líder, equipe, clientes</a>
+  <a class="nav-item" href="#metodos">Métodos</a>
+  <a class="nav-item sub" href="#metodos">→ Defesa e cultura</a>
+  <a class="nav-item" href="#pratica">Perguntas para a prática</a>
+  <a class="nav-item" href="#referencias">Referências</a>
+</nav>
+
+<main class="wrapper">
+
+  <section class="hero" id="intro">
+    <div class="hero-tag"><span class="dot"></span>Conheça seus vieses · Dunning-Kruger</div>
+    <h1>Por que quem sabe<br>menos, às vezes,<br>tem mais certeza</h1>
+    <p class="hero-sub">Material de leitura e referência sobre o viés mais citado de forma errada da psicologia popular.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-label">Tempo de leitura</span><span class="meta-value">10 min</span></div>
+      <div class="meta-item"><span class="meta-label">Base teórica</span><span class="meta-value">Kruger &amp; Dunning, 1999</span></div>
+      <div class="meta-item"><span class="meta-label">Aplicação</span><span class="meta-value">Liderança de equipes</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="o-que-e">
+    <div class="section-eyebrow"><span class="dot"></span>O que é</div>
+    <h2 class="section-title">O efeito Dunning-Kruger</h2>
+    <p>Em 1995, um homem chamado McArthur Wheeler assaltou dois bancos em Pittsburgh a cara descoberta, sem máscara nenhuma, e foi preso horas depois com a ajuda das câmeras de segurança. Quando a polícia mostrou as gravações, ele reagiu com genuína incredulidade: "mas eu passei suco de limão". Wheeler sabia que suco de limão podia ser usado como tinta invisível em papel, e concluiu, de forma equivocada mas sincera, que passá-lo no rosto o tornaria invisível para câmeras.</p>
+    <p>Foi esse tipo de erro que os psicólogos Justin Kruger e David Dunning decidiram estudar de forma sistemática, publicando em 1999 o artigo "Unskilled and Unaware of It". A definição, com precisão: pessoas com desempenho baixo numa tarefa tendem a superestimar bastante o próprio desempenho, porque a mesma falta de habilidade que gera o erro também impede a pessoa de reconhecer o erro.</p>
+
+    <div class="experiment" id="exp-percentil">
+      <div class="experiment-eyebrow">O experimento original</div>
+      <h4>Humor, lógica e gramática</h4>
+      <p>Estudantes de Cornell fizeram testes de humor, raciocínio lógico e gramática, e depois estimaram o próprio percentil de desempenho em relação aos colegas.</p>
+      <p class="experiment-prompt">Antes de continuar: você acha que quem teve desempenho real mais baixo fez uma autoestimativa também baixa?</p>
+      <button class="reveal-btn" data-target="result-percentil">Ver o resultado</button>
+      <div class="reveal-result" id="result-percentil">
+        <div class="result-bars">
+          <div class="result-bar-col"><div class="result-bar-track"><div class="result-bar" data-height="12"></div></div><div class="result-bar-val">12º</div><div class="result-bar-label">Percentil real (quartil inferior)</div></div>
+          <div class="result-bar-col"><div class="result-bar-track"><div class="result-bar" data-height="62"></div></div><div class="result-bar-val">62º</div><div class="result-bar-label">Percentil que estimaram para si</div></div>
+        </div>
+        <p class="result-note">Um erro de cerca de 50 pontos percentuais, sistemático e repetido nos três testes diferentes. Quem fez pior, de longe, se avaliou acima da média.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="como-funciona">
+    <div class="section-eyebrow"><span class="dot"></span>O mecanismo</div>
+    <h2 class="section-title">Como o efeito Dunning-Kruger funciona</h2>
+    <p>O mecanismo proposto é o que os autores chamam de "dupla maldição": a mesma competência necessária para resolver bem um problema também é necessária para julgar se a solução está certa. Alguém ruim em gramática não só comete mais erros gramaticais; também não tem o conhecimento necessário para perceber que errou.</p>
+
+    <div class="mech-grid">
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 8v4l3 2"/></svg></div>
+        <h5>Quem faz pior</h5>
+        <p>Não tem a ferramenta mental para reconhecer uma resposta correta quando a vê. Mesmo diante das respostas certas de outras pessoas, não corrige a própria estimativa.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h5>Quem faz melhor</h5>
+        <p>Tende a subestimar-se um pouco, mas por outro motivo: um "efeito de falso consenso" — presume que os outros foram tão bem quanto ela. Ao ver o desempenho alheio, se recalibra rápido, para cima.</p>
+      </div>
+    </div>
+
+    <div class="experiment" id="exp-treino">
+      <div class="experiment-eyebrow">O achado mais otimista do estudo</div>
+      <h4>Treinar corrige as duas coisas juntas</h4>
+      <p>Os pesquisadores deram, a parte dos participantes de pior desempenho, um treinamento breve sobre como resolver o teste de lógica.</p>
+      <p class="experiment-prompt">Antes de continuar: você acha que só o desempenho melhorou, ou a autoavaliação também?</p>
+      <button class="reveal-btn" data-target="result-treino">Ver o resultado</button>
+      <div class="reveal-result" id="result-treino">
+        <p style="color:var(--ink-on-dark);font-size:0.98rem;">As duas coisas melhoraram juntas, na mesma proporção. Aumentar a competência real, mesmo que pouco, aumentou de forma direta a capacidade de a pessoa avaliar a própria competência.</p>
+        <p class="result-note">Isso sugere que o caminho mais confiável para uma autoavaliação mais precisa é desenvolver competência real — não tentar corrigir a percepção diretamente.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-text"><strong>Uma ressalva sobre o estado atual da pesquisa:</strong> desde os anos 2000, pesquisadores como Krueger &amp; Mueller (2002) e, mais recentemente, Gignac &amp; Zajenkowski (2020) argumentam que boa parte do padrão visto em pesquisas de campo pode vir de dois efeitos estatísticos comuns — a tendência geral de nos avaliarmos acima da média, e a regressão à média. Outros pesquisadores contestam essa leitura. O padrão controlado do estudo original está bem documentado; o quanto ele se generaliza é uma pergunta ainda em aberto.</div>
+    </div>
+  </section>
+
+  <section class="section" id="quatro-lentes">
+    <div class="section-eyebrow"><span class="dot"></span>Onde aparece</div>
+    <h2 class="section-title">Quatro lentes</h2>
+    <p>O efeito Dunning-Kruger aparece sempre que alguém avalia a própria competência numa área onde justamente falta competência para fazer essa avaliação direito. Clique em cada lente.</p>
+
+    <div class="lens-tabs" id="lens-tabs">
+      <button class="lens-btn active" data-lens="lider"><span class="lens-icon">👤</span> Quem lidera</button>
+      <button class="lens-btn" data-lens="equipe"><span class="lens-icon">👥</span> Equipe</button>
+      <button class="lens-btn" data-lens="externo"><span class="lens-icon">🛒</span> Cliente externo</button>
+      <button class="lens-btn" data-lens="interno"><span class="lens-icon">🏢</span> Cliente interno</button>
+    </div>
+
+    <div class="lens-panels">
+      <div class="lens-panel active" id="lens-lider">
+        <p>Um gestor recém-promovido, ainda sem experiência real de gestão, tende a ter mais confiança na própria capacidade de liderar do que terá alguns meses depois, quando a complexidade real do cargo começa a aparecer. Vale registrar: o gráfico popular de "confiança que sobe, desaba e sobe de novo devagar" é uma ilustração popularizada, não um achado replicado com essa forma exata nos dados originais — mas a direção geral (confiança inicial alta, corrigida pela experiência) é consistente com a lógica de Kruger e Dunning.</p>
+        <p>Na prática, o risco mais concreto é decisório: um líder que não reconhece os próprios limites de conhecimento técnico tende a tomar decisões estratégicas onde deveria buscar uma segunda opinião especializada — e é justamente quem mais precisaria dessa opinião quem menos sente essa necessidade.</p>
+      </div>
+      <div class="lens-panel" id="lens-equipe">
+        <p>Membros juniores de uma equipe, ainda no início da curva de aprendizado, tendem a superestimar o quanto já dominam uma ferramenta ou processo novo — o que explica por que costumam resistir menos a assumir tarefas complexas demais para o próprio nível, não por coragem, mas por não perceberem a lacuna.</p>
+        <p>O mesmo padrão explica parte da resistência a feedback: quem está mais distante do próprio potencial de melhoria costuma ser, também, quem mais discorda de uma avaliação crítica, porque a autoavaliação inflada já estava lá antes mesmo do feedback chegar.</p>
+      </div>
+      <div class="lens-panel" id="lens-externo">
+        <p>Um cliente que pesquisou um problema técnico por conta própria — um sintoma de saúde, uma dúvida jurídica, uma falha de sistema — frequentemente chega à conversa com um especialista já convicto do diagnóstico e da solução, mesmo tendo uma compreensão superficial do problema.</p>
+        <p>Isso gera atrito real: o cliente interpreta a discordância do especialista como obstrução ou tentativa de venda desnecessária, não como correção genuína. A mesma limitação de conhecimento que gerou o diagnóstico errado impede o cliente de perceber por que ele está errado.</p>
+      </div>
+      <div class="lens-panel" id="lens-interno">
+        <p>Uma área da empresa que solicita um serviço técnico de outra — um relatório de dados, uma alteração de sistema, uma peça jurídica — costuma subestimar a complexidade real do que está pedindo, porque enxerga o problema apenas pela própria superfície.</p>
+        <p>"Isso deve ser rápido de fazer" é uma frase comum vinda de quem não tem o conhecimento técnico necessário para perceber as camadas de complexidade escondidas atrás de um pedido aparentemente simples. O atrito entre áreas de negócio e áreas técnicas, com frequência, tem esse mecanismo como uma de suas causas silenciosas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="metodos">
+    <div class="section-eyebrow"><span class="dot"></span>O que fazer com isso</div>
+    <h2 class="section-title">Métodos para lidar com o efeito Dunning-Kruger</h2>
+
+    <div class="methods-grid">
+      <div class="method-col defend">
+        <div class="method-eyebrow">Para se proteger</div>
+        <h4>Defesa</h4>
+        <div class="method-item">
+          <h5>Busque avaliação externa</h5>
+          <p>Como a própria limitação de conhecimento impede a autopercepção precisa, feedback estruturado de terceiros e métricas objetivas funcionam como correção externa para uma lente interna distorcida.</p>
+        </div>
+        <div class="method-item">
+          <h5>Invista em competência real</h5>
+          <p>O estudo de 1999 mostrou treinamento melhorando desempenho e autoavaliação juntos. O caminho mais confiável para uma autoavaliação mais precisa é desenvolver competência real, não corrigir a percepção diretamente.</p>
+        </div>
+        <div class="method-item">
+          <h5>Trate a própria certeza como sinal a investigar</h5>
+          <p>Antes de uma decisão importante fora da própria especialidade, perguntar "quem sabe mais sobre isso do que eu?" compensa exatamente o ponto cego que o efeito descreve.</p>
+        </div>
+      </div>
+      <div class="method-col ethical">
+        <div class="method-eyebrow">Para a equipe</div>
+        <h4>Cultivar humildade epistêmica</h4>
+        <div class="method-item">
+          <h5>Não existe "uso ético" aqui</h5>
+          <p>Diferente de ancoragem ou aversão à perda, este viés não tem uma versão boa de ser explorado. O equivalente mais próximo é desenhar uma cultura que recompense reconhecer limites, em vez de puni-los.</p>
+        </div>
+        <div class="method-item">
+          <h5>Normalize o "não sei"</h5>
+          <p>Frases como "não sei, vou verificar" precisam ser normalizadas vindas de qualquer nível hierárquico — inclusive e principalmente de quem lidera.</p>
+        </div>
+        <div class="method-item">
+          <h5>Institua segunda opinião estrutural</h5>
+          <p>Um ritual de revisão por alguém de fora do time, em decisões de alto risco, não depende da boa vontade individual de admitir incerteza — algo que a própria pesquisa sugere ser difícil para quem mais precisa fazê-lo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pratica">
+    <div class="section-eyebrow"><span class="dot"></span>Para levar com você</div>
+    <h2 class="section-title">Perguntas para a prática</h2>
+    <div class="reflexao-grid">
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">01</div><p>Pense numa área fora da sua especialidade onde você toma decisões com alguma frequência. Como você saberia se está no grupo que subestima ou que superestima a própria competência ali?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">02</div><p>Existe, na sua equipe, alguém que resiste a feedback de um jeito que parece mais sobre não enxergar o problema do que sobre discordar dele conscientemente?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">03</div><p>Descreva uma vez em que um cliente discordou de você com convicção alta sobre um assunto técnico que você domina mais do que ele. O que ajudou, ou teria ajudado?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">04</div><p>Que ritual de "segunda opinião" faria sentido instituir na sua área para decisões de alto risco — e quem seria a pessoa certa para exercer esse papel?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="referencias">
+    <div class="section-eyebrow"><span class="dot"></span>Fontes</div>
+    <h2 class="section-title">Referências</h2>
+    <ul class="ref-list">
+      <li><span class="ref-num">01</span><span>Ackerman, P. L., Beier, M. E., &amp; Bowen, K. R. (2002). "What We Really Know about Our Abilities and Our Knowledge". <em>Personality and Individual Differences</em>, 33(4), 587–605.</span></li>
+      <li><span class="ref-num">02</span><span>Gignac, G. E., &amp; Zajenkowski, M. (2020). "The Dunning-Kruger Effect Is (Mostly) a Statistical Artefact". <em>Intelligence</em>, 80, 101449.</span></li>
+      <li><span class="ref-num">03</span><span>Heine, S. J. et al. (1999). Estudo sobre variação cultural no padrão Dunning-Kruger.</span></li>
+      <li><span class="ref-num">04</span><span>Krueger, J., &amp; Mueller, R. A. (2002). "Unskilled, Unaware, or Both?". <em>Journal of Personality and Social Psychology</em>, 82(2), 180–188.</span></li>
+      <li><span class="ref-num">05</span><span>Kruger, J., &amp; Dunning, D. (1999). "Unskilled and Unaware of It". <em>Journal of Personality and Social Psychology</em>, 77(6), 1121–1134.</span></li>
+      <li><span class="ref-num">06</span><span>Nuhfer, E. et al. (2016, 2017). Estudos sobre o componente estatístico do efeito em dados de campo.</span></li>
+      <li><span class="ref-num">07</span><span>The Decision Lab. "Dunning-Kruger Effect". thedecisionlab.com</span></li>
+    </ul>
+  </section>
+
+</main>
+
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">&#8593;</button>
+
+<script>
+  // barra de progresso + scrollspy + back-to-top
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('back-to-top').style.display = window.scrollY > 500 ? 'flex' : 'none';
+    const sections = document.querySelectorAll('section[id]');
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+    document.querySelectorAll('.nav-item').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+  });
+
+  // sidebar off-canvas (mobile)
+  const toggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  toggle.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open');
+    toggle.classList.toggle('active', open);
+    overlay.style.display = open ? 'block' : 'none';
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open'); toggle.classList.remove('active'); overlay.style.display = 'none';
+  });
+  sidebar.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    sidebar.classList.remove('open'); toggle.classList.remove('active'); overlay.style.display = 'none';
+  }));
+
+  // reveal de seções ao rolar (com fallback se o navegador não suportar)
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.section').forEach(s => io.observe(s));
+  } else {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('in-view'));
+  }
+
+  // experimentos: revelar resultado + animar barras
+  document.querySelectorAll('.reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      target.classList.add('open');
+      btn.disabled = true;
+      btn.textContent = 'Resultado revelado';
+      target.querySelectorAll('.result-bar').forEach(bar => {
+        const h = parseInt(bar.dataset.height, 10);
+        requestAnimationFrame(() => { bar.style.height = h + '%'; });
+      });
+    });
+  });
+
+  // quatro lentes (abas)
+  const lensTabs = document.getElementById('lens-tabs');
+  lensTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.lens-btn');
+    if(!btn) return;
+    const key = btn.dataset.lens;
+    lensTabs.querySelectorAll('.lens-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.lens-panel').forEach(p => p.classList.toggle('active', p.id === 'lens-' + key));
+  });
+</script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/portal.js"></script>
+<script>VD.notas({ id: 'vies-dunning-kruger', titulo: 'Conheça seus vieses · Dunning-Kruger' });</script>
+</body>
+</html>

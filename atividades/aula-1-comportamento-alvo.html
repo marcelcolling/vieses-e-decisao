@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do Objetivo ao Comportamento-Alvo — Aula 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/portal.css">
+<style>
+  :root {
+    --roxo: #402C4F;
+    --roxo-tint: rgba(64,44,79,0.06);
+    --azul: #455066;
+    --azul-tint: rgba(69,80,102,0.08);
+    --fundo: #FCFCFA;
+    --fundo-alt: #F2EFEA;
+    --amarelo: #EFB93C;
+    --texto: #2A2432;
+    --texto-muted: #6b6478;
+    --branco: #FFFFFF;
+    --border: rgba(64,44,79,0.16);
+    --ok: rgba(52,160,107,0.12);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { overflow-x: hidden; max-width: 100%; }
+  body {
+    margin: 0; font-family: 'Inter', sans-serif; background: var(--fundo); color: var(--texto);
+    line-height: 1.6;
+  }
+  .page { max-width: 980px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+
+  header.hero {
+    background: var(--roxo); color: var(--branco);
+    padding: clamp(2.2rem, 7vw, 3.5rem) 0 clamp(1.8rem, 5vw, 2.8rem); margin-bottom: 2.5rem;
+  }
+  header.hero .hero-inner { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; }
+  header.hero .tag {
+    display: inline-block; border: 1px solid rgba(239,185,60,0.5); color: var(--amarelo);
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.9rem;
+    border-radius: 100px; margin-bottom: 1.2rem; font-style: italic;
+  }
+  header.hero h1 { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(1.6rem, 4vw, 2.4rem); margin: 0 0 0.6rem; }
+  header.hero p { font-family: 'Fraunces', serif; font-style: italic; color: rgba(255,255,255,0.8); max-width: 620px; margin: 0; font-size: 1rem; }
+
+  .identifica { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.8rem; }
+  .identifica label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.65); display: block; margin-bottom: 0.3rem; font-style: italic; }
+  .identifica input {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25); border-radius: 8px;
+    padding: 0.6rem 0.8rem; color: var(--branco); font-family: 'Inter', sans-serif; font-size: 16px; min-width: 220px;
+    width: 100%;
+  }
+  .identifica input::placeholder { color: rgba(255,255,255,0.45); }
+  .identifica > div { flex: 1 1 220px; min-width: 0; }
+
+  .passo { margin-bottom: 3.5rem; }
+  .passo-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+  .passo-num {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--roxo); color: var(--branco);
+    display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 700; flex-shrink: 0;
+  }
+  .passo-head h2 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.4rem; color: var(--roxo); margin: 0; }
+  .passo-desc { font-family: 'Fraunces', serif; font-style: italic; color: var(--texto-muted); margin: 0 0 1.4rem 3.2rem; font-size: 0.95rem; }
+  @media (max-width: 560px) { .passo-desc { margin-left: 0; } }
+
+  table { width: 100%; border-collapse: collapse; background: var(--branco); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  thead th {
+    background: var(--azul); color: var(--branco); text-align: left; font-size: 0.78rem;
+    letter-spacing: 0.04em; text-transform: uppercase; padding: 0.7rem 0.9rem; font-weight: 600;
+  }
+  tbody td { padding: 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  textarea, select {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.7rem;
+    font-family: 'Inter', sans-serif; font-size: 16px; color: var(--texto); background: var(--fundo-alt);
+    resize: vertical; min-height: 48px; line-height: 1.45;
+  }
+  select { min-height: 48px; padding: 0.6rem 0.5rem; }
+  textarea:focus, select:focus, input:focus { outline: 2px solid var(--amarelo); outline-offset: 1px; }
+
+  .col-prioridade, .col-remove { width: 90px; }
+
+  button {
+    font-family: 'Inter', sans-serif; font-weight: 500; cursor: pointer; border: none; border-radius: 8px;
+    padding: 0.6rem 1.1rem; font-size: 0.85rem; transition: transform 0.15s, opacity 0.15s;
+  }
+  button:hover { transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  .btn-add { background: var(--roxo-tint); color: var(--roxo); border: 1px dashed var(--roxo); margin-top: 0.8rem; }
+  .btn-remove { background: transparent; color: #b0475a; border: none; font-size: 1.1rem; padding: 0.3rem 0.6rem; }
+  .btn-primary { background: var(--amarelo); color: var(--texto); }
+  .btn-ghost { background: var(--fundo-alt); color: var(--azul); border: 1px solid var(--border); }
+  label.btn-ghost { padding: 0.6rem 1.1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; }
+
+  .barra-acoes { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1rem; align-items: center; }
+  .barra-acoes .nota-backup { font-size: 0.8rem; color: var(--texto-muted); flex-basis: 100%; margin-top: 0.2rem; }
+
+  /* MATRIZ */
+  .matriz-wrap { display: grid; grid-template-columns: 36px 1fr; gap: 0.8rem; }
+  .eixo-y {
+    writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; font-size: 0.78rem;
+    color: var(--azul); font-style: italic; font-family: 'Fraunces', serif; padding: 0.5rem 0;
+  }
+  .matriz-col { display: flex; flex-direction: column; gap: 0.6rem; }
+  .matriz-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0.8rem; min-height: 340px; }
+  .quadrante {
+    border-radius: 14px; padding: 1rem; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.6rem;
+  }
+  .quadrante h4 { margin: 0; font-family: 'Fraunces', serif; font-size: 0.95rem; color: var(--texto); }
+  .quadrante .sub { font-size: 0.72rem; color: var(--texto-muted); margin-top: -0.4rem; }
+  .quadrante .itens { display: flex; flex-wrap: wrap; gap: 0.4rem; flex: 1; align-content: flex-start; }
+  .pill {
+    background: var(--branco); border: 1px solid var(--border); border-radius: 100px; padding: 0.35rem 0.8rem;
+    font-size: 0.78rem; max-width: 100%; cursor: default;
+  }
+  .q-prioridade { background: rgba(52,160,107,0.1); border-color: rgba(52,160,107,0.4); }
+  .q-prioridade .pill { background: rgba(52,160,107,0.15); border-color: rgba(52,160,107,0.5); }
+  .q-aposta { background: rgba(69,80,102,0.07); }
+  .q-rapido { background: rgba(239,185,60,0.1); }
+  .q-evitar { background: rgba(176,71,90,0.06); }
+  .eixo-x { text-align: center; font-size: 0.78rem; color: var(--azul); font-style: italic; font-family: 'Fraunces', serif; margin-top: 0.2rem; }
+
+  .classificar-lista { margin-top: 1.4rem; }
+  .classificar-item {
+    display: grid; grid-template-columns: 1fr 140px 140px; gap: 0.8rem; align-items: center;
+    background: var(--branco); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.9rem; margin-bottom: 0.6rem;
+  }
+  .classificar-item .texto-comp { font-size: 0.87rem; }
+
+  .resumo-final {
+    background: var(--azul); color: var(--branco); border-radius: 16px; padding: 1.6rem 1.8rem; margin-top: 1.5rem;
+  }
+  .resumo-final h3 { font-family: 'Fraunces', serif; margin: 0 0 0.6rem; font-size: 1.1rem; }
+  .resumo-final p { margin: 0; color: rgba(255,255,255,0.85); font-size: 0.9rem; }
+  .resumo-final .vazio { font-style: italic; color: rgba(255,255,255,0.6); }
+  .resumo-final ul { margin: 0.6rem 0 0; padding-left: 1.2rem; }
+  .resumo-final .proximo { margin-top: 1rem; font-size: 0.84rem; color: rgba(255,255,255,0.8); }
+  .resumo-final .proximo a { color: var(--amarelo); font-weight: 600; }
+
+  .empty-hint { font-size: 0.82rem; color: var(--texto-muted); font-style: italic; padding: 1rem; text-align: center; }
+
+  .btn-ajuda {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--amarelo); color: var(--texto);
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem; padding: 0; line-height: 1;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(42,36,50,0.55); z-index: 500;
+    align-items: center; justify-content: center; padding: 1.5rem;
+  }
+  .modal-overlay.aberto { display: flex; }
+  .modal-box {
+    background: var(--fundo); border-radius: 18px; max-width: 720px; width: 100%; max-height: 85vh;
+    overflow-y: auto; padding: 2rem 2.2rem; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .modal-fechar {
+    position: absolute; top: 1.2rem; right: 1.2rem; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--roxo-tint); color: var(--roxo); font-size: 1.1rem; padding: 0;
+  }
+  .modal-box h3 { font-family: 'Fraunces', serif; color: var(--roxo); font-size: 1.3rem; margin: 0 0 1.4rem; }
+  .modal-secao { margin-bottom: 1.6rem; }
+  .modal-secao h4 {
+    font-family: 'Fraunces', serif; font-size: 1.02rem; color: var(--azul); margin: 0 0 0.7rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .modal-secao h4 .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .criterio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .criterio-card {
+    background: var(--branco); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.1rem;
+  }
+  .criterio-card strong { display: block; color: var(--texto); font-size: 0.9rem; margin-bottom: 0.4rem; }
+  .criterio-card p { margin: 0 0 0.6rem; font-size: 0.84rem; color: var(--texto-muted); line-height: 1.6; }
+  .criterio-card ul { margin: 0; padding-left: 1.1rem; font-size: 0.82rem; color: var(--texto-muted); }
+  .criterio-card li { margin-bottom: 0.3rem; }
+  .modal-pergunta {
+    background: var(--fundo-alt); border-left: 3px solid var(--amarelo); border-radius: 0 10px 10px 0;
+    padding: 0.8rem 1rem; font-size: 0.84rem; color: var(--texto-muted); margin-top: 0.8rem;
+  }
+  @media (max-width: 640px) { .criterio-grid { grid-template-columns: 1fr; } }
+
+  .impressao-caixa { display: none; }
+
+  @media print {
+    .no-print { display: none !important; }
+    html, body { font-size: 13px; }
+    header.hero { background: var(--roxo) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 1.6rem 0 1.3rem; margin-bottom: 1.4rem; }
+    header.hero h1 { font-size: 1.4rem; }
+    header.hero p { font-size: 0.82rem; }
+    body { background: white; overflow-x: visible; }
+    .quadrante, .resumo-final { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .passo { margin-bottom: 1.5rem; page-break-inside: avoid; break-inside: avoid; }
+    .passo-head h2 { font-size: 1.05rem; }
+    .passo-num { width: 28px; height: 28px; font-size: 0.85rem; }
+    .passo-desc { font-size: 0.78rem; margin-left: 2.4rem; margin-bottom: 0.8rem; }
+    .quadrante, .classificar-item, .criterio-card { page-break-inside: avoid; break-inside: avoid; }
+
+    table.tabela-responsiva { display: table !important; table-layout: fixed !important; width: 100% !important; border: 1px solid var(--border) !important; background: var(--branco) !important; }
+    table.tabela-responsiva thead { display: table-header-group !important; }
+    table.tabela-responsiva tbody { display: table-row-group !important; }
+    table.tabela-responsiva tr { display: table-row !important; background: none !important; border: none !important; margin: 0 !important; padding: 0 !important; }
+    table.tabela-responsiva td { display: table-cell !important; border-bottom: 1px solid var(--border) !important; padding: 0.4rem 0.45rem !important; vertical-align: top !important; }
+    table.tabela-responsiva td[data-label]::before { content: none !important; }
+    table.tabela-responsiva td.col-remove { display: none !important; }
+    .col-prioridade, .col-remove { width: 90px !important; }
+    thead th { font-size: 0.62rem; padding: 0.45rem 0.5rem !important; }
+
+    textarea, select { display: none !important; }
+    .impressao-caixa {
+      display: block !important; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;
+      font-family: 'Inter', sans-serif; font-size: 10.5px; line-height: 1.4; color: var(--texto);
+      padding: 0.3rem 0.4rem; border: 1px solid var(--border); border-radius: 5px; background: var(--fundo-alt);
+    }
+
+    .classificar-item { grid-template-columns: 1fr 120px 120px !important; padding: 0.5rem 0.6rem !important; gap: 0.5rem !important; }
+    .classificar-item .texto-comp { font-size: 0.74rem; }
+    .matriz-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: 1fr 1fr !important; gap: 0.5rem !important; min-height: 0 !important; }
+    .quadrante { padding: 0.6rem !important; gap: 0.35rem !important; }
+    .quadrante h4 { font-size: 0.8rem; }
+    .quadrante .sub { font-size: 0.6rem; }
+    .pill { font-size: 0.65rem; padding: 0.25rem 0.55rem; }
+
+    .resumo-final { padding: 0.9rem 1.1rem; margin-top: 0.9rem; }
+    .resumo-final h3 { font-size: 0.92rem; }
+    .resumo-final p, .resumo-final li { font-size: 0.76rem; }
+  }
+  @media (max-width: 760px) {
+    .classificar-item { grid-template-columns: 1fr; }
+    .matriz-grid { grid-template-columns: 1fr; }
+
+    table.tabela-responsiva { border: none; background: transparent; }
+    table.tabela-responsiva thead { display: none; }
+    table.tabela-responsiva, table.tabela-responsiva tbody, table.tabela-responsiva tr, table.tabela-responsiva td {
+      display: block; width: 100%;
+    }
+    table.tabela-responsiva tr {
+      background: var(--branco); border: 1px solid var(--border); border-radius: 12px;
+      padding: 0.9rem; margin-bottom: 0.9rem;
+    }
+    table.tabela-responsiva td { border-bottom: none; padding: 0.5rem 0; }
+    table.tabela-responsiva td[data-label]::before {
+      content: attr(data-label); display: block; font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em; color: var(--texto-muted); margin-bottom: 0.35rem;
+    }
+    table.tabela-responsiva td.col-remove { width: 100%; padding-top: 0; text-align: right; }
+    .col-prioridade, .col-remove { width: auto; }
+
+    .modal-box { padding: 1.5rem 1.3rem; max-height: 90vh; }
+    .barra-acoes { flex-direction: column; align-items: stretch; }
+    .barra-acoes button, .barra-acoes label { width: 100%; text-align: center; justify-content: center; }
+  }
+
+  @media (max-width: 600px) {
+    .btn-remove { min-width: 44px; min-height: 44px; font-size: 1.3rem; }
+    .btn-ajuda { width: 40px; height: 40px; font-size: 1.05rem; }
+    .modal-fechar { width: 40px; height: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="tag">Aula 1 · Target</div>
+    <h1>Do objetivo ao comportamento-alvo</h1>
+    <p>Preencha as três etapas abaixo durante a aula. Ao final, você sai com 1-2 comportamentos-alvo priorizados, prontos para o diagnóstico da Aula 2.</p>
+    <div class="vd-print-id"></div>
+    <div class="identifica no-print">
+      <div><label for="campoEquipe">Equipe / Área</label><input id="campoEquipe" type="text" placeholder="Ex.: Comercial, RH, Operações..."></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <section class="passo">
+    <div class="passo-head"><div class="passo-num">1</div><h2>Objetivos e indicadores</h2></div>
+    <p class="passo-desc">Liste de 2 a 4 objetivos ou indicadores da sua gestão que precisam de uma mudança drástica agora.</p>
+    <table id="tabelaObjetivos" class="tabela-responsiva">
+      <thead><tr><th style="width:32%">Objetivo / indicador</th><th style="width:38%">Por que precisa mudar agora</th><th class="col-prioridade">Prioridade</th><th class="col-remove no-print"></th></tr></thead>
+      <tbody id="corpoObjetivos"></tbody>
+    </table>
+    <button class="btn-add no-print" onclick="addObjetivo()">+ Adicionar objetivo</button>
+  </section>
+
+  <section class="passo">
+    <div class="passo-head"><div class="passo-num">2</div><h2>Comportamentos necessários</h2></div>
+    <p class="passo-desc">Para cada objetivo, identifique o comportamento indesejado atual e reescreva-o como um comportamento-alvo: quem faz + ação específica + contexto/frequência + critério de verificação.</p>
+    <table id="tabelaComportamentos" class="tabela-responsiva">
+      <thead><tr><th style="width:20%">Vinculado ao objetivo</th><th style="width:35%">Comportamento indesejado (atual)</th><th style="width:37%">Comportamento-alvo (reescrito)</th><th class="col-remove no-print"></th></tr></thead>
+      <tbody id="corpoComportamentos"></tbody>
+    </table>
+    <button class="btn-add no-print" onclick="addComportamento()">+ Adicionar comportamento</button>
+  </section>
+
+  <section class="passo">
+    <div class="passo-head">
+      <div class="passo-num">3</div><h2>Matriz de impacto e viabilidade</h2>
+      <button class="btn-ajuda no-print" onclick="abrirAjuda()" title="O que significa viabilidade e impacto alto/baixo?">?</button>
+    </div>
+    <p class="passo-desc">Classifique cada comportamento-alvo pela viabilidade de mudá-lo e pelo impacto esperado no objetivo. Ainda estamos na etapa Target — isso avalia o comportamento em si, não uma intervenção (isso vem só na Aula 3). A matriz abaixo se atualiza sozinha. Em dúvida sobre como classificar? Clique no <strong>?</strong> ao lado do título.</p>
+
+    <div id="listaClassificar" class="classificar-lista"></div>
+
+    <div class="matriz-wrap">
+      <div class="eixo-y">Impacto</div>
+      <div class="matriz-col">
+        <div class="matriz-grid">
+          <div class="quadrante q-prioridade">
+            <h4>Prioridade máxima</h4>
+            <div class="sub">alta viabilidade · alto impacto</div>
+            <div class="itens" id="q-alta-alto"></div>
+          </div>
+          <div class="quadrante q-aposta">
+            <h4>Grande aposta</h4>
+            <div class="sub">baixa viabilidade · alto impacto</div>
+            <div class="itens" id="q-baixa-alto"></div>
+          </div>
+          <div class="quadrante q-rapido">
+            <h4>Ganho rápido, porte menor</h4>
+            <div class="sub">alta viabilidade · baixo impacto</div>
+            <div class="itens" id="q-alta-baixo"></div>
+          </div>
+          <div class="quadrante q-evitar">
+            <h4>Evitar por ora</h4>
+            <div class="sub">baixa viabilidade · baixo impacto</div>
+            <div class="itens" id="q-baixa-baixo"></div>
+          </div>
+        </div>
+        <div class="eixo-x">Viabilidade de mudar o comportamento →</div>
+      </div>
+    </div>
+
+    <div class="resumo-final">
+      <h3>Seu comportamento-alvo oficial (para a Aula 2)</h3>
+      <div id="resumoTexto"><p class="vazio">Classifique os comportamentos acima para ver a recomendação aqui.</p></div>
+    </div>
+  </section>
+
+  <div class="barra-acoes no-print">
+    <button class="btn-primary" onclick="imprimirDocumento()">Imprimir / Salvar PDF</button>
+    <button class="btn-ghost" onclick="exportarJSON()">Baixar cópia (.json)</button>
+    <label class="btn-ghost" style="display:inline-flex;align-items:center;cursor:pointer;">Restaurar cópia (.json)
+      <input type="file" accept=".json" onchange="importarJSON(event)" style="display:none">
+    </label>
+    <span class="nota-backup">Suas respostas são salvas automaticamente. A cópia em .json é opcional, apenas um backup extra.</span>
+  </div>
+
+</div>
+
+<div class="modal-overlay no-print" id="modalAjuda">
+  <div class="modal-box">
+    <button class="modal-fechar" onclick="fecharAjuda()" title="Fechar">✕</button>
+    <h3>Como classificar viabilidade e impacto</h3>
+    <p style="font-size:0.85rem; color:var(--texto-muted); margin:-0.8rem 0 1.6rem;">Estamos na etapa <strong>Target</strong> do método — avaliando se vale a pena levar <em>este comportamento</em> adiante, e não uma intervenção (isso só existe a partir da Aula 3). Por isso os critérios abaixo falam da facilidade de mudar o comportamento em si, não do custo de uma solução ainda não desenhada.</p>
+
+    <div class="modal-secao">
+      <h4><span class="dot" style="background:var(--azul)"></span>Viabilidade de mudar o comportamento</h4>
+      <div class="criterio-grid">
+        <div class="criterio-card">
+          <strong>Viabilidade alta</strong>
+          <p>Sua equipe/organização tem capacidade de atuar no ambiente onde o comportamento acontece, e o grupo-alvo não está fundamentalmente resistente.</p>
+          <ul>
+            <li>Você (ou sua área) consegue influenciar o ambiente onde o comportamento ocorre</li>
+            <li>O grupo está "em cima do muro", não fundamentalmente contrário a mudar</li>
+            <li>Não exige desenvolver uma habilidade nova e complexa</li>
+            <li>É um comportamento pontual, ou não depende de coordenar muitas pessoas/áreas ao mesmo tempo</li>
+          </ul>
+        </div>
+        <div class="criterio-card">
+          <strong>Viabilidade baixa</strong>
+          <p>Mudar esse comportamento está fora do alcance direto da sua equipe, ou esbarra em resistência real do grupo.</p>
+          <ul>
+            <li>Você não controla o ambiente onde o comportamento acontece</li>
+            <li>O grupo-alvo se opõe abertamente a mudar (não é só falta de lembrete ou de facilidade)</li>
+            <li>Exige esforço grande e sustentado, ou uma habilidade nova difícil de adquirir</li>
+            <li>Depende de coordenar várias pessoas ou áreas diferentes ao mesmo tempo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-pergunta">Pergunta-guia: <em>"Eu (ou minha equipe) consigo influenciar o ambiente onde esse comportamento acontece? O grupo está aberto a mudar, ou é uma questão de convicção enraizada?"</em></div>
+    </div>
+
+    <div class="modal-secao">
+      <h4><span class="dot" style="background:var(--roxo)"></span>Impacto esperado</h4>
+      <div class="criterio-grid">
+        <div class="criterio-card">
+          <strong>Impacto alto</strong>
+          <p>Mesmo uma mudança pequena nesse comportamento já representaria progresso real e visível rumo ao objetivo do Passo 1.</p>
+          <ul>
+            <li>Afeta diretamente o objetivo/indicador prioritário mapeado no Passo 1</li>
+            <li>Uma mudança marginal já seria vista como sucesso por quem acompanha o indicador</li>
+            <li>Atinge um número significativo de pessoas, ou é praticado por muita gente hoje</li>
+          </ul>
+        </div>
+        <div class="criterio-card">
+          <strong>Impacto baixo</strong>
+          <p>O efeito sobre o objetivo é indireto, marginal demais para ser notado, ou afeta pouquíssimas pessoas.</p>
+          <ul>
+            <li>Efeito indireto ou de segunda ordem sobre o indicador do Passo 1</li>
+            <li>Mesmo mudando bastante, dificilmente alguém chamaria isso de progresso relevante</li>
+            <li>Atinge poucas pessoas, ou é um comportamento raro no grupo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-pergunta">Pergunta-guia: <em>"Se esse comportamento mudasse só um pouco — não 100% das pessoas — isso já contaria como progresso real no objetivo do Passo 1?"</em></div>
+    </div>
+
+    <div class="modal-secao" style="margin-bottom:0;">
+      <h4><span class="dot" style="background:var(--amarelo)"></span>Lembrete</h4>
+      <p style="font-size:0.86rem; color:var(--texto-muted); margin:0;">Nem sempre o comportamento mais impactante é o melhor para começar — se a viabilidade for baixa, ele pode não sair do papel. Por isso o quadrante "prioridade máxima" busca <strong>alta viabilidade</strong>, não necessariamente o maior impacto possível. Comportamentos de alto impacto e baixa viabilidade não são descartados — são "grandes apostas" para revisitar depois, com mais tempo ou mais apoio.</p>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/portal.js"></script>
+<script>
+const esc = VD.esc;
+function abrirAjuda() { document.getElementById('modalAjuda').classList.add('aberto'); }
+function fecharAjuda() { document.getElementById('modalAjuda').classList.remove('aberto'); }
+document.getElementById('modalAjuda').addEventListener('click', (e) => { if (e.target.id === 'modalAjuda') fecharAjuda(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharAjuda(); });
+
+const PRIORIDADE = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
+const QUADRANTE = { 'alta-alto': 'Prioridade máxima', 'baixa-alto': 'Grande aposta', 'alta-baixo': 'Ganho rápido, porte menor', 'baixa-baixo': 'Evitar por ora' };
+
+let objetivos = [];
+let comportamentos = [];
+let seq = 0;
+function novoId() { return 'id' + (seq++); }
+
+function addObjetivo(data) {
+  const o = data || { id: novoId(), texto: '', motivo: '', prioridade: 'media' };
+  objetivos.push(o);
+  renderObjetivos();
+  renderComportamentos();
+}
+function removeObjetivo(id) {
+  objetivos = objetivos.filter(o => o.id !== id);
+  renderObjetivos();
+  renderComportamentos();
+}
+function renderObjetivos() {
+  const body = document.getElementById('corpoObjetivos');
+  body.innerHTML = '';
+  if (objetivos.length === 0) {
+    body.innerHTML = '<tr><td colspan="4" class="empty-hint">Nenhum objetivo ainda. Clique em "Adicionar objetivo".</td></tr>';
+    return;
+  }
+  objetivos.forEach(o => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td data-label="Objetivo / indicador"><textarea placeholder="Ex.: Reduzir rotatividade da equipe">${esc(o.texto)}</textarea></td>
+      <td data-label="Por que precisa mudar agora"><textarea placeholder="Ex.: já perdemos 3 pessoas-chave este trimestre">${esc(o.motivo)}</textarea></td>
+      <td data-label="Prioridade" class="col-prioridade">
+        <select>
+          <option value="alta" ${o.prioridade==='alta'?'selected':''}>Alta</option>
+          <option value="media" ${o.prioridade==='media'?'selected':''}>Média</option>
+          <option value="baixa" ${o.prioridade==='baixa'?'selected':''}>Baixa</option>
+        </select>
+      </td>
+      <td class="no-print col-remove"><button class="btn-remove" title="Remover" onclick="removeObjetivo('${o.id}')">✕</button></td>`;
+    const [taTexto, taMotivo] = tr.querySelectorAll('textarea');
+    const sel = tr.querySelector('select');
+    taTexto.oninput = () => { o.texto = taTexto.value; renderComportamentos(); };
+    taMotivo.oninput = () => { o.motivo = taMotivo.value; };
+    sel.onchange = () => { o.prioridade = sel.value; };
+    body.appendChild(tr);
+  });
+}
+
+function addComportamento(data) {
+  const c = data || { id: novoId(), objetivoId: objetivos[0]?.id || '', indesejado: '', alvo: '', viabilidade: '', impacto: '' };
+  comportamentos.push(c);
+  renderComportamentos();
+  renderMatriz();
+}
+function removeComportamento(id) {
+  comportamentos = comportamentos.filter(c => c.id !== id);
+  renderComportamentos();
+  renderMatriz();
+}
+function renderComportamentos() {
+  const body = document.getElementById('corpoComportamentos');
+  body.innerHTML = '';
+  if (comportamentos.length === 0) {
+    body.innerHTML = '<tr><td colspan="4" class="empty-hint">Nenhum comportamento ainda. Clique em "Adicionar comportamento".</td></tr>';
+    return;
+  }
+  comportamentos.forEach(c => {
+    const tr = document.createElement('tr');
+    const opcoesObjetivo = objetivos.map(o => `<option value="${o.id}" ${c.objetivoId===o.id?'selected':''}>${esc((o.texto || '(sem título)').slice(0,40))}</option>`).join('');
+    tr.innerHTML = `
+      <td data-label="Vinculado ao objetivo"><select>${opcoesObjetivo || '<option value="">Nenhum objetivo cadastrado</option>'}</select></td>
+      <td data-label="Comportamento indesejado (atual)"><textarea placeholder="Ex.: gestores evitam conversas de carreira">${esc(c.indesejado)}</textarea></td>
+      <td data-label="Comportamento-alvo (reescrito)"><textarea placeholder="Ex.: todo gestor realiza 1 conversa de carreira por trimestre, registrada em ata">${esc(c.alvo)}</textarea></td>
+      <td class="no-print col-remove"><button class="btn-remove" title="Remover" onclick="removeComportamento('${c.id}')">✕</button></td>`;
+    const sel = tr.querySelector('select');
+    const [taInd, taAlvo] = tr.querySelectorAll('textarea');
+    // se o objetivo vinculado foi removido, passa a valer o que aparece selecionado
+    if (sel.value !== c.objetivoId) c.objetivoId = sel.value;
+    sel.onchange = () => { c.objetivoId = sel.value; };
+    taInd.oninput = () => { c.indesejado = taInd.value; };
+    taAlvo.oninput = () => { c.alvo = taAlvo.value; renderMatriz(); };
+    body.appendChild(tr);
+  });
+}
+
+function renderMatriz() {
+  const lista = document.getElementById('listaClassificar');
+  lista.innerHTML = '';
+  const comAlvo = comportamentos.filter(c => c.alvo && c.alvo.trim().length > 0);
+  if (comAlvo.length === 0) {
+    lista.innerHTML = '<div class="empty-hint">Escreva ao menos um comportamento-alvo no Passo 2 para começar a classificar aqui.</div>';
+  }
+  comAlvo.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'classificar-item';
+    row.innerHTML = `
+      <div class="texto-comp">${esc(c.alvo)}</div>
+      <select data-tipo="viabilidade" aria-label="Viabilidade">
+        <option value="">Viabilidade...</option>
+        <option value="alta" ${c.viabilidade==='alta'?'selected':''}>Viabilidade alta</option>
+        <option value="baixa" ${c.viabilidade==='baixa'?'selected':''}>Viabilidade baixa</option>
+      </select>
+      <select data-tipo="impacto" aria-label="Impacto">
+        <option value="">Impacto...</option>
+        <option value="alto" ${c.impacto==='alto'?'selected':''}>Impacto alto</option>
+        <option value="baixo" ${c.impacto==='baixo'?'selected':''}>Impacto baixo</option>
+      </select>`;
+    const selViabilidade = row.querySelector('[data-tipo="viabilidade"]');
+    const selImpacto = row.querySelector('[data-tipo="impacto"]');
+    selViabilidade.onchange = () => { c.viabilidade = selViabilidade.value; posicionarQuadrantes(); };
+    selImpacto.onchange = () => { c.impacto = selImpacto.value; posicionarQuadrantes(); };
+    lista.appendChild(row);
+  });
+  posicionarQuadrantes();
+}
+
+function posicionarQuadrantes() {
+  const quads = { 'alta-alto': [], 'baixa-alto': [], 'alta-baixo': [], 'baixa-baixo': [] };
+  comportamentos.forEach(c => {
+    if (!c.alvo || !c.viabilidade || !c.impacto) return;
+    quads[`${c.viabilidade}-${c.impacto}`].push(c.alvo);
+  });
+  Object.keys(quads).forEach(k => {
+    document.getElementById('q-' + k).innerHTML = quads[k].map(t => `<span class="pill">${esc(t)}</span>`).join('');
+  });
+
+  const resumo = document.getElementById('resumoTexto');
+  if (quads['alta-alto'].length > 0) {
+    resumo.innerHTML = `<p>Estes caem em "prioridade máxima" (alta viabilidade, alto impacto) — são os melhores candidatos para levar à Aula 2:</p><ul>${quads['alta-alto'].map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+      <p class="proximo no-print">Na <a href="aula-2-barreiras.html">atividade da Aula 2</a>, use o botão “Trazer da Aula 1” para começar o diagnóstico a partir daqui.</p>`;
+  } else {
+    resumo.innerHTML = '<p class="vazio">Classifique os comportamentos acima para ver a recomendação aqui.</p>';
+  }
+}
+
+/* ======= Estado: coletar / aplicar / resumo (usados pelo salvamento automático) ======= */
+function coletar() {
+  return {
+    equipe: document.getElementById('campoEquipe').value,
+    objetivos: objetivos.map(o => ({ id: o.id, texto: o.texto, motivo: o.motivo, prioridade: o.prioridade })),
+    comportamentos: comportamentos.map(c => ({ id: c.id, objetivoId: c.objetivoId, indesejado: c.indesejado, alvo: c.alvo, viabilidade: c.viabilidade, impacto: c.impacto }))
+  };
+}
+
+function aplicar(d) {
+  d = d || {};
+  document.getElementById('campoEquipe').value = d.equipe || '';
+  seq = 0;
+  const mapa = {};
+  const idOk = (id) => typeof id === 'string' && /^id\d+$/.test(id);
+  const todos = [...(d.objetivos || []), ...(d.comportamentos || [])];
+  todos.forEach(x => { if (idOk(x.id)) seq = Math.max(seq, parseInt(x.id.slice(2), 10) + 1); });
+  const fixar = (id) => { if (idOk(id)) return id; if (!mapa[id]) mapa[id] = novoId(); return mapa[id]; };
+  objetivos = (d.objetivos || []).map(o => ({
+    id: fixar(o.id), texto: String(o.texto || ''), motivo: String(o.motivo || ''),
+    prioridade: ['alta', 'media', 'baixa'].includes(o.prioridade) ? o.prioridade : 'media'
+  }));
+  comportamentos = (d.comportamentos || []).map(c => ({
+    id: fixar(c.id), objetivoId: c.objetivoId ? fixar(c.objetivoId) : '', indesejado: String(c.indesejado || ''), alvo: String(c.alvo || ''),
+    viabilidade: ['alta', 'baixa'].includes(c.viabilidade) ? c.viabilidade : '',
+    impacto: ['alto', 'baixo'].includes(c.impacto) ? c.impacto : ''
+  }));
+  if (!objetivos.length && !comportamentos.length) {
+    objetivos.push({ id: novoId(), texto: '', motivo: '', prioridade: 'media' });
+    comportamentos.push({ id: novoId(), objetivoId: objetivos[0].id, indesejado: '', alvo: '', viabilidade: '', impacto: '' });
+  }
+  renderObjetivos(); renderComportamentos(); renderMatriz();
+}
+
+function resumo(d) {
+  const R = [];
+  const S1 = '1. Objetivos e indicadores', S2 = '2. Comportamentos necessários', S3 = '3. Matriz de impacto e viabilidade';
+  R.push(['Identificação', 'Equipe / Área', d.equipe || '—']);
+  const objs = d.objetivos || [];
+  objs.filter(o => (o.texto + o.motivo).trim()).forEach((o, i) => {
+    R.push([S1, 'Objetivo ' + (i + 1), [o.texto || '—', 'Por que precisa mudar agora: ' + (o.motivo || '—'), 'Prioridade: ' + (PRIORIDADE[o.prioridade] || '—')].join('\n')]);
+  });
+  const comps = (d.comportamentos || []).filter(c => (c.indesejado + c.alvo).trim());
+  comps.forEach((c, i) => {
+    const obj = objs.find(o => o.id === c.objetivoId);
+    R.push([S2, 'Comportamento ' + (i + 1), [
+      'Objetivo vinculado: ' + ((obj && obj.texto) || '—'),
+      'Comportamento indesejado (atual): ' + (c.indesejado || '—'),
+      'Comportamento-alvo (reescrito): ' + (c.alvo || '—')
+    ].join('\n')]);
+  });
+  comps.filter(c => (c.alvo || '').trim()).forEach(c => {
+    const q = c.viabilidade && c.impacto ? QUADRANTE[c.viabilidade + '-' + c.impacto] : 'não classificado';
+    R.push([S3, c.alvo, 'Viabilidade: ' + (c.viabilidade || '—') + ' · Impacto: ' + (c.impacto || '—') + ' → ' + q]);
+  });
+  const prior = comps.filter(c => c.alvo && c.viabilidade === 'alta' && c.impacto === 'alto').map(c => '• ' + c.alvo);
+  R.push(['Resultado', 'Comportamento-alvo oficial (para a Aula 2)', prior.length ? prior.join('\n') : '—']);
+  return R;
+}
+
+/* ======= Impressão ======= */
+function ajustarParaImpressao() {
+  if (document.querySelector('.impressao-caixa')) return;
+  document.querySelectorAll('#tabelaObjetivos textarea, #tabelaComportamentos textarea').forEach(ta => {
+    const div = document.createElement('div');
+    div.className = 'impressao-caixa';
+    div.textContent = (ta.value && ta.value.trim()) ? ta.value : '—';
+    ta.style.display = 'none';
+    ta.insertAdjacentElement('afterend', div);
+  });
+  document.querySelectorAll('#tabelaObjetivos select, #tabelaComportamentos select, #listaClassificar select').forEach(sel => {
+    const opt = sel.options[sel.selectedIndex];
+    const div = document.createElement('div');
+    div.className = 'impressao-caixa';
+    div.textContent = opt ? opt.text : '—';
+    sel.style.display = 'none';
+    sel.insertAdjacentElement('afterend', div);
+  });
+}
+function restaurarAposImpressao() {
+  document.querySelectorAll('.impressao-caixa').forEach(div => div.remove());
+  document.querySelectorAll('#tabelaObjetivos textarea, #tabelaComportamentos textarea, #tabelaObjetivos select, #tabelaComportamentos select, #listaClassificar select').forEach(el => {
+    el.style.display = '';
+  });
+}
+function imprimirDocumento() {
+  ajustarParaImpressao();
+  setTimeout(() => window.print(), 60);
+}
+window.addEventListener('beforeprint', ajustarParaImpressao);
+window.addEventListener('afterprint', restaurarAposImpressao);
+
+/* ======= Cópia de segurança em arquivo ======= */
+function exportarJSON() {
+  const s = VD.sessao();
+  const dados = Object.assign({ ferramenta: 'aula1', nome: s ? s.nome : '', turma: s ? s.turma : '' }, coletar(), { exportadoEm: new Date().toISOString() });
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const nomeArq = (dados.nome || 'aula1').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g,'-');
+  a.href = url; a.download = `comportamento-alvo-${nomeArq}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importarJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (!confirm('Substituir as respostas atuais pelas do arquivo?')) return;
+      aplicar(dados);
+      ctl.salvarAgora();
+    } catch (err) {
+      alert('Não foi possível ler este arquivo. Verifique se é um .json exportado por esta mesma ferramenta.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+/* ======= Salvamento automático (planilha + navegador) ======= */
+const ctl = VD.ferramenta({
+  id: 'aula1',
+  titulo: 'Aula 1 · Do objetivo ao comportamento-alvo',
+  crumb: 'Aula 1 · Atividade',
+  coletar, aplicar, resumo,
+  infoImpressao: () => { const e = document.getElementById('campoEquipe').value.trim(); return e ? 'Equipe/Área: ' + e : ''; }
+});
+</script>
+</body>
+</html>

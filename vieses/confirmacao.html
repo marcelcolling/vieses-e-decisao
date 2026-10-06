@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conheça seus vieses: Confirmação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#402C4F; --purple-deep:#2C1E37;
+  --navy:#455066; --navy-deep:#2E3646;
+  --paper:#FCFCFA; --paper-dim:#EFEEE7; --paper-line:rgba(64,44,79,0.14);
+  --amber:#EFB93C; --amber-ink:#5B4212;
+  --ink-on-dark:#FCFCFA; --dim-on-dark:rgba(252,252,250,0.7);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, sans-serif;
+  --sidebar-w:272px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:var(--font-body); background:var(--paper); color:var(--purple);
+  line-height:1.7; overflow-x:hidden; font-size:17px;
+}
+::selection{ background:var(--amber); color:var(--purple-deep); }
+a{ color:var(--purple); }
+:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; }
+
+/* ---------- PROGRESS BAR ---------- */
+#progress-bar{ position:fixed; top:0; left:0; height:3px; width:0%; background:var(--amber); z-index:1000; transition:width .1s linear; }
+
+/* ---------- SIDEBAR ---------- */
+#sidebar-toggle{
+  position:fixed; top:1.1rem; left:1rem; z-index:200; display:none;
+  background:var(--purple-deep); border:1px solid rgba(252,252,250,0.25);
+  color:var(--ink-on-dark); width:42px; height:42px; border-radius:10px;
+  cursor:pointer; align-items:center; justify-content:center; flex-direction:column; gap:4px;
+}
+#sidebar-toggle span{ display:block; width:18px; height:2px; background:var(--ink-on-dark); border-radius:2px; transition:transform .25s, opacity .25s; }
+#sidebar-toggle.active span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+#sidebar-toggle.active span:nth-child(2){ opacity:0; }
+#sidebar-toggle.active span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+#overlay{ display:none; position:fixed; inset:0; background:rgba(44,30,55,0.55); z-index:90; }
+
+#sidebar{
+  position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w);
+  background:var(--purple-deep); padding:2.2rem 0 2rem; z-index:100; overflow-y:auto;
+}
+.sidebar-badge{ display:flex; align-items:center; gap:0.6rem; padding:0 1.6rem 1.4rem; }
+.sidebar-badge .dot{ width:13px; height:13px; border-radius:50%; border:2px solid var(--amber); flex-shrink:0; }
+.sidebar-badge span{ font-family:var(--font-body); font-weight:700; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--dim-on-dark); }
+.sidebar-title{
+  font-family:var(--font-display); font-style:italic; font-weight:500; font-size:1.05rem;
+  color:var(--ink-on-dark); padding:0 1.6rem 1.3rem; border-bottom:1px solid rgba(252,252,250,0.14); margin-bottom:0.6rem;
+}
+.nav-item{
+  display:block; padding:0.6rem 1.6rem; color:var(--dim-on-dark); text-decoration:none;
+  font-size:0.87rem; font-weight:500; border-left:3px solid transparent;
+  transition:color .2s, background .2s, border-color .2s;
+}
+.nav-item:hover, .nav-item.active{ color:var(--ink-on-dark); background:rgba(252,252,250,0.06); border-left-color:var(--amber); }
+.nav-item.sub{ padding-left:2.6rem; font-size:0.82rem; }
+
+/* ---------- LAYOUT ---------- */
+.wrapper{ max-width:740px; margin:0 auto; padding:0 2rem 7rem; margin-left:calc(var(--sidebar-w) + 2vw); position:relative; }
+@media (max-width:980px){
+  #sidebar{ transform:translateX(-100%); transition:transform .4s cubic-bezier(.4,0,.2,1); }
+  #sidebar.open{ transform:translateX(0); }
+  #sidebar-toggle{ display:flex; }
+  .wrapper{ margin-left:auto; max-width:720px; padding:0 1.3rem 5rem; }
+}
+
+/* ---------- HERO ---------- */
+.hero{ padding:6rem 0 3.5rem; }
+.hero-tag{
+  display:inline-flex; align-items:center; gap:0.55rem; border:1px solid var(--paper-line);
+  border-radius:100px; padding:0.4rem 1rem 0.4rem 0.7rem; font-size:0.75rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); margin-bottom:2rem;
+}
+.hero-tag .dot{ width:9px; height:9px; border-radius:50%; background:var(--amber); }
+.hero h1{ font-family:var(--font-display); font-weight:700; font-size:clamp(2.8rem,7vw,4.6rem); line-height:1.03; color:var(--purple); }
+.hero-sub{ font-family:var(--font-display); font-style:italic; font-weight:400; font-size:clamp(1.15rem,2vw,1.4rem); color:var(--navy); max-width:34ch; margin-top:1.3rem; line-height:1.5; }
+.hero-meta{ display:flex; gap:2.4rem; flex-wrap:wrap; margin-top:2.8rem; padding-top:1.8rem; border-top:1px solid var(--paper-line); }
+.meta-item{ display:flex; flex-direction:column; gap:0.25rem; }
+.meta-label{ font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); opacity:0.7; }
+.meta-value{ font-size:0.92rem; font-weight:600; color:var(--purple); }
+
+/* ---------- SECTIONS ---------- */
+.section{ padding:3.6rem 0; border-top:1px solid var(--paper-line); opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+.section.in-view{ opacity:1; transform:translateY(0); }
+.section-eyebrow{ display:flex; align-items:center; gap:0.6rem; font-size:0.76rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber-ink); margin-bottom:0.9rem; }
+.section-eyebrow .dot{ width:8px; height:8px; border-radius:50%; border:2px solid var(--amber); }
+.section-title{ font-family:var(--font-display); font-weight:600; font-size:clamp(1.7rem,4vw,2.35rem); color:var(--purple); margin-bottom:1.3rem; line-height:1.15; }
+.section p{ font-size:1rem; color:var(--navy); line-height:1.8; margin-bottom:1.15rem; max-width:66ch; }
+.section p strong{ color:var(--purple); }
+.section h4.sub{ font-family:var(--font-display); font-weight:600; font-size:1.2rem; color:var(--purple); margin:1.6rem 0 0.7rem; }
+
+/* ---------- EXPERIMENTO (componente de assinatura) ---------- */
+.experiment{
+  background:var(--purple-deep); color:var(--ink-on-dark); border-radius:18px;
+  padding:2rem 2.1rem 2.2rem; margin:2rem 0; position:relative; overflow:hidden;
+}
+.experiment:before{ content:''; position:absolute; top:-40px; right:-40px; width:140px; height:140px; border-radius:50%; border:2px solid rgba(239,185,60,0.25); }
+.experiment-eyebrow{ font-size:0.74rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber); margin-bottom:0.7rem; }
+.experiment h4{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; margin-bottom:0.8rem; }
+.experiment p{ color:var(--dim-on-dark); font-size:0.94rem; max-width:none; }
+.experiment-prompt{ font-style:italic; color:var(--ink-on-dark); margin-top:1rem; }
+.reveal-btn{
+  margin-top:1.2rem; background:var(--amber); color:var(--amber-ink); border:none;
+  font-family:var(--font-body); font-weight:700; font-size:0.88rem; padding:0.7rem 1.3rem;
+  border-radius:8px; cursor:pointer; transition:transform .15s, background .15s;
+}
+.reveal-btn:hover{ background:#f5c968; transform:translateY(-1px); }
+.reveal-btn:disabled{ opacity:0.5; cursor:default; transform:none; }
+.reveal-result{
+  max-height:0; overflow:hidden; opacity:0; transition:max-height .5s ease, opacity .4s ease, margin-top .5s ease;
+}
+.reveal-result.open{ max-height:400px; opacity:1; margin-top:1.3rem; }
+.result-bars{ display:flex; gap:1.6rem; margin-top:1rem; }
+.result-bar-col{ display:flex; flex-direction:column; align-items:center; gap:0.5rem; flex:1; }
+.result-bar-track{ height:120px; width:100%; display:flex; align-items:flex-end; justify-content:center; }
+.result-bar{ width:100%; max-width:80px; background:var(--amber); border-radius:6px 6px 0 0; height:0; transition:height 1s cubic-bezier(.2,.8,.2,1); }
+.result-bar-label{ font-size:0.78rem; color:var(--dim-on-dark); text-align:center; }
+.result-bar-val{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; color:var(--ink-on-dark); }
+.result-note{ font-size:0.85rem; color:var(--dim-on-dark); border-top:1px solid rgba(252,252,250,0.14); padding-top:0.9rem; margin-top:1.1rem; }
+
+/* ---------- MECANISMO: DUAS COLUNAS ---------- */
+.mech-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin:1.6rem 0 2rem; }
+@media (max-width:680px){ .mech-grid{ grid-template-columns:1fr; } }
+.mech-card{ background:var(--paper-dim); border:1px solid var(--paper-line); border-radius:14px; padding:1.5rem 1.6rem; }
+.mech-card .mech-icon{ width:38px; height:38px; border-radius:50%; border:2px solid var(--navy); display:flex; align-items:center; justify-content:center; margin-bottom:0.9rem; }
+.mech-card h5{ font-family:var(--font-display); font-weight:600; font-size:1.08rem; color:var(--purple); margin-bottom:0.5rem; }
+.mech-card p{ font-size:0.9rem; color:var(--navy); max-width:none; margin-bottom:0; }
+
+/* ---------- QUATRO LENTES (abas) ---------- */
+.lens-tabs{ display:flex; gap:0.6rem; flex-wrap:wrap; margin:1.6rem 0 0; }
+.lens-btn{
+  display:flex; align-items:center; gap:0.55rem; font-family:var(--font-body); font-weight:700;
+  font-size:0.86rem; padding:0.65rem 1.1rem 0.65rem 0.7rem; background:var(--paper); border:1.5px solid var(--paper-line);
+  color:var(--navy); border-radius:100px; cursor:pointer; transition:border-color .15s, background .15s, color .15s;
+}
+.lens-btn .lens-icon{ width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--paper-dim); flex-shrink:0; }
+.lens-btn:hover{ border-color:var(--navy); }
+.lens-btn.active{ background:var(--purple); border-color:var(--purple); color:var(--paper); }
+.lens-btn.active .lens-icon{ background:rgba(252,252,250,0.15); }
+.lens-panels{ margin-top:1.5rem; }
+.lens-panel{ display:none; animation:fadeUp .4s ease; }
+.lens-panel.active{ display:block; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.lens-panel p{ font-size:1rem; }
+
+/* ---------- MÉTODOS ---------- */
+.methods-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:1.6rem; }
+@media (max-width:780px){ .methods-grid{ grid-template-columns:1fr; } }
+.method-col{ border-radius:16px; padding:1.7rem 1.8rem; }
+.method-col.defend{ background:var(--paper-dim); border:1px solid var(--paper-line); }
+.method-col.ethical{ background:var(--navy-deep); color:var(--ink-on-dark); }
+.method-col h4{ font-family:var(--font-display); font-weight:600; font-size:1.2rem; margin-bottom:0.3rem; }
+.method-col.defend h4{ color:var(--purple); }
+.method-col.ethical h4{ color:var(--ink-on-dark); }
+.method-col .method-eyebrow{ font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; }
+.method-col.defend .method-eyebrow{ color:var(--amber-ink); }
+.method-col.ethical .method-eyebrow{ color:var(--amber); }
+.method-item{ margin-top:1.1rem; padding-top:1.1rem; border-top:1px dashed rgba(64,44,79,0.18); }
+.method-col.ethical .method-item{ border-top-color:rgba(252,252,250,0.16); }
+.method-item:first-of-type{ border-top:none; margin-top:1rem; padding-top:0; }
+.method-item h5{ font-family:var(--font-body); font-weight:700; font-size:0.92rem; margin-bottom:0.35rem; }
+.method-col.defend .method-item h5{ color:var(--purple); }
+.method-col.ethical .method-item h5{ color:var(--ink-on-dark); }
+.method-item p{ font-size:0.88rem; margin-bottom:0; max-width:none; }
+.method-col.defend .method-item p{ color:var(--navy); }
+.method-col.ethical .method-item p{ color:var(--dim-on-dark); }
+
+/* ---------- ATENÇÃO (avisos) ---------- */
+.callout{
+  display:flex; gap:1rem; background:var(--paper-dim); border:1px solid var(--paper-line);
+  border-left:4px solid var(--amber); border-radius:0 12px 12px 0; padding:1.2rem 1.5rem; margin:1.6rem 0;
+}
+.callout-text{ font-size:0.92rem; color:var(--navy); line-height:1.65; }
+.callout-text strong{ color:var(--purple); }
+
+/* ---------- PERGUNTAS PARA A PRÁTICA ---------- */
+.reflexao-grid{ display:flex; flex-direction:column; gap:1.1rem; margin-top:1.6rem; }
+.reflexao-item{ background:var(--paper-dim); border:1px solid var(--paper-line); border-radius:14px; padding:1.4rem 1.6rem; }
+.reflexao-top{ display:flex; gap:1.1rem; }
+.reflexao-num{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; color:var(--amber-ink); opacity:0.55; flex-shrink:0; }
+.reflexao-top p{ font-size:0.96rem; color:var(--purple); margin-bottom:0; }
+.reflexao-note{
+  margin-top:0.9rem; margin-left:2.7rem; border:1.5px dashed var(--navy); border-radius:10px;
+  padding:0.8rem 1rem; min-height:60px; font-size:0.9rem; color:var(--purple); background:var(--paper);
+}
+.reflexao-note:empty:before{ content:'Clique aqui e escreva sua resposta...'; color:var(--navy); opacity:0.6; font-style:italic; }
+
+/* ---------- REFERÊNCIAS ---------- */
+.ref-list{ list-style:none; margin-top:1rem; }
+.ref-list li{ font-size:0.87rem; color:var(--navy); padding:0.85rem 0; border-bottom:1px solid var(--paper-line); display:flex; gap:1rem; }
+.ref-list li:last-child{ border-bottom:none; }
+.ref-num{ color:var(--amber-ink); font-weight:700; font-size:0.8rem; flex-shrink:0; }
+.ref-list em{ color:var(--purple); }
+
+#back-to-top{
+  position:fixed; bottom:2rem; right:2rem; width:46px; height:46px; background:var(--purple);
+  border:none; border-radius:12px; color:var(--paper); font-size:1.2rem; cursor:pointer;
+  display:none; align-items:center; justify-content:center; z-index:100; box-shadow:0 10px 30px -8px rgba(44,30,55,0.5);
+}
+#back-to-top:hover{ background:var(--purple-deep); }
+
+@media (prefers-reduced-motion: reduce){
+  .section, .reveal-result, .result-bar{ transition:none !important; }
+  .lens-panel{ animation:none !important; }
+}
+</style>
+<!-- portal-vd -->
+<link rel="stylesheet" href="../assets/css/portal.css">
+<style>
+  .nav-item.vd-voltar{ color:var(--amber); font-weight:600; }
+  @media print{
+    .section{ opacity:1 !important; transform:none !important; }
+    #sidebar, #sidebar-toggle, #overlay, #progress-bar, #back-to-top{ display:none !important; }
+    .wrapper{ margin:0 auto !important; }
+    .lens-panel{ display:block !important; }
+    .reveal-result{ max-height:none !important; opacity:1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<button id="sidebar-toggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+<div id="overlay"></div>
+
+<nav id="sidebar">
+  <div class="sidebar-badge"><span class="dot"></span><span>Conheça seus vieses · 02</span></div>
+  <div class="sidebar-title">Confirmação</div>
+  <a class="nav-item vd-voltar" href="../index.html">← Voltar ao portal</a>
+  <a class="nav-item" href="#intro">Início</a>
+  <a class="nav-item" href="#o-que-e">O que é o viés</a>
+  <a class="nav-item" href="#como-funciona">Como funciona</a>
+  <a class="nav-item" href="#quatro-lentes">Onde aparece</a>
+  <a class="nav-item sub" href="#quatro-lentes">→ Líder, equipe, clientes</a>
+  <a class="nav-item" href="#metodos">Métodos</a>
+  <a class="nav-item sub" href="#metodos">→ Defesa e dissenso genuíno</a>
+  <a class="nav-item" href="#pratica">Perguntas para a prática</a>
+  <a class="nav-item" href="#referencias">Referências</a>
+</nav>
+
+<main class="wrapper">
+
+  <section class="hero" id="intro">
+    <div class="hero-tag"><span class="dot"></span>Conheça seus vieses · Confirmação</div>
+    <h1>Por que a mesma<br>evidência nos deixa<br>mais convictos</h1>
+    <p class="hero-sub">Material de leitura e referência sobre o viés que faz cada lado de um debate sair mais seguro da própria posição.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-label">Tempo de leitura</span><span class="meta-value">11 min</span></div>
+      <div class="meta-item"><span class="meta-label">Base teórica</span><span class="meta-value">Wason, 1960 · Nickerson, 1998</span></div>
+      <div class="meta-item"><span class="meta-label">Aplicação</span><span class="meta-value">Liderança de equipes</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="o-que-e">
+    <div class="section-eyebrow"><span class="dot"></span>O que é</div>
+    <h2 class="section-title">O viés de confirmação</h2>
+    <p>O viés de confirmação é a tendência de notar, buscar, interpretar e lembrar informações de um jeito que confirme nossas crenças já existentes, enquanto ignoramos, minimizamos ou reinterpretamos evidências contrárias. Não é simplesmente "gostar de ter razão": é um processo automático de filtragem que distorce todo o ciclo de coleta e análise de informação, do que buscamos até o que lembramos depois.</p>
+    <p>O psicólogo Peter Wason documentou o mecanismo em 1960, com um experimento hoje clássico.</p>
+
+    <div class="experiment" id="exp-246">
+      <div class="experiment-eyebrow">O experimento original</div>
+      <h4>A sequência 2, 4, 6</h4>
+      <p>Wason mostrava aos participantes a sequência <strong style="color:var(--ink-on-dark)">2, 4, 6</strong> e dizia que ela seguia uma regra. A tarefa: descobrir a regra propondo novas sequências de três números, recebendo um "sim" ou "não" a cada tentativa.</p>
+      <p class="experiment-prompt">A maioria formava uma hipótese imediata e só testava sequências que a confirmassem. Antes de continuar: qual regra você imagina que fosse essa — e você teria testado alguma sequência que pudesse provar essa hipótese errada?</p>
+      <button class="reveal-btn" data-target="result-246">Ver o resultado</button>
+      <div class="reveal-result" id="result-246">
+        <p style="color:var(--ink-on-dark);font-size:0.98rem;">A hipótese mais comum era "números pares, subindo de dois em dois" — testada com sequências como 8-10-12 ou 20-22-24, sempre confirmadas. A regra verdadeira era muito mais simples: <strong>qualquer sequência crescente</strong>.</p>
+        <p class="result-note">Quase ninguém testava uma sequência capaz de refutar a própria hipótese — como uma decrescente, ou com intervalos irregulares. As pessoas testam para confirmar, não para refutar.</p>
+      </div>
+    </div>
+
+    <p>Décadas depois, Raymond Nickerson (1998) reuniu esse e outros achados numa revisão que se tornaria referência no campo. Como o próprio Nickerson cita, para o pesquisador Jonathan Evans (1989), essa é a noção de erro inferencial mais conhecida e mais amplamente aceita de toda a literatura sobre raciocínio humano — um reconhecimento de que poucos vieses têm tanta sustentação acumulada quanto este.</p>
+  </section>
+
+  <section class="section" id="como-funciona">
+    <div class="section-eyebrow"><span class="dot"></span>O mecanismo</div>
+    <h2 class="section-title">Como o viés de confirmação funciona</h2>
+    <p>O viés opera em três frentes diferentes, e vale a pena separá-las porque cada uma pede uma defesa distinta.</p>
+
+    <div class="mech-grid">
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <h5>Busca seletiva</h5>
+        <p>Procuramos informações que confirmem a hipótese em vez de testá-la de forma ativa — o padrão exato do experimento de Wason. Um exemplo organizacional direto: encomendar pesquisa de mercado só depois que a decisão estratégica já foi tomada.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><path d="M4 12h16M4 12a4 4 0 014-4M20 12a4 4 0 01-4 4"/></svg></div>
+        <h5>Interpretação tendenciosa</h5>
+        <p>Informações ambíguas são lidas como confirmação da crença prévia. Um dado neutro de satisfação de cliente pode virar "os clientes adoram o produto" para quem já estava convencido disso.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="8"/></svg></div>
+        <h5>Memória seletiva</h5>
+        <p>Lembramos com mais facilidade dos casos que confirmam do que dos que contradizem uma crença. Um gestor tende a lembrar os acertos de quem considera "bom" e esquecer os erros — ou o oposto, para quem já rotulou como "fraco".</p>
+      </div>
+    </div>
+
+    <div class="experiment" id="exp-lrl">
+      <div class="experiment-eyebrow">Evidência com dois grupos opostos</div>
+      <h4>O estudo da pena de morte</h4>
+      <p>Charles Lord, Lee Ross e Mark Lepper (1979) reuniram 48 estudantes — 24 favoráveis e 24 contrários à pena de morte — e apresentaram aos dois grupos o mesmo conjunto misto de estudos fictícios: um sugerindo que a pena de morte reduz o crime, outro sugerindo que não.</p>
+      <p class="experiment-prompt">Antes de continuar: diante da mesma evidência mista, você acha que os dois grupos se aproximaram de um meio-termo?</p>
+      <button class="reveal-btn" data-target="result-lrl">Ver o resultado</button>
+      <div class="reveal-result" id="result-lrl">
+        <p style="color:var(--ink-on-dark);font-size:0.98rem;">Não. Os dois grupos saíram <strong>mais convictos</strong> da posição com que haviam entrado — não mais próximos um do outro. Cada grupo avaliou o estudo que confirmava sua crença como mais bem conduzido, e encontrou falhas no estudo que a contradizia.</p>
+        <p class="result-note">Os dois grupos usaram os mesmos critérios de rigor científico — "esse estudo foi bem conduzido?" — para chegar a conclusões opostas sobre qual evidência levar a sério.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="quatro-lentes">
+    <div class="section-eyebrow"><span class="dot"></span>Onde aparece</div>
+    <h2 class="section-title">Quatro lentes</h2>
+    <p>O viés de confirmação é especialmente perigoso onde a análise de dados é central — porque permite que "dados" sejam usados para justificar qualquer conclusão pré-determinada. Clique em cada lente.</p>
+
+    <div class="lens-tabs" id="lens-tabs">
+      <button class="lens-btn active" data-lens="lider"><span class="lens-icon">👤</span> Quem lidera</button>
+      <button class="lens-btn" data-lens="equipe"><span class="lens-icon">👥</span> Equipe</button>
+      <button class="lens-btn" data-lens="externo"><span class="lens-icon">🛒</span> Cliente externo</button>
+      <button class="lens-btn" data-lens="interno"><span class="lens-icon">🏢</span> Cliente interno</button>
+    </div>
+
+    <div class="lens-panels">
+      <div class="lens-panel active" id="lens-lider">
+        <p>Um caso relatado pelo The Decision Lab ilustra bem o mecanismo. Uma gerente de cafeteria via as vendas caindo havia meses. Crente convicta de que "trabalho duro leva a resultado", concluiu que a equipe não estava se esforçando o suficiente: apertou o controle de presença e aumentou o número de funcionários por turno, acima do orçamento planejado. As vendas continuaram caindo. Só ao conversar com outros comerciantes da região descobriu a causa real: a loja havia sido realocada para uma rua bem menos movimentada. A crença em "trabalho duro" a fez descartar, sem examinar, qualquer evidência que apontasse para a localização.</p>
+        <p>O mesmo padrão aparece, de forma mais sutil, em entrevistas e avaliações de desempenho. Uma impressão positiva formada nos primeiros minutos de uma entrevista direciona a leitura do restante da conversa; respostas ambíguas do candidato são interpretadas a favor dessa primeira impressão. Gestores que já rotularam um funcionário como "estrela" tendem a interpretar comportamentos neutros de forma positiva — o mesmo comportamento, vindo de alguém já rotulado como "problemático", é lido de forma negativa. A crença inicial funciona como uma âncora que a confirmação reforça a cada novo dado ambíguo.</p>
+      </div>
+      <div class="lens-panel" id="lens-equipe">
+        <p>Uma equipe de produto convicta do valor de uma nova funcionalidade tende a rotular feedback negativo de cliente como "esse cliente não entendeu o valor" ou "não é o nosso perfil", enquanto feedback positivo é celebrado como "validação". O produto acaba lançado sobre uma base de dados que já era uma seleção tendenciosa da realidade — e o problema piora quando a mesma equipe que criou o produto também conduz a pesquisa que deveria validá-lo.</p>
+        <p>Retrospectivas de projeto sofrem de uma variação do mesmo padrão: a equipe atribui os sucessos à própria competência e os fracassos a fatores externos, protegendo a crença coletiva na própria eficácia às custas do aprendizado real sobre o que de fato aconteceu.</p>
+      </div>
+      <div class="lens-panel" id="lens-externo">
+        <p>Clientes satisfeitos com uma marca tendem a interpretar um problema de atendimento como exceção pontual; clientes já insatisfeitos interpretam o mesmo problema como confirmação de um padrão. A experiência objetiva pode ser idêntica nos dois casos — o que muda é a crença prévia através da qual ela é filtrada.</p>
+      </div>
+      <div class="lens-panel" id="lens-interno">
+        <p>A diretoria de uma empresa acredita que o mercado está migrando para uma direção X e já decide expandir para lá. Contrata uma consultoria para "analisar o mercado" — mas as perguntas feitas ao consultor já carregam a premissa de que X é o caminho certo. A análise entregue confirma X, porque foi isso que pediram para investigar. Os dados são reais; a conclusão é viesada desde a pergunta que a originou.</p>
+        <p>Esse padrão tem nome desde que o analista Avinash Kaushik o descreveu, por volta de 2006: o efeito <strong>HiPPO</strong> (<em>highest paid person's opinion</em>) — quando a direção de uma decisão é determinada por quem está no topo da hierarquia, e toda análise subsequente existe para confirmá-la, não para testá-la.</p>
+        <p>Há uma linha ética que vale nomear: quando uma empresa encomenda pesquisa para "justificar" ao conselho uma decisão já tomada, o viés de confirmação deixa de ser um erro cognitivo e vira estratégia deliberada de manipulação de informação. Uma cultura que pune quem chega com más notícias empurra esse padrão para dentro da empresa — só sobe para o topo a informação que já confirma que "está tudo bem".</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="metodos">
+    <div class="section-eyebrow"><span class="dot"></span>O que fazer com isso</div>
+    <h2 class="section-title">Métodos para lidar com o viés de confirmação</h2>
+
+    <div class="callout">
+      <div class="callout-text">Uma intuição comum funciona pior do que parece: <strong>designar formalmente uma pessoa para o papel de "advogado do diabo" tende a decepcionar.</strong> Pesquisas da psicóloga Charlan Nemeth mostram que o grupo percebe quando alguém está só encenando uma discordância — e trata o argumento como teatro, não como posição real. A dissidência autêntica supera consistentemente a dissidência encenada.</div>
+    </div>
+
+    <div class="methods-grid">
+      <div class="method-col defend">
+        <div class="method-eyebrow">Para se proteger</div>
+        <h4>Defesa</h4>
+        <div class="method-item">
+          <h5>Pré-mortem</h5>
+          <p>Antes de aprovar um projeto, a equipe imagina que ele já fracassou daqui a doze meses e lista as causas prováveis. Popularizado por Gary Klein (HBR, 2007); o princípio por trás — imaginar que o evento já aconteceu, não que poderia acontecer — vem de Mitchell, Russo &amp; Pennington (1989), e aumenta em cerca de 30% a identificação correta de causas de fracasso.</p>
+        </div>
+        <div class="method-item">
+          <h5>Entrevistas estruturadas</h5>
+          <p>Critérios definidos antes de ver os candidatos, com perguntas idênticas para todos. Meta-análise de Schmidt &amp; Hunter (1998): validade preditiva cerca de duas vezes maior do que entrevistas livres.</p>
+        </div>
+        <div class="method-item">
+          <h5>Separe quem propõe de quem testa</h5>
+          <p>Em pesquisa de mercado, a equipe que formulou a hipótese não deveria ser a mesma que coleta e analisa os dados — princípio central do desenho de pesquisa científica, que remove o mecanismo que permite ao viés operar.</p>
+        </div>
+      </div>
+      <div class="method-col ethical">
+        <div class="method-eyebrow">Para usar bem</div>
+        <h4>Desenhar para o dissenso genuíno</h4>
+        <div class="method-item">
+          <h5>Argumento escrito, não em slides</h5>
+          <p>A prática mais conhecida da Amazon: memorandos narrativos de até seis páginas antes de qualquer decisão relevante. Um argumento escrito expõe lacunas lógicas de um jeito que uma apresentação com tópicos soltos consegue esconder.</p>
+        </div>
+        <div class="method-item">
+          <h5>Debate ativo como expectativa, não exceção</h5>
+          <p>A McKinsey encontrou, em decisões corporativas importantes, uma chance 2,3 vezes maior de bom resultado quando o debate com perspectivas divergentes acontece de verdade, comparado a decisões fechadas sem esse processo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pratica">
+    <div class="section-eyebrow"><span class="dot"></span>Para levar com você</div>
+    <h2 class="section-title">Perguntas para a prática</h2>
+    <div class="reflexao-grid">
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">01</div><p>Pense numa crença profissional sua com convicção alta. Nos últimos seis meses, você buscou ativamente uma evidência que pudesse provar que está errado, ou só reuniu mais confirmações?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">02</div><p>Escolha uma decisão importante da sua equipe tomada recentemente. Quem, no processo, teve o papel de tentar provar que ela estava errada — e essa pessoa foi levada a sério?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">03</div><p>Existe, na sua organização, algum tipo de má notícia que as pessoas evitam levar para cima? O que isso sugere sobre o que realmente chega até quem decide?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">04</div><p>Se você tivesse que aplicar um pré-mortem à próxima decisão importante da sua área, quem participaria — e o que você suspeita que a lista de causas de fracasso revelaria?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="referencias">
+    <div class="section-eyebrow"><span class="dot"></span>Fontes</div>
+    <h2 class="section-title">Referências</h2>
+    <ul class="ref-list">
+      <li><span class="ref-num">01</span><span>Kaushik, A. (2006). <em>Web Analytics: An Hour a Day</em>. Sybex.</span></li>
+      <li><span class="ref-num">02</span><span>Klein, G. (2007). "Performing a Project Premortem". <em>Harvard Business Review</em>, 85(9), 18–19.</span></li>
+      <li><span class="ref-num">03</span><span>Lord, C. G., Ross, L., &amp; Lepper, M. R. (1979). "Biased Assimilation and Attitude Polarization". <em>Journal of Personality and Social Psychology</em>, 37(11), 2098–2109.</span></li>
+      <li><span class="ref-num">04</span><span>Mitchell, D. J., Russo, J. E., &amp; Pennington, N. (1989). "Back to the Future". <em>Journal of Behavioral Decision Making</em>, 2(1), 25–38.</span></li>
+      <li><span class="ref-num">05</span><span>Nemeth, C. J. et al. (2001). "Devil's Advocate versus Authentic Dissent". <em>European Journal of Social Psychology</em>, 31(6), 707–720.</span></li>
+      <li><span class="ref-num">06</span><span>Nickerson, R. S. (1998). "Confirmation Bias: A Ubiquitous Phenomenon in Many Guises". <em>Review of General Psychology</em>, 2(2), 175–220.</span></li>
+      <li><span class="ref-num">07</span><span>Schmidt, F. L., &amp; Hunter, J. E. (1998). "The Validity and Utility of Selection Methods in Personnel Psychology". <em>Psychological Bulletin</em>, 124(2), 262–274.</span></li>
+      <li><span class="ref-num">08</span><span>Wason, P. C. (1960). "On the Failure to Eliminate Hypotheses in a Conceptual Task". <em>Quarterly Journal of Experimental Psychology</em>, 12(3), 129–140.</span></li>
+      <li><span class="ref-num">09</span><span>The Decision Lab. "Confirmation Bias". thedecisionlab.com</span></li>
+      <li><span class="ref-num">10</span><span>McKinsey &amp; Company. Artigos sobre qualidade de debate em decisões corporativas.</span></li>
+    </ul>
+  </section>
+
+</main>
+
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">&#8593;</button>
+
+<script>
+  // barra de progresso + scrollspy + back-to-top
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('back-to-top').style.display = window.scrollY > 500 ? 'flex' : 'none';
+    const sections = document.querySelectorAll('section[id]');
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+    document.querySelectorAll('.nav-item').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+  });
+
+  // sidebar off-canvas (mobile)
+  const toggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  toggle.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open');
+    toggle.classList.toggle('active', open);
+    overlay.style.display = open ? 'block' : 'none';
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open'); toggle.classList.remove('active'); overlay.style.display = 'none';
+  });
+  sidebar.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    sidebar.classList.remove('open'); toggle.classList.remove('active'); overlay.style.display = 'none';
+  }));
+
+  // reveal de seções ao rolar (com fallback se o navegador não suportar)
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.section').forEach(s => io.observe(s));
+  } else {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('in-view'));
+  }
+
+  // experimentos: revelar resultado + animar barras
+  document.querySelectorAll('.reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      target.classList.add('open');
+      btn.disabled = true;
+      btn.textContent = 'Resultado revelado';
+      target.querySelectorAll('.result-bar').forEach(bar => {
+        const h = parseInt(bar.dataset.height, 10);
+        requestAnimationFrame(() => { bar.style.height = h + '%'; });
+      });
+    });
+  });
+
+  // quatro lentes (abas)
+  const lensTabs = document.getElementById('lens-tabs');
+  lensTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.lens-btn');
+    if(!btn) return;
+    const key = btn.dataset.lens;
+    lensTabs.querySelectorAll('.lens-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.lens-panel').forEach(p => p.classList.toggle('active', p.id === 'lens-' + key));
+  });
+</script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/portal.js"></script>
+<script>VD.notas({ id: 'vies-confirmacao', titulo: 'Conheça seus vieses · Confirmação' });</script>
+</body>
+</html>

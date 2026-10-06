@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vieses e Decisão — Portal da disciplina</title>
+<meta name="description" content="Conteúdos e atividades da disciplina Vieses e Decisão: economia comportamental aplicada à liderança.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/portal.css">
+<style>
+  :root {
+    --roxo:#402C4F; --roxo-deep:#2C1E37; --azul:#455066; --azul-deep:#2E3646;
+    --papel:#FCFCFA; --papel-dim:#EFEEE7; --linha:rgba(64,44,79,0.14);
+    --amarelo:#EFB93C; --amarelo-ink:#5B4212; --texto:#2A2432; --muted:#6b6478;
+    --display:'Fraunces', Georgia, serif; --body:'Inter', -apple-system, sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body { margin:0; font-family:var(--body); background:var(--papel); color:var(--texto); line-height:1.6; overflow-x:hidden; }
+  a { color:inherit; }
+  ::selection { background:var(--amarelo); color:var(--roxo-deep); }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 1.5rem; }
+  .vd-topbar-inner { max-width:1080px; }
+
+  /* HERO */
+  .hero { background:var(--roxo); color:#fff; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; right:-120px; top:-120px; width:420px; height:420px; border-radius:50%; border:2px solid rgba(239,185,60,0.22); }
+  .hero::after { content:''; position:absolute; right:60px; bottom:-160px; width:260px; height:260px; border-radius:50%; border:2px solid rgba(255,255,255,0.08); }
+  .hero-grid { display:grid; grid-template-columns:1.35fr 1fr; gap:3rem; align-items:center; padding:clamp(3rem,8vw,5.5rem) 0 clamp(3rem,7vw,4.8rem); position:relative; z-index:1; }
+  .tag { display:inline-flex; align-items:center; gap:0.55rem; border:1px solid rgba(239,185,60,0.5); color:var(--amarelo); font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.35rem 0.95rem; border-radius:100px; font-weight:600; }
+  .tag i { width:8px; height:8px; border-radius:50%; background:var(--amarelo); display:inline-block; }
+  .hero h1 { font-family:var(--display); font-weight:700; font-size:clamp(2.6rem,6.5vw,4.4rem); line-height:1.02; margin:1.4rem 0 1rem; letter-spacing:-0.01em; }
+  .hero h1 em { font-style:italic; font-weight:500; color:var(--amarelo); }
+  .hero-sub { font-family:var(--display); font-style:italic; font-size:clamp(1.08rem,2vw,1.3rem); color:rgba(255,255,255,0.82); max-width:34ch; margin:0; line-height:1.5; }
+
+  .sessao-card { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.16); border-radius:20px; padding:1.7rem 1.7rem 1.6rem; backdrop-filter:blur(4px); }
+  .sessao-card .eyebrow { font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amarelo); margin-bottom:0.6rem; }
+  .sessao-card h2 { font-family:var(--display); font-weight:600; font-size:1.45rem; margin:0 0 0.5rem; line-height:1.2; }
+  .sessao-card p { font-size:0.9rem; color:rgba(255,255,255,0.78); margin:0 0 1.2rem; line-height:1.6; }
+  .sessao-card .vd-btn { padding:0.75rem 1.2rem; font-size:0.9rem; }
+  .progresso { list-style:none; margin:0 0 1.2rem; padding:0; display:flex; flex-direction:column; gap:0.45rem; }
+  .progresso li { display:flex; justify-content:space-between; gap:1rem; font-size:0.86rem; background:rgba(255,255,255,0.06); border-radius:10px; padding:0.55rem 0.8rem; }
+  .progresso li span:last-child { color:rgba(255,255,255,0.7); white-space:nowrap; }
+  .progresso li.feito span:last-child { color:#8fe0b6; }
+  .sessao-acoes { display:flex; gap:0.6rem; flex-wrap:wrap; }
+
+  /* SEÇÕES */
+  section.bloco { padding:clamp(3.2rem,7vw,5rem) 0; }
+  section.bloco + section.bloco { border-top:1px solid var(--linha); }
+  .eyebrow-sec { display:flex; align-items:center; gap:0.6rem; font-size:0.76rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amarelo-ink); margin-bottom:0.8rem; }
+  .eyebrow-sec i { width:8px; height:8px; border-radius:50%; border:2px solid var(--amarelo); display:inline-block; }
+  h2.titulo-sec { font-family:var(--display); font-weight:600; font-size:clamp(1.8rem,4vw,2.5rem); color:var(--roxo); margin:0 0 0.8rem; line-height:1.12; }
+  p.intro-sec { color:var(--azul); font-size:1.02rem; max-width:62ch; margin:0 0 2.2rem; line-height:1.75; }
+
+  /* TRILHA */
+  .trilha { position:relative; display:flex; flex-direction:column; gap:1.1rem; }
+  .trilha::before { content:''; position:absolute; left:27px; top:30px; bottom:30px; width:2px; background:linear-gradient(var(--roxo) 0 62%, var(--linha) 62%); }
+  .etapa { display:grid; grid-template-columns:56px 1fr; gap:1.3rem; position:relative; }
+  .etapa-num { width:56px; height:56px; border-radius:50%; background:var(--roxo); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; font-size:1.25rem; line-height:1; position:relative; z-index:1; box-shadow:0 0 0 6px var(--papel); }
+  .etapa-num small { font-family:var(--body); font-size:0.52rem; letter-spacing:0.08em; font-weight:600; opacity:0.75; margin-top:2px; }
+  .etapa.futura .etapa-num { background:var(--papel-dim); color:var(--azul); border:2px dashed rgba(69,80,102,0.35); }
+  .etapa-card { background:#fff; border:1px solid var(--linha); border-radius:18px; padding:1.5rem 1.6rem; transition:border-color .2s, box-shadow .2s; }
+  .etapa-card:hover { border-color:rgba(64,44,79,0.3); box-shadow:0 18px 40px -26px rgba(44,30,55,0.4); }
+  .etapa.futura .etapa-card { background:transparent; border-style:dashed; }
+  .etapa-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
+  .etapa-label { font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amarelo-ink); }
+  .etapa h3 { font-family:var(--display); font-weight:600; font-size:1.35rem; color:var(--roxo); margin:0.35rem 0 0.5rem; line-height:1.2; }
+  .etapa p.desc { font-size:0.93rem; color:var(--azul); margin:0 0 0.4rem; line-height:1.7; max-width:68ch; }
+  .etapa p.entrega { font-size:0.84rem; color:var(--muted); margin:0; }
+  .etapa p.entrega strong { color:var(--texto); font-weight:600; }
+  .badge-breve { font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:0.3rem 0.75rem; border-radius:100px; background:var(--papel-dim); color:var(--azul); }
+  .recursos { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.8rem; margin-top:1.2rem; }
+  .recurso { display:flex; align-items:center; gap:0.9rem; text-decoration:none; background:var(--papel); border:1px solid var(--linha); border-radius:14px; padding:0.9rem 1rem; transition:border-color .15s, transform .15s, background .15s; }
+  .recurso:hover { border-color:var(--roxo); transform:translateY(-1px); background:#fff; }
+  .recurso:focus-visible { outline:2px solid var(--amarelo); outline-offset:2px; }
+  .recurso-ico { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .recurso.leitura .recurso-ico { background:rgba(69,80,102,0.1); color:var(--azul); }
+  .recurso.atividade .recurso-ico { background:var(--roxo); color:var(--amarelo); }
+  .recurso-txt { min-width:0; flex:1; }
+  .recurso-tipo { font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+  .recurso-nome { display:block; font-weight:600; font-size:0.92rem; color:var(--texto); line-height:1.35; }
+  .recurso-status { display:block; font-size:0.74rem; color:var(--muted); margin-top:0.15rem; }
+  .recurso-status.feito { color:#2f8f5f; font-weight:600; }
+  .recurso-seta { color:var(--roxo); font-size:1.1rem; flex-shrink:0; }
+
+  /* VIESES */
+  .vieses-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:1.1rem; }
+  .vies { display:flex; flex-direction:column; text-decoration:none; background:var(--roxo-deep); color:#fff; border-radius:18px; padding:1.6rem 1.6rem 1.4rem; position:relative; overflow:hidden; min-height:250px; transition:transform .2s, box-shadow .2s; }
+  .vies::before { content:''; position:absolute; top:-46px; right:-46px; width:150px; height:150px; border-radius:50%; border:2px solid rgba(239,185,60,0.25); transition:transform .4s; }
+  .vies:hover { transform:translateY(-3px); box-shadow:0 22px 44px -22px rgba(44,30,55,0.7); }
+  .vies:hover::before { transform:scale(1.15); }
+  .vies:focus-visible { outline:3px solid var(--amarelo); outline-offset:3px; }
+  .vies-num { font-family:var(--display); font-weight:700; font-size:2rem; color:var(--amarelo); line-height:1; }
+  .vies-nome { font-size:0.74rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.65); margin:0.9rem 0 0.4rem; }
+  .vies-pergunta { font-family:var(--display); font-weight:600; font-size:1.25rem; line-height:1.25; margin:0 0 1.2rem; }
+  .vies-meta { margin-top:auto; display:flex; justify-content:space-between; gap:0.8rem; flex-wrap:wrap; font-size:0.78rem; color:rgba(255,255,255,0.65); border-top:1px solid rgba(255,255,255,0.12); padding-top:0.85rem; }
+  .vies-meta .ok { color:#8fe0b6; font-weight:600; }
+
+  /* COMO FUNCIONA */
+  .passos { display:grid; grid-template-columns:repeat(3, 1fr); gap:1.1rem; }
+  .passo-c { background:var(--papel-dim); border:1px solid var(--linha); border-radius:16px; padding:1.5rem 1.5rem 1.4rem; }
+  .passo-c .n { width:38px; height:38px; border-radius:50%; background:var(--roxo); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; margin-bottom:0.9rem; }
+  .passo-c h4 { font-family:var(--display); font-weight:600; font-size:1.1rem; color:var(--roxo); margin:0 0 0.45rem; }
+  .passo-c p { font-size:0.88rem; color:var(--azul); margin:0; line-height:1.65; }
+  .aviso-local { margin-top:1.4rem; display:flex; gap:0.9rem; background:#fff; border:1px solid var(--linha); border-left:4px solid var(--amarelo); border-radius:0 12px 12px 0; padding:1rem 1.3rem; font-size:0.88rem; color:var(--azul); line-height:1.65; }
+  .aviso-local strong { color:var(--roxo); }
+
+  footer { background:var(--roxo-deep); color:rgba(255,255,255,0.6); font-size:0.82rem; padding:2.2rem 0; }
+  footer .wrap { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  footer strong { color:#fff; font-family:var(--display); font-weight:600; }
+
+  @media (max-width:880px) {
+    .hero-grid { grid-template-columns:1fr; gap:2rem; }
+    .passos { grid-template-columns:1fr; }
+  }
+  @media (max-width:560px) {
+    .wrap { padding-left:1rem; padding-right:1rem; }
+    .trilha::before { left:19px; }
+    .etapa { grid-template-columns:40px 1fr; gap:0.8rem; }
+    .etapa-num { width:40px; height:40px; font-size:1rem; box-shadow:0 0 0 4px var(--papel); }
+    .etapa-num small { display:none; }
+    .etapa-card { padding:1.2rem 1.1rem; }
+    .vieses-grid { grid-template-columns:1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vies, .vies::before, .recurso, .etapa-card { transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="tag"><i></i><span id="programa">Pós-graduação em Liderança</span></span>
+      <h1>Vieses <em>e</em><br>Decisão</h1>
+      <p class="hero-sub" id="subtitulo">Economia comportamental aplicada à liderança: do objetivo vago ao comportamento que move o indicador.</p>
+    </div>
+    <div class="sessao-card" id="sessaoCard" aria-live="polite"></div>
+  </div>
+</header>
+
+<main>
+  <section class="bloco" id="trilha">
+    <div class="wrap">
+      <div class="eyebrow-sec"><i></i>A trilha da disciplina</div>
+      <h2 class="titulo-sec">Cinco etapas, um comportamento</h2>
+      <p class="intro-sec">Cada aula avança uma etapa do mesmo método. Você escolhe um comportamento-alvo na Aula 1 e o leva até o fim: diagnostica as barreiras, desenha a intervenção e monta o plano de aplicação. Leia o material de cada aula e preencha a atividade — ela salva sozinha enquanto você escreve.</p>
+
+      <div class="trilha">
+        <article class="etapa">
+          <div class="etapa-num">1<small>TARGET</small></div>
+          <div class="etapa-card">
+            <div class="etapa-label">Aula 1 · Target</div>
+            <h3>O custo dos vieses e os comportamentos-alvo</h3>
+            <p class="desc">Reconhecer o papel dos vieses cognitivos nas decisões de quem lidera e traduzir objetivos e indicadores vagos em comportamentos-alvo específicos e avaliáveis.</p>
+            <p class="entrega"><strong>Você sai com:</strong> 1 ou 2 comportamentos-alvo mapeados e priorizados.</p>
+            <div class="recursos">
+              <a class="recurso leitura" href="leituras/passo-1-objetivos-e-indicadores.html">
+                <span class="recurso-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2V5z"/><path d="M4 19a2 2 0 012-2h13"/></svg></span>
+                <span class="recurso-txt"><span class="recurso-tipo">Leitura</span><span class="recurso-nome">Mapeamento de objetivos e indicadores críticos</span><span class="recurso-status" id="tempoLeitura1">Material de referência</span></span>
+                <span class="recurso-seta">→</span>
+              </a>
+              <a class="recurso atividade" href="atividades/aula-1-comportamento-alvo.html">
+                <span class="recurso-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></span>
+                <span class="recurso-txt"><span class="recurso-tipo">Atividade</span><span class="recurso-nome">Do objetivo ao comportamento-alvo</span><span class="recurso-status" data-ferramenta="aula1">Não iniciada</span></span>
+                <span class="recurso-seta">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="etapa">
+          <div class="etapa-num">2<small>EXPLORE</small></div>
+          <div class="etapa-card">
+            <div class="etapa-label">Aula 2 · Explore</div>
+            <h3>Por que o comportamento ainda não acontece</h3>
+            <p class="desc">Diagnosticar as barreiras do comportamento-alvo com o modelo COM-B: percorrer capacidade, oportunidade e motivação, triangular fontes e priorizar o componente mais deficiente.</p>
+            <p class="entrega"><strong>Você sai com:</strong> uma hipótese de barreira registrada e priorizada.</p>
+            <div class="recursos">
+              <a class="recurso atividade" href="atividades/aula-2-barreiras.html">
+                <span class="recurso-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                <span class="recurso-txt"><span class="recurso-tipo">Atividade</span><span class="recurso-nome">Levantamento, triangulação e priorização de barreiras</span><span class="recurso-status" data-ferramenta="aula2">Não iniciada</span></span>
+                <span class="recurso-seta">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="etapa">
+          <div class="etapa-num">3<small>SOLUTION</small></div>
+          <div class="etapa-card">
+            <div class="etapa-label">Aula 3 · Solution</div>
+            <h3>Da barreira à intervenção: BCW e EAST</h3>
+            <p class="desc">Converter o diagnóstico em intervenção: escolher a função certa no Behaviour Change Wheel, filtrar com os critérios APEASE e desenhar a implementação tática com o EAST.</p>
+            <p class="entrega"><strong>Você sai com:</strong> uma proposta de intervenção pronta para testar.</p>
+            <div class="recursos">
+              <a class="recurso atividade" href="atividades/aula-3-intervencao.html">
+                <span class="recurso-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></span>
+                <span class="recurso-txt"><span class="recurso-tipo">Atividade</span><span class="recurso-nome">Da barreira à intervenção</span><span class="recurso-status" data-ferramenta="aula3">Não iniciada</span></span>
+                <span class="recurso-seta">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="etapa futura">
+          <div class="etapa-num">4<small>TRIAL</small></div>
+          <div class="etapa-card">
+            <div class="etapa-top"><div class="etapa-label">Aula 4 · Trial</div><span class="badge-breve">Em breve</span></div>
+            <h3>O plano de aplicação</h3>
+            <p class="desc">Transformar a intervenção desenhada em um plano de aplicação concreto, com medição de impacto.</p>
+          </div>
+        </article>
+
+        <article class="etapa futura">
+          <div class="etapa-num">5<small>SCALE</small></div>
+          <div class="etapa-card">
+            <div class="etapa-top"><div class="etapa-label">Mentorias · Scale</div><span class="badge-breve">Em breve</span></div>
+            <h3>Escalar na prática</h3>
+            <p class="desc">Acompanhamento da aplicação no dia a dia da sua equipe — mover a média a um custo que se pague sozinho.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloco" id="vieses" style="background:var(--papel-dim)">
+    <div class="wrap">
+      <div class="eyebrow-sec"><i></i>Material complementar</div>
+      <h2 class="titulo-sec">Conheça seus vieses</h2>
+      <p class="intro-sec">Uma série de leituras curtas, cada uma sobre um viés cognitivo: o experimento que o revelou, como ele aparece na liderança, na equipe e nos clientes, e o que fazer a respeito. As perguntas para a prática no fim de cada material também ficam salvas.</p>
+      <div class="vieses-grid">
+        <a class="vies" href="vieses/ancoragem.html">
+          <span class="vies-num">01</span><span class="vies-nome">Ancoragem</span>
+          <span class="vies-pergunta">Por que comparamos tudo com o primeiro número que ouvimos</span>
+          <span class="vies-meta"><span>12 min · Tversky &amp; Kahneman, 1974</span><span data-ferramenta="vies-ancoragem"></span></span>
+        </a>
+        <a class="vies" href="vieses/confirmacao.html">
+          <span class="vies-num">02</span><span class="vies-nome">Confirmação</span>
+          <span class="vies-pergunta">Por que a mesma evidência nos deixa mais convictos</span>
+          <span class="vies-meta"><span>11 min · Wason, 1960</span><span data-ferramenta="vies-confirmacao"></span></span>
+        </a>
+        <a class="vies" href="vieses/aversao-a-perda.html">
+          <span class="vies-num">03</span><span class="vies-nome">Aversão à perda</span>
+          <span class="vies-pergunta">Por que perder dói mais do que ganhar dá prazer</span>
+          <span class="vies-meta"><span>10 min · Kahneman &amp; Tversky, 1979</span><span data-ferramenta="vies-aversao-a-perda"></span></span>
+        </a>
+        <a class="vies" href="vieses/dunning-kruger.html">
+          <span class="vies-num">04</span><span class="vies-nome">Dunning-Kruger</span>
+          <span class="vies-pergunta">Por que quem sabe menos, às vezes, tem mais certeza</span>
+          <span class="vies-meta"><span>10 min · Kruger &amp; Dunning, 1999</span><span data-ferramenta="vies-dunning-kruger"></span></span>
+        </a>
+        <a class="vies" href="vieses/enquadramento.html">
+          <span class="vies-num">05</span><span class="vies-nome">Enquadramento</span>
+          <span class="vies-pergunta">Por que a mesma notícia muda quando contada ao contrário</span>
+          <span class="vies-meta"><span>9 min · Tversky &amp; Kahneman, 1981</span><span data-ferramenta="vies-enquadramento"></span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloco" id="como-funciona">
+    <div class="wrap">
+      <div class="eyebrow-sec"><i></i>Como funcionam as atividades</div>
+      <h2 class="titulo-sec">Preencha, feche, volte depois</h2>
+      <p class="intro-sec">Não é preciso baixar nem enviar arquivos. Tudo o que você escreve fica guardado e volta quando você entrar de novo, em qualquer computador.</p>
+      <div class="passos">
+        <div class="passo-c"><div class="n">1</div><h4>Identifique-se</h4><p>Entre com o seu nome — ou o nome do grupo — e uma palavra-chave. No primeiro acesso, o cadastro é criado na hora.</p></div>
+        <div class="passo-c"><div class="n">2</div><h4>Preencha no seu ritmo</h4><p>As respostas são salvas automaticamente enquanto você escreve. O indicador no topo da página mostra quando tudo chegou à planilha.</p></div>
+        <div class="passo-c"><div class="n">3</div><h4>Receba orientação</h4><p>O professor acompanha as respostas da turma e usa o que vocês registraram para orientar a etapa seguinte.</p></div>
+      </div>
+      <div class="aviso-local" id="avisoModo"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><strong id="rodapeNome">Vieses e Decisão</strong> · Portal da disciplina</span>
+    <span>Material de uso exclusivo da turma.</span>
+  </div>
+</footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/portal.js"></script>
+<script>
+(function () {
+  var C = window.VD_CONFIG || {};
+  if (C.PROGRAMA) document.getElementById('programa').textContent = C.PROGRAMA;
+  if (C.NOME_DISCIPLINA) { document.getElementById('rodapeNome').textContent = C.NOME_DISCIPLINA; }
+
+  VD.iniciarPagina();
+
+  var esc = VD.esc;
+  var ATIVIDADES = [
+    { id: 'aula1', nome: 'Aula 1 · Comportamento-alvo', url: 'atividades/aula-1-comportamento-alvo.html' },
+    { id: 'aula2', nome: 'Aula 2 · Barreiras', url: 'atividades/aula-2-barreiras.html' },
+    { id: 'aula3', nome: 'Aula 3 · Intervenção', url: 'atividades/aula-3-intervencao.html' }
+  ];
+
+  function rotulo(reg) {
+    if (!reg) return null;
+    if (VD.emPlanilha() && reg.pendente) return 'Alterações ainda não enviadas';
+    return 'Salva ' + VD.fmtHora(reg.base || reg.atualizado);
+  }
+
+  function render() {
+    var s = VD.sessao();
+    var card = document.getElementById('sessaoCard');
+    if (!s) {
+      card.innerHTML =
+        '<div class="eyebrow">Comece por aqui</div>' +
+        '<h2>Entre para fazer as atividades</h2>' +
+        '<p>Use o seu nome (ou o do grupo) e uma palavra-chave. Assim suas respostas ficam guardadas e você continua de onde parou.</p>' +
+        '<div class="sessao-acoes"><button type="button" class="vd-btn vd-btn-amarelo" id="btnEntrar">Entrar</button>' +
+        '<a class="vd-btn vd-btn-claro" href="#trilha">Ver a trilha</a></div>';
+      document.getElementById('btnEntrar').onclick = function () { VD.abrirLogin(); };
+    } else {
+      card.innerHTML =
+        '<div class="eyebrow">' + (s.turma ? esc(s.turma) : 'Sua área') + '</div>' +
+        '<h2>Olá, ' + esc(s.nome) + '</h2>' +
+        '<p>' + (VD.emPlanilha() ? 'Suas respostas estão sendo salvas na planilha da turma.' : 'Modo local: suas respostas ficam salvas neste navegador.') + '</p>' +
+        '<ul class="progresso">' + ATIVIDADES.map(function (a) {
+          var r = rotulo(VD.registro(a.id));
+          return '<li class="' + (r ? 'feito' : '') + '"><span>' + esc(a.nome) + '</span><span>' + (r ? esc(r) : 'Não iniciada') + '</span></li>';
+        }).join('') + '</ul>' +
+        '<div class="sessao-acoes"><a class="vd-btn vd-btn-amarelo" href="' + proxima() + '">Continuar</a>' +
+        '<button type="button" class="vd-btn vd-btn-claro" id="btnSair">Trocar de estudante</button></div>';
+      document.getElementById('btnSair').onclick = function () { VD.sair(); };
+    }
+
+    document.querySelectorAll('[data-ferramenta]').forEach(function (el) {
+      var r = rotulo(VD.registro(el.dataset.ferramenta));
+      var ehVies = el.dataset.ferramenta.indexOf('vies-') === 0;
+      el.classList.toggle('feito', !!r);
+      el.classList.toggle('ok', !!r && ehVies);
+      el.textContent = r ? (ehVies ? '✓ Anotações salvas' : '✓ ' + r) : (ehVies ? '' : 'Não iniciada');
+    });
+
+    var aviso = document.getElementById('avisoModo');
+    aviso.innerHTML = VD.planilha
+      ? '<span><strong>Dica para grupos:</strong> todos do grupo entram com o mesmo nome e a mesma palavra-chave. Se duas pessoas editarem a mesma atividade ao mesmo tempo, o portal avisa e pergunta qual versão manter.</span>'
+      : '<span><strong>Atenção:</strong> a planilha da turma ainda não foi conectada a este portal. Enquanto isso, as respostas ficam salvas só no navegador em que foram escritas.</span>';
+  }
+
+  function proxima() {
+    for (var i = 0; i < ATIVIDADES.length; i++) if (!VD.registro(ATIVIDADES[i].id)) return ATIVIDADES[i].url;
+    return ATIVIDADES[ATIVIDADES.length - 1].url;
+  }
+
+  VD.onSessao(render);
+  render();
+})();
+</script>
+</body>
+</html>

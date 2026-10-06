@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Da Barreira à Intervenção — Aula 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/portal.css">
+<style>
+  :root {
+    --roxo: #402C4F;
+    --roxo-tint: rgba(64,44,79,0.06);
+    --azul: #455066;
+    --azul-tint: rgba(69,80,102,0.08);
+    --fundo: #FCFCFA;
+    --fundo-alt: #F2EFEA;
+    --amarelo: #EFB93C;
+    --texto: #2A2432;
+    --texto-muted: #6b6478;
+    --branco: #FFFFFF;
+    --border: rgba(64,44,79,0.16);
+    --ok: rgba(52,160,107,0.35);
+    --ok-bg: rgba(52,160,107,0.1);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; }
+  html, body { overflow-x: hidden; max-width: 100%; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--fundo); color: var(--texto); line-height: 1.6; }
+  .page { max-width: 980px; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+  header.hero { background: var(--roxo); color: var(--branco); padding: clamp(2.2rem, 7vw, 3.5rem) 0 clamp(1.8rem, 5vw, 2.8rem); margin-bottom: 2.2rem; }
+  header.hero .hero-inner { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; }
+  header.hero .tag { display: inline-block; border: 1px solid rgba(239,185,60,0.5); color: var(--amarelo); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 100px; margin-bottom: 1.2rem; font-style: italic; }
+  header.hero h1 { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(1.5rem, 4vw, 2.3rem); margin: 0 0 0.6rem; line-height: 1.25; }
+  header.hero p { font-family: 'Fraunces', serif; font-style: italic; color: rgba(255,255,255,0.82); max-width: 680px; margin: 0; font-size: 1rem; }
+
+  .identifica { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.6rem; }
+  .identifica > div { flex: 1 1 200px; min-width: 0; }
+  .identifica.full > div { flex-basis: 100%; }
+  .identifica label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.65); display: block; margin-bottom: 0.35rem; font-style: italic; }
+  .identifica input[type="text"], .identifica textarea, .identifica select {
+    background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.28); border-radius: 8px;
+    padding: 0.65rem 0.8rem; color: var(--branco); font-family: 'Inter', sans-serif; font-size: 16px; width: 100%;
+  }
+  .identifica select { color: var(--texto); background: rgba(255,255,255,0.92); }
+  .identifica textarea { min-height: 52px; resize: vertical; }
+  .identifica input::placeholder, .identifica textarea::placeholder { color: rgba(255,255,255,0.45); }
+  .trazer-linha { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.4rem; padding-top: 1.2rem; border-top: 1px solid rgba(255,255,255,0.15); }
+  .trazer-linha span { font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+
+  .passo { margin-bottom: 3.2rem; }
+  .passo-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+  .passo-num { width: 40px; height: 40px; border-radius: 50%; background: var(--roxo); color: var(--branco); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 700; flex-shrink: 0; }
+  .passo-head h2 { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(1.15rem, 3vw, 1.4rem); color: var(--roxo); margin: 0; }
+  .passo-desc { font-family: 'Fraunces', serif; font-style: italic; color: var(--texto-muted); margin: 0 0 1.3rem 3.2rem; font-size: 0.94rem; }
+  @media (max-width: 560px) { .passo-desc { margin-left: 0; } }
+
+  p.corpo { font-size: 0.9rem; color: var(--texto-muted); line-height: 1.75; margin: 0 0 1rem; }
+  p.corpo strong { color: var(--texto); }
+
+  .callout { display: flex; gap: 0.9rem; background: var(--fundo-alt); border: 1px solid var(--border); border-left: 3px solid var(--roxo); border-radius: 0 12px 12px 0; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .callout.amarelo { border-left-color: var(--amarelo); }
+  .callout.azul { border-left-color: var(--azul); }
+  .callout-icon { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; background: var(--roxo); color: var(--branco); }
+  .callout.amarelo .callout-icon { background: var(--amarelo); color: var(--texto); }
+  .callout.azul .callout-icon { background: var(--azul); color: var(--branco); }
+  .callout-text { font-size: 0.85rem; color: var(--texto-muted); line-height: 1.7; }
+  .callout-text strong { color: var(--texto); }
+
+  select, textarea, input[type="text"] {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.7rem;
+    font-family: 'Inter', sans-serif; font-size: 16px; color: var(--texto); background: var(--fundo-alt);
+    resize: vertical; line-height: 1.5;
+  }
+  select { min-height: 46px; }
+  textarea { min-height: 70px; }
+  select:focus, textarea:focus, input:focus { outline: 2px solid var(--amarelo); outline-offset: 1px; }
+
+  .funcoes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; margin: 1.2rem 0; }
+  @media (max-width: 860px) { .funcoes-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .funcoes-grid { grid-template-columns: 1fr; } }
+  .funcao-card {
+    background: var(--branco); border: 2px solid var(--border); border-radius: 14px; padding: 1rem 1.1rem;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s; min-height: 44px; display: flex; flex-direction: column; gap: 0.4rem;
+    text-align: left; font: inherit; color: inherit; width: 100%;
+  }
+  .funcao-card:hover { border-color: var(--azul); }
+  .funcao-card:focus-visible { outline: 2px solid var(--amarelo); outline-offset: 2px; }
+  .funcao-card.selecionada { border-color: var(--roxo); background: var(--roxo-tint); }
+  .funcao-card .func-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--branco); }
+  .funcao-card.selecionada .func-check { background: var(--roxo); border-color: var(--roxo); }
+  .funcao-card .func-top { display: flex; align-items: center; gap: 0.6rem; }
+  .funcao-card .func-nome { font-family: 'Fraunces', serif; font-weight: 700; color: var(--roxo); font-size: 0.98rem; }
+  .funcao-card .func-en { font-size: 0.72rem; color: var(--texto-muted); font-style: italic; }
+  .funcao-card .func-desc { font-size: 0.8rem; color: var(--texto-muted); line-height: 1.55; }
+  .aviso-sem-componente { background: var(--fundo-alt); border: 1px dashed var(--border); border-radius: 12px; padding: 1.4rem; text-align: center; font-size: 0.88rem; color: var(--texto-muted); font-style: italic; }
+
+  .btn-ajuda-inline {
+    display: inline-flex; align-items: center; gap: 0.4rem; background: none; border: none; color: var(--azul);
+    font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; text-decoration: underline; margin-bottom: 0.8rem;
+  }
+
+  .score-row { display: grid; grid-template-columns: 1.2fr repeat(6, 62px) 70px; gap: 0.5rem; align-items: center; background: var(--branco); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.8rem; margin-bottom: 0.6rem; }
+  .score-row .score-nome { font-size: 0.85rem; color: var(--texto); font-weight: 600; font-family: 'Fraunces', serif; }
+  .score-row select { min-height: 42px; font-size: 0.85rem; padding: 0.35rem; }
+  .score-total { text-align: center; font-family: 'Fraunces', serif; font-weight: 700; color: var(--roxo); font-size: 1.05rem; }
+  .score-labels { display: grid; grid-template-columns: 1.2fr repeat(6, 62px) 70px; gap: 0.5rem; padding: 0 0.8rem; margin-bottom: 0.5rem; }
+  .score-labels span { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--texto-muted); text-align: center; }
+  .score-labels span:first-child { text-align: left; }
+  .score-row .score-field label { display: none; }
+  @media (max-width: 900px) {
+    .score-row, .score-labels { grid-template-columns: 1fr; gap: 0.4rem; }
+    .score-labels { display: none !important; }
+    .score-row .score-field { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+    .score-row .score-field label { display: block; font-size: 0.72rem; text-transform: uppercase; color: var(--texto-muted); }
+    .score-total { text-align: left; padding-top: 0.3rem; border-top: 1px dashed var(--border); margin-top: 0.3rem; }
+  }
+  .ranking-medalha { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--amarelo); color: var(--texto); align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; margin-right: 0.5rem; }
+
+  .east-item { border: 1px solid var(--border); border-radius: 14px; margin-bottom: 0.9rem; overflow: hidden; background: var(--branco); }
+  .east-header { width: 100%; text-align: left; background: var(--fundo-alt); border: none; padding: 1rem 1.2rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 44px; }
+  .east-header-left { display: flex; align-items: center; gap: 0.8rem; }
+  .east-letra { width: 36px; height: 36px; border-radius: 50%; background: var(--roxo); color: var(--branco); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 700; flex-shrink: 0; }
+  .east-nome { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 700; color: var(--texto); }
+  .east-sub { font-family: 'Inter', sans-serif; font-style: italic; font-weight: 400; font-size: 0.72rem; color: var(--texto-muted); display: block; margin-top: 0.1rem; }
+  .east-check-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.76rem; color: var(--azul); font-weight: 600; white-space: nowrap; cursor: pointer; }
+  .east-check-label input { width: 20px; height: 20px; }
+  .east-icon { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--azul); color: var(--branco); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: transform 0.25s; }
+  .east-item.open .east-icon { transform: rotate(45deg); }
+  .east-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .east-item.open .east-body { max-height: 1200px; }
+  .east-body-inner { padding: 1.1rem 1.2rem 1.3rem; }
+  .east-body-inner p.tecnicas { font-size: 0.83rem; color: var(--texto-muted); line-height: 1.6; margin: 0 0 0.8rem; }
+  .east-item.marcado { border-color: var(--roxo); }
+  .east-item.marcado .east-header { background: var(--roxo-tint); }
+
+  .hipotese-box { background: var(--azul); color: var(--branco); border-radius: 16px; padding: 1.6rem 1.8rem; margin-top: 1.5rem; }
+  .hipotese-box h3 { font-family: 'Fraunces', serif; margin: 0 0 0.8rem; font-size: 1.1rem; }
+  .hipotese-box textarea { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.28); color: var(--branco); margin-bottom: 0.8rem; }
+  .hipotese-box textarea::placeholder { color: rgba(255,255,255,0.5); }
+  .hipotese-preview { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem 1.1rem; font-size: 0.88rem; line-height: 1.7; margin-top: 0.8rem; }
+  .hipotese-preview .vazio { font-style: italic; color: rgba(255,255,255,0.55); }
+  .hipotese-preview strong { color: var(--amarelo); }
+  .hipotese-preview ul { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+
+  button {
+    font-family: 'Inter', sans-serif; font-weight: 500; cursor: pointer; border: none; border-radius: 8px;
+    padding: 0.65rem 1.1rem; font-size: 0.85rem; transition: transform 0.15s, opacity 0.15s; min-height: 44px;
+  }
+  button:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--amarelo); color: var(--texto); }
+  .btn-ghost { background: var(--fundo-alt); color: var(--azul); border: 1px solid var(--border); }
+  .barra-acoes { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1rem; align-items: center; }
+  .barra-acoes .nota-backup { font-size: 0.8rem; color: var(--texto-muted); flex-basis: 100%; margin-top: 0.2rem; }
+  @media (max-width: 560px) { .barra-acoes button, .barra-acoes label { width: 100%; text-align: center; justify-content: center; } }
+  label.btn-ghost { display: inline-flex; align-items: center; cursor: pointer; padding: 0.65rem 1.1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; min-height: 44px; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,36,50,0.55); z-index: 500; align-items: center; justify-content: center; padding: 1.5rem; }
+  .modal-overlay.aberto { display: flex; }
+  .modal-box { background: var(--fundo); border-radius: 18px; max-width: 760px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 2rem 2.2rem; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  @media (max-width: 560px) { .modal-box { padding: 1.5rem 1.3rem; max-height: 92vh; } }
+  .modal-fechar { position: absolute; top: 1.1rem; right: 1.1rem; width: 40px; height: 40px; border-radius: 50%; background: var(--roxo-tint); color: var(--roxo); font-size: 1.1rem; padding: 0; }
+  .modal-box h3 { font-family: 'Fraunces', serif; color: var(--roxo); font-size: 1.25rem; margin: 0 0 1.2rem; }
+  .modal-box h4 { font-family: 'Fraunces', serif; font-size: 0.98rem; color: var(--azul); margin: 1.1rem 0 0.6rem; }
+  .modal-box p, .modal-box li { font-size: 0.85rem; color: var(--texto-muted); line-height: 1.65; }
+
+  .impressao-caixa { display: none; }
+  @media print {
+    .no-print { display: none !important; }
+    html, body { font-size: 12px; }
+    header.hero { background: var(--roxo) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 1.4rem 0 1.1rem; margin-bottom: 1.2rem; }
+    body { background: white; overflow-x: visible; }
+    .passo { margin-bottom: 1.3rem; page-break-inside: avoid; break-inside: avoid; }
+    .east-body { max-height: none !important; }
+    .east-item { page-break-inside: avoid; break-inside: avoid; }
+    .east-icon { display: none; }
+    textarea, select, input[type="text"] { display: none !important; }
+    .impressao-caixa { display: block !important; white-space: pre-wrap; word-break: break-word; font-size: 10.5px; line-height: 1.4; color: var(--texto); padding: 0.3rem 0.4rem; border: 1px solid var(--border); border-radius: 5px; background: var(--fundo-alt); }
+    header.hero .impressao-caixa { background: rgba(255,255,255,0.14); color: var(--branco); border-color: rgba(255,255,255,0.35); }
+    .score-labels { display: none !important; }
+    .funcoes-grid { grid-template-columns: 1fr 1fr !important; gap: 0.5rem; }
+    .funcao-card { page-break-inside: avoid; break-inside: avoid; padding: 0.7rem 0.8rem; }
+    .score-row { grid-template-columns: 1fr !important; gap: 0.3rem; page-break-inside: avoid; break-inside: avoid; }
+    .score-row .score-field { display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+    .score-row .score-field label { display: block; font-size: 0.65rem; text-transform: uppercase; color: var(--texto-muted); }
+    .score-total { text-align: left !important; padding-top: 0.25rem; border-top: 1px dashed var(--border); margin-top: 0.2rem; }
+    .east-check-label input { display: inline-block !important; }
+    .trazer-linha { display: none !important; }
+  }
+
+  @media (max-width: 600px) {
+    .east-icon, .modal-fechar, .func-check { min-width: 30px; }
+    .modal-fechar { min-height: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="tag">Etapa Solution · BCW + EAST</div>
+    <h1>Da barreira à intervenção</h1>
+    <p>Retomem a hipótese de barreira da Aula 2 e transformem-na numa proposta de intervenção: a função certa, a política que a viabiliza, e o desenho tático que aumenta a chance de ela funcionar de verdade.</p>
+    <div class="vd-print-id"></div>
+    <div class="trazer-linha no-print">
+      <button type="button" class="vd-btn vd-btn-amarelo" onclick="trazerDaAula2()">↧ Trazer da Aula 2</button>
+      <span>Preenche o comportamento-alvo, o componente priorizado e as evidências a partir da sua atividade da Aula 2.</span>
+    </div>
+    <div class="identifica">
+      <div><label for="campoEquipe">Equipe / Área</label><input id="campoEquipe" type="text" placeholder="Ex.: Comercial, RH, Operações..."></div>
+    </div>
+    <div class="identifica full">
+      <div><label for="campoComportamento">Comportamento-alvo em foco</label><textarea id="campoComportamento" placeholder="Cole aqui o comportamento-alvo trabalhado na Aula 2" oninput="atualizarSintese()"></textarea></div>
+    </div>
+    <div class="identifica">
+      <div>
+        <label for="campoComponente">Componente COM-B priorizado (Aula 2)</label>
+        <select id="campoComponente" onchange="onComponenteChange()">
+          <option value="">Selecione...</option>
+          <option value="cf">Capacidade Física</option>
+          <option value="cp">Capacidade Psicológica</option>
+          <option value="of">Oportunidade Física</option>
+          <option value="os">Oportunidade Social</option>
+          <option value="mr">Motivação Reflexiva</option>
+          <option value="ma">Motivação Automática</option>
+        </select>
+      </div>
+    </div>
+    <div class="identifica full">
+      <div><label for="campoPorque">Porquê (evidências da Aula 2)</label><textarea id="campoPorque" placeholder="Cole aqui o resumo das evidências que sustentam essa hipótese"></textarea></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <section class="passo">
+    <p class="corpo">Este documento segue a mesma lógica das ferramentas anteriores: <strong>não existe atalho automático</strong> — a matriz do Passo 1 mostra o que é <em>possível</em>, os critérios do Passo 2 filtram o que é <em>indicado</em>, e o desenho tático do Passo 4 é o que faz a intervenção escolhida realmente funcionar na prática. Preencham o componente COM-B priorizado no cabeçalho acima antes de começar.</p>
+  </section>
+
+  <!-- PASSO 1: FUNÇÕES CONECTADAS -->
+  <section class="passo" id="passo1">
+    <div class="passo-head"><div class="passo-num">1</div><h2>Funções conectadas ao componente</h2></div>
+    <p class="passo-desc">Com base no componente priorizado no cabeçalho, estas são as funções de intervenção com mecanismo de ação comprovado para ele. Selecionem 2 ou 3 candidatas para levar ao Passo 2 — a matriz mostra o que é possível, não decide sozinha qual é a melhor.</p>
+    <div id="funcoesContainer"></div>
+  </section>
+
+  <!-- PASSO 2: APEASE -->
+  <section class="passo" id="passo2">
+    <div class="passo-head"><div class="passo-num">2</div><h2>Critérios APEASE</h2></div>
+    <p class="passo-desc">Pontuem de 0 a 3 cada função candidata em cada um dos seis critérios. A pontuação e o ranking abaixo se calculam sozinhos.</p>
+    <button class="btn-ajuda-inline no-print" onclick="abrirModal('modalCriterios')">Ver como pontuar cada critério (0 a 3) →</button>
+
+    <div id="avisoSemFuncao" class="callout amarelo">
+      <div class="callout-icon">✍️</div>
+      <div class="callout-text">Selecionem ao menos uma função candidata no Passo 1 para começar a pontuar aqui.</div>
+    </div>
+
+    <div class="score-labels" id="scoreLabels" style="display:none;">
+      <span>Função</span><span>A</span><span>P</span><span>E</span><span>A</span><span>S</span><span>E</span><span>Total</span>
+    </div>
+    <div id="scoreLista"></div>
+    <div id="rankingResumo"></div>
+  </section>
+
+  <!-- PASSO 3: POLÍTICA -->
+  <section class="passo" id="passo3">
+    <div class="passo-head"><div class="passo-num">3</div><h2>Política que viabiliza</h2></div>
+    <p class="passo-desc">Para a função escolhida, qual categoria de política do anel externo do BCW a torna possível de implementar no seu contexto?</p>
+    <select id="campoPolitica" onchange="atualizarSintese();" aria-label="Categoria de política">
+      <option value="">Selecione a categoria de política...</option>
+      <option value="Communication/Marketing">Communication / Marketing</option>
+      <option value="Guidelines">Guidelines</option>
+      <option value="Fiscal">Fiscal</option>
+      <option value="Regulation">Regulation</option>
+      <option value="Legislation">Legislation</option>
+      <option value="Environmental/Social Planning">Environmental / Social Planning</option>
+      <option value="Service Provision">Service Provision</option>
+    </select>
+    <label for="campoPoliticaJust" style="font-size:0.78rem; font-weight:600; color:var(--azul); text-transform:uppercase; letter-spacing:0.03em; display:block; margin:0.9rem 0 0.4rem;">Como essa política viabiliza a função escolhida no seu contexto?</label>
+    <textarea id="campoPoliticaJust" placeholder="Ex.: um Guideline interno de RH tornaria o novo processo obrigatório para todos os gestores da área" oninput="atualizarSintese();"></textarea>
+  </section>
+
+  <!-- PASSO 4: EAST -->
+  <section class="passo" id="passo4">
+    <div class="passo-head"><div class="passo-num">4</div><h2>Desenho tático — EAST</h2></div>
+    <p class="passo-desc">Marquem ao menos <strong>dois</strong> princípios e escrevam 2-3 ideias táticas específicas para o comportamento-alvo em foco — sem se preocupar ainda com viabilidade final.</p>
+    <div id="eastContainer"></div>
+  </section>
+
+  <!-- PASSO 5: SÍNTESE -->
+  <section class="passo" id="passo5">
+    <div class="passo-head"><div class="passo-num">5</div><h2>Síntese da intervenção</h2></div>
+    <p class="passo-desc">O resultado não é uma certeza — é uma proposta estruturada para testar. Preencham os dois campos abaixo para fechar.</p>
+    <div class="hipotese-box">
+      <h3>Fechando a proposta de intervenção</h3>
+      <p style="font-size:0.85rem; color:rgba(255,255,255,0.8); margin-top:-0.4rem;">Registrem como vocês vão saber se a intervenção está funcionando.</p>
+      <label for="campoDescricao" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; opacity:0.85; display:block; margin-bottom:0.4rem;">Descreva com clareza o que será feito</label>
+      <textarea id="campoDescricao" placeholder="Ex.: um programa de treinamento por meio de mentorias, agendadas conforme a disponibilidade, junto a um profissional. Após o final, ele é acompanhado por um sistema de pontuação e ranking." oninput="atualizarSintese();"></textarea>
+      <label for="campoMedicao" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; opacity:0.85; display:block; margin-bottom:0.4rem;">Como vamos medir se funcionou</label>
+      <textarea id="campoMedicao" placeholder="Ex.: % de registros corretos no CRM, medido semanalmente pelos próximos 60 dias" oninput="atualizarSintese();"></textarea>
+      <label for="campoErrado" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; opacity:0.85; display:block; margin-bottom:0.4rem;">Saberíamos que escolhemos errado se...</label>
+      <textarea id="campoErrado" placeholder="O que vocês observariam que indicaria que essa função/tática não é a certa?" oninput="atualizarSintese();"></textarea>
+      <div class="hipotese-preview" id="sintesePreview"><span class="vazio">Complete os passos acima para gerar a síntese final aqui.</span></div>
+    </div>
+  </section>
+
+  <div class="barra-acoes no-print">
+    <button class="btn-primary" onclick="imprimirDocumento()">Imprimir / Salvar PDF</button>
+    <button class="btn-ghost" onclick="exportarJSON()">Baixar cópia (.json)</button>
+    <label class="btn-ghost">Restaurar cópia (.json)<input type="file" accept=".json" onchange="importarJSON(event)" style="display:none"></label>
+    <span class="nota-backup">Suas respostas são salvas automaticamente. A cópia em .json é opcional, apenas um backup extra.</span>
+  </div>
+
+</div>
+
+<!-- MODAL CRITÉRIOS APEASE -->
+<div class="modal-overlay no-print" id="modalCriterios">
+  <div class="modal-box">
+    <button class="modal-fechar" onclick="fecharModal('modalCriterios')">✕</button>
+    <h3>Como pontuar cada critério APEASE</h3>
+    <p>Para cada função candidata, atribuam uma pontuação de 0 a 3 em cada critério abaixo. Some as seis pontuações (máximo 18) — a função com maior soma é a candidata mais indicada, mas o desempate final é sempre uma decisão do grupo, não só do número.</p>
+    <h4>A · Affordability (custo)</h4>
+    <p><strong>0</strong> fora do orçamento disponível · <strong>1</strong> exigiria orçamento extra não garantido · <strong>2</strong> cabe com algum ajuste · <strong>3</strong> cabe folgadamente no orçamento atual</p>
+    <h4>P · Practicability (praticabilidade)</h4>
+    <p><strong>0</strong> não há recursos humanos/infraestrutura hoje · <strong>1</strong> exigiria montar capacidade nova considerável · <strong>2</strong> viável com pequenos ajustes de processo · <strong>3</strong> totalmente viável com o que já existe</p>
+    <h4>E · Effectiveness (efetividade)</h4>
+    <p><strong>0</strong> sem evidência de que funcione para este tipo de barreira · <strong>1</strong> evidência fraca ou indireta · <strong>2</strong> evidência razoável em contexto parecido · <strong>3</strong> evidência forte e específica</p>
+    <h4>A · Acceptability (aceitabilidade)</h4>
+    <p><strong>0</strong> geraria forte resistência de quem seria afetado · <strong>1</strong> resistência perceptível, mas administrável · <strong>2</strong> neutro a bem recebido · <strong>3</strong> provavelmente bem-vindo por quem será afetado</p>
+    <h4>S · Side-effects (efeitos colaterais)</h4>
+    <p><strong>0</strong> risco alto de efeito colateral sério · <strong>1</strong> algum risco identificável, requer atenção · <strong>2</strong> risco baixo e conhecido · <strong>3</strong> nenhum efeito colateral relevante identificado</p>
+    <h4>E · Equity (equidade)</h4>
+    <p><strong>0</strong> beneficia uns e prejudica claramente outros · <strong>1</strong> distribuição desigual perceptível · <strong>2</strong> distribuição razoavelmente equilibrada · <strong>3</strong> benefícios e ônus bem distribuídos entre todos os afetados</p>
+  </div>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/portal.js"></script>
+<script>
+const esc = VD.esc;
+const FUNCOES = [
+  { id: 'educacao', nome: 'Educação', en: 'Education', desc: 'Aumenta conhecimento ou compreensão sobre o comportamento, causas e consequências.' },
+  { id: 'persuasao', nome: 'Persuasão', en: 'Persuasion', desc: 'Usa comunicação para induzir sentimentos ou estimular ação, além de informar.' },
+  { id: 'incentivo', nome: 'Incentivo', en: 'Incentivisation', desc: 'Cria expectativa de recompensa para aumentar a probabilidade do comportamento-alvo.' },
+  { id: 'coercao', nome: 'Coerção', en: 'Coercion', desc: 'Cria expectativa de punição ou custo associado ao comportamento indesejado.' },
+  { id: 'treinamento', nome: 'Treinamento', en: 'Training', desc: 'Desenvolve habilidades físicas ou cognitivas necessárias para executar o comportamento.' },
+  { id: 'restricao', nome: 'Restrição', en: 'Restriction', desc: 'Usa regras para reduzir a oportunidade de comportamentos concorrentes.' },
+  { id: 'reestruturacao', nome: 'Reestruturação Ambiental', en: 'Environmental Restructuring', desc: 'Altera o contexto físico ou social para tornar o comportamento-alvo mais fácil ou automático.' },
+  { id: 'modelagem', nome: 'Modelagem', en: 'Modelling', desc: 'Fornece exemplos ou modelos de comportamento para observação e imitação.' },
+  { id: 'habilitacao', nome: 'Habilitação', en: 'Enablement', desc: 'Aumenta meios ou reduz barreiras além de educação, treinamento ou reestruturação.' }
+];
+
+const MATRIZ = {
+  cf: ['treinamento', 'habilitacao'],
+  cp: ['educacao', 'treinamento', 'habilitacao'],
+  of: ['restricao', 'reestruturacao', 'habilitacao'],
+  os: ['restricao', 'reestruturacao', 'modelagem'],
+  mr: ['educacao', 'persuasao', 'incentivo', 'coercao', 'habilitacao'],
+  ma: ['persuasao', 'incentivo', 'coercao', 'restricao', 'reestruturacao', 'modelagem', 'habilitacao']
+};
+
+const COMPONENTE_NOME = { cf: 'Capacidade Física', cp: 'Capacidade Psicológica', of: 'Oportunidade Física', os: 'Oportunidade Social', mr: 'Motivação Reflexiva', ma: 'Motivação Automática' };
+/* ids usados na ferramenta da Aula 2 → códigos desta ferramenta */
+const DA_AULA2 = { cFisica: 'cf', cPsicologica: 'cp', oFisica: 'of', oSocial: 'os', mReflexiva: 'mr', mAutomatica: 'ma' };
+
+const EAST = [
+  { id: 'easy', letra: 'E', nome: 'Easy', sub: 'Reduza o esforço', tecnicas: 'Técnicas de referência: defaults, redução de etapas, mensagens simples, checklists, acesso direto, bundling.' },
+  { id: 'attractive', letra: 'A', nome: 'Attractive', sub: 'Capture atenção', tecnicas: 'Técnicas de referência: personalização, saliência visual, framing de perda, gamificação, mensagens de identidade.' },
+  { id: 'social', letra: 'S', nome: 'Social', sub: 'Use a influência dos outros', tecnicas: 'Técnicas de referência: normas descritivas e injuntivas, compromisso público, peer champions, comparação com pares.' },
+  { id: 'timely', letra: 'T', nome: 'Timely', sub: 'Intervenha no momento certo', tecnicas: 'Técnicas de referência: momentos de transição, implementation intentions, lembretes próximos à ação.' }
+];
+
+const APEASE_LETRAS = ['a1','p','e1','a2','s','e2'];
+const APEASE_ROTULO = { a1: 'Affordability (custo)', p: 'Practicability (praticabilidade)', e1: 'Effectiveness (efetividade)', a2: 'Acceptability (aceitabilidade)', s: 'Side-effects (efeitos colaterais)', e2: 'Equity (equidade)' };
+const APEASE_CURTO = { a1: 'A', p: 'P', e1: 'E', a2: 'A', s: 'S', e2: 'E' };
+
+let estado = { funcoesSelecionadas: [], scores: {}, east: {}, campoComponente: '' };
+
+function onComponenteChange() {
+  estado.campoComponente = document.getElementById('campoComponente').value;
+  // funções que deixaram de estar conectadas ao novo componente saem da seleção
+  const conectadas = MATRIZ[estado.campoComponente] || [];
+  estado.funcoesSelecionadas = estado.funcoesSelecionadas.filter(f => conectadas.includes(f));
+  renderFuncoes();
+}
+
+function renderFuncoes() {
+  const container = document.getElementById('funcoesContainer');
+  const comp = estado.campoComponente;
+  if (!comp) {
+    container.innerHTML = '<div class="aviso-sem-componente">Selecionem o componente COM-B priorizado no cabeçalho para ver as funções conectadas.</div>';
+    renderScoreLista();
+    return;
+  }
+  const conectadas = MATRIZ[comp] || [];
+  container.innerHTML = `
+    <div class="callout azul">
+      <div class="callout-icon">🎯</div>
+      <div class="callout-text">Componente priorizado: <strong>${COMPONENTE_NOME[comp]}</strong>. As funções abaixo têm mecanismo de ação conectado a esse componente na matriz de ligação do BCW.</div>
+    </div>
+    <div class="funcoes-grid">
+      ${conectadas.map(fid => {
+        const f = FUNCOES.find(x => x.id === fid);
+        const sel = estado.funcoesSelecionadas.includes(fid);
+        return `<button type="button" class="funcao-card ${sel ? 'selecionada' : ''}" aria-pressed="${sel}" onclick="toggleFuncao('${fid}')">
+          <div class="func-top"><div class="func-check">${sel ? '✓' : ''}</div><div><div class="func-nome">${f.nome}</div><div class="func-en">${f.en}</div></div></div>
+          <div class="func-desc">${f.desc}</div>
+        </button>`;
+      }).join('')}
+    </div>`;
+  renderScoreLista();
+}
+
+function toggleFuncao(fid) {
+  const idx = estado.funcoesSelecionadas.indexOf(fid);
+  if (idx === -1) estado.funcoesSelecionadas.push(fid);
+  else estado.funcoesSelecionadas.splice(idx, 1);
+  renderFuncoes();
+}
+
+function renderScoreLista() {
+  const lista = document.getElementById('scoreLista');
+  const labels = document.getElementById('scoreLabels');
+  const aviso = document.getElementById('avisoSemFuncao');
+  const selecionadas = estado.funcoesSelecionadas.map(fid => FUNCOES.find(f => f.id === fid)).filter(Boolean);
+
+  if (selecionadas.length === 0) {
+    lista.innerHTML = '';
+    labels.style.display = 'none';
+    aviso.style.display = 'flex';
+    document.getElementById('rankingResumo').innerHTML = '';
+    atualizarSintese();
+    return;
+  }
+  aviso.style.display = 'none';
+  labels.style.display = 'grid';
+
+  lista.innerHTML = selecionadas.map(f => {
+    const sc = estado.scores[f.id] || {};
+    return `<div class="score-row" id="score-${f.id}">
+      <div class="score-nome">${f.nome}</div>
+      ${APEASE_LETRAS.map(c => `<div class="score-field"><label>${APEASE_ROTULO[c]}</label>${selectScore(f.id, c, sc[c])}</div>`).join('')}
+      <div class="score-total" id="total-${f.id}">${calcTotal(sc)}</div>
+    </div>`;
+  }).join('');
+
+  renderRanking();
+}
+
+function selectScore(fid, campo, valorAtual) {
+  const opcoes = [0,1,2,3].map(n => `<option value="${n}" ${String(valorAtual)===String(n)?'selected':''}>${n}</option>`).join('');
+  return `<select onchange="onScoreChange('${fid}','${campo}', this.value)" aria-label="${APEASE_ROTULO[campo]}"><option value="">–</option>${opcoes}</select>`;
+}
+
+function calcTotal(sc) {
+  const vals = APEASE_LETRAS.map(c => (sc || {})[c]);
+  if (vals.some(v => v === '' || v === undefined || v === null)) return '—';
+  return vals.reduce((a,b) => a + Number(b), 0);
+}
+
+function onScoreChange(fid, campo, valor) {
+  if (!estado.scores[fid]) estado.scores[fid] = {};
+  estado.scores[fid][campo] = valor;
+  document.getElementById('total-' + fid).textContent = calcTotal(estado.scores[fid]);
+  renderRanking();
+}
+
+/* ranking puro: usado na tela e no resumo enviado à planilha */
+function rankingDe(funcoesSelecionadas, scores) {
+  return (funcoesSelecionadas || [])
+    .map(fid => FUNCOES.find(f => f.id === fid)).filter(Boolean)
+    .map(f => ({ f, total: calcTotal((scores || {})[f.id] || {}) }))
+    .filter(x => x.total !== '—')
+    .sort((a, b) => b.total - a.total);
+}
+
+function renderRanking() {
+  const comScore = rankingDe(estado.funcoesSelecionadas, estado.scores);
+  const resumoEl = document.getElementById('rankingResumo');
+  if (comScore.length === 0) { resumoEl.innerHTML = ''; atualizarSintese(); return; }
+  resumoEl.innerHTML = `
+    <div class="hipotese-box" style="background: var(--roxo);">
+      <h3>Ranking (máximo 18 pontos)</h3>
+      <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        ${comScore.map((x, i) => `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.08); border-radius:8px; padding:0.6rem 0.9rem;">
+            <span>${i===0 ? '<span class="ranking-medalha">1º</span>' : ''}${x.f.nome}</span>
+            <strong>${x.total}/18</strong>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  atualizarSintese();
+}
+
+function funcaoVencedora() {
+  return rankingDe(estado.funcoesSelecionadas, estado.scores)[0] || null;
+}
+
+/* ============ PASSO 4: EAST ============ */
+function renderEast() {
+  const container = document.getElementById('eastContainer');
+  container.innerHTML = EAST.map(e => {
+    const dados = estado.east[e.id] || { marcado: false, texto: '' };
+    return `<div class="east-item ${dados.marcado ? 'marcado' : ''}" id="east-${e.id}">
+      <div class="east-header" role="button" tabindex="0" onclick="toggleEast('${e.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleEast('${e.id}')}">
+        <div class="east-header-left">
+          <div class="east-letra">${e.letra}</div>
+          <div><div class="east-nome">${e.nome}</div><span class="east-sub">${e.sub}</span></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.9rem;">
+          <label class="east-check-label" onclick="event.stopPropagation()">
+            <input type="checkbox" ${dados.marcado ? 'checked' : ''} onchange="onEastCheck('${e.id}', this.checked)"> aplicar
+          </label>
+          <div class="east-icon">+</div>
+        </div>
+      </div>
+      <div class="east-body">
+        <div class="east-body-inner">
+          <p class="tecnicas">${e.tecnicas}</p>
+          <label for="east-txt-${e.id}" style="font-size:0.78rem; font-weight:600; color:var(--azul); text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:0.4rem;">Ideias táticas para este comportamento (2-3 ideias)</label>
+          <textarea id="east-txt-${e.id}" placeholder="Escreva as ideias táticas aqui..." oninput="onEastTexto('${e.id}', this.value)">${esc(dados.texto || '')}</textarea>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleEast(id) {
+  document.getElementById('east-' + id).classList.toggle('open');
+}
+function onEastCheck(id, marcado) {
+  if (!estado.east[id]) estado.east[id] = { marcado: false, texto: '' };
+  estado.east[id].marcado = marcado;
+  const item = document.getElementById('east-' + id);
+  item.classList.toggle('marcado', marcado);
+  if (marcado) item.classList.add('open');
+  atualizarSintese();
+}
+function onEastTexto(id, texto) {
+  if (!estado.east[id]) estado.east[id] = { marcado: false, texto: '' };
+  estado.east[id].texto = texto;
+  atualizarSintese();
+}
+
+/* ============ PASSO 5: SÍNTESE ============ */
+function atualizarSintese() {
+  const preview = document.getElementById('sintesePreview');
+  const vencedora = funcaoVencedora();
+  const politica = document.getElementById('campoPolitica').value || '';
+  const descricao = document.getElementById('campoDescricao').value.trim();
+  const medicao = document.getElementById('campoMedicao').value.trim();
+  const errado = document.getElementById('campoErrado').value.trim();
+  const eastMarcados = Object.keys(estado.east).filter(k => estado.east[k].marcado && (estado.east[k].texto || '').trim().length > 0);
+
+  if (!vencedora || !politica || !descricao || !medicao || !errado || eastMarcados.length < 2) {
+    preview.innerHTML = '<span class="vazio">Completem a seleção e pontuação de função (Passo 2), a política (Passo 3), ao menos duas táticas EAST marcadas com texto (Passo 4), e os três campos acima para gerar a síntese.</span>';
+    return;
+  }
+  const comportamento = (document.getElementById('campoComportamento').value || 'o comportamento-alvo').trim();
+  const eastTextos = eastMarcados.map(k => {
+    const e = EAST.find(x => x.id === k);
+    return `<li><strong>${e.nome}:</strong> ${esc(estado.east[k].texto)}</li>`;
+  }).join('');
+
+  preview.innerHTML = `
+    <p>Para <strong>${esc(comportamento)}</strong>, a função de intervenção escolhida é <strong>${vencedora.f.nome}</strong> (${vencedora.total}/18 nos critérios APEASE), viabilizada pela política de <strong>${esc(politica)}</strong>.</p>
+    <p style="margin-top:0.6rem;"><strong>O que será feito:</strong> ${esc(descricao)}</p>
+    <p style="margin-top:0.6rem;">Táticas EAST aplicadas:</p>
+    <ul>${eastTextos}</ul>
+    <p style="margin-top:0.6rem;">Mediremos o resultado por: ${esc(medicao)}</p>
+    <p style="margin-top:0.6rem;">Saberíamos que escolhemos errado se: ${esc(errado)}</p>
+  `;
+}
+
+/* ============ Trazer da Aula 2 ============ */
+const SUBCOMP_AULA2 = ['cFisica', 'cPsicologica', 'oFisica', 'oSocial', 'mReflexiva', 'mAutomatica'];
+function componenteVencedorAula2(d) {
+  const estruturais = ['cFisica', 'cPsicologica', 'oFisica', 'oSocial'];
+  const total = sc => {
+    const v = [sc.freq, sc.conflito, sc.intensidade];
+    return v.some(x => x === '' || x === undefined || x === null) ? null : v.reduce((a, b) => a + Number(b), 0);
+  };
+  const lista = SUBCOMP_AULA2
+    .filter(id => (((d.evidencias || {})[id]) || '').trim())
+    .map(id => ({ id, t: total((d.scores || {})[id] || {}) }))
+    .filter(x => x.t !== null)
+    .sort((a, b) => (b.t - a.t) || (Number(estruturais.includes(b.id)) - Number(estruturais.includes(a.id))));
+  return lista.length ? DA_AULA2[lista[0].id] : '';
+}
+
+function trazerDaAula2() {
+  const d = VD.dados('aula2');
+  if (!d) {
+    VD.toast(VD.sessao() ? 'Não encontramos respostas salvas da Aula 2.' : 'Entre com seu nome e palavra-chave para acessar suas respostas da Aula 2.');
+    if (!VD.sessao()) VD.abrirLogin();
+    return;
+  }
+  const comp = componenteVencedorAula2(d);
+  const campos = {
+    campoEquipe: d.equipe || '',
+    campoComportamento: d.comportamento || '',
+    campoPorque: d.hipoPorque || ''
+  };
+  const jaPreenchido = ['campoComportamento', 'campoPorque'].some(id => document.getElementById(id).value.trim()) || document.getElementById('campoComponente').value;
+  if (jaPreenchido && !confirm('Substituir o comportamento, o componente e o porquê já preenchidos pelos dados da Aula 2?')) return;
+  Object.keys(campos).forEach(id => {
+    const el = document.getElementById(id);
+    if (campos[id] || id !== 'campoEquipe') el.value = campos[id] || el.value;
+  });
+  if (comp) {
+    document.getElementById('campoComponente').value = comp;
+    onComponenteChange();
+  }
+  atualizarSintese();
+  VD.alterado();
+  VD.toast(comp ? 'Dados da Aula 2 trazidos: componente priorizado ' + COMPONENTE_NOME[comp] + '.' : 'Dados da Aula 2 trazidos. A Aula 2 ainda não tem um componente pontuado — selecione-o manualmente.');
+}
+
+/* ============ Estado: coletar / aplicar / resumo ============ */
+function coletar() {
+  return {
+    equipe: document.getElementById('campoEquipe').value,
+    comportamento: document.getElementById('campoComportamento').value,
+    componente: document.getElementById('campoComponente').value,
+    porque: document.getElementById('campoPorque').value,
+    funcoesSelecionadas: estado.funcoesSelecionadas.slice(),
+    scores: JSON.parse(JSON.stringify(estado.scores)),
+    east: JSON.parse(JSON.stringify(estado.east)),
+    politica: document.getElementById('campoPolitica').value,
+    politicaJust: document.getElementById('campoPoliticaJust').value,
+    descricao: document.getElementById('campoDescricao').value,
+    medicao: document.getElementById('campoMedicao').value,
+    errado: document.getElementById('campoErrado').value
+  };
+}
+
+function aplicar(d) {
+  d = d || {};
+  // compatível com arquivos .json da versão anterior (que guardavam tudo dentro de "estado")
+  const e = d.estado || {};
+  const val = (id, v) => { document.getElementById(id).value = v || ''; };
+  val('campoEquipe', d.equipe);
+  val('campoComportamento', d.comportamento);
+  val('campoComponente', MATRIZ[d.componente] ? d.componente : '');
+  val('campoPorque', d.porque);
+  val('campoPolitica', d.politica);
+  val('campoPoliticaJust', d.politicaJust);
+  val('campoDescricao', d.descricao);
+  val('campoMedicao', d.medicao);
+  val('campoErrado', d.errado);
+  estado = {
+    funcoesSelecionadas: (d.funcoesSelecionadas || e.funcoesSelecionadas || []).filter(f => FUNCOES.some(x => x.id === f)),
+    scores: JSON.parse(JSON.stringify(d.scores || e.scores || {})),
+    east: JSON.parse(JSON.stringify(d.east || e.east || {})),
+    campoComponente: document.getElementById('campoComponente').value
+  };
+  renderFuncoes();
+  renderEast();
+  atualizarSintese();
+}
+
+function resumo(d) {
+  const R = [];
+  R.push(['Identificação', 'Equipe / Área', d.equipe || '—']);
+  R.push(['Identificação', 'Comportamento-alvo em foco', d.comportamento || '—']);
+  R.push(['Identificação', 'Componente COM-B priorizado', COMPONENTE_NOME[d.componente] || '—']);
+  R.push(['Identificação', 'Porquê (evidências da Aula 2)', d.porque || '—']);
+  const sel = (d.funcoesSelecionadas || []).map(fid => FUNCOES.find(f => f.id === fid)).filter(Boolean);
+  R.push(['Passo 1 · Funções candidatas', 'Selecionadas', sel.length ? sel.map(f => f.nome + ' (' + f.en + ')').join('\n') : '—']);
+  sel.forEach(f => {
+    const sc = (d.scores || {})[f.id] || {};
+    const t = calcTotal(sc);
+    R.push(['Passo 2 · APEASE', f.nome, APEASE_LETRAS.map(c => APEASE_CURTO[c] + ' ' + (sc[c] === undefined || sc[c] === '' ? '–' : sc[c])).join(' · ') + ' = ' + t + '/18']);
+  });
+  const venc = rankingDe(d.funcoesSelecionadas, d.scores)[0];
+  R.push(['Passo 2 · APEASE', 'Função escolhida', venc ? venc.f.nome + ' (' + venc.total + '/18)' : '—']);
+  R.push(['Passo 3 · Política', 'Categoria', d.politica || '—']);
+  R.push(['Passo 3 · Política', 'Como viabiliza a função', d.politicaJust || '—']);
+  EAST.forEach(e => {
+    const x = (d.east || {})[e.id];
+    if (x && (x.marcado || (x.texto || '').trim())) {
+      R.push(['Passo 4 · EAST', e.nome + (x.marcado ? ' (aplicar)' : ' (não marcado)'), x.texto || '—']);
+    }
+  });
+  R.push(['Passo 5 · Síntese', 'O que será feito', d.descricao || '—']);
+  R.push(['Passo 5 · Síntese', 'Como vamos medir', d.medicao || '—']);
+  R.push(['Passo 5 · Síntese', 'Saberíamos que escolhemos errado se', d.errado || '—']);
+  return R;
+}
+
+/* ============ IMPRESSÃO ============ */
+function ajustarParaImpressao() {
+  if (document.querySelector('.impressao-caixa')) return;
+  document.querySelectorAll('textarea, select, input[type="text"]').forEach(el => {
+    if (el.closest('.modal-overlay') || el.closest('.vd-modal')) return;
+    const div = document.createElement('div');
+    div.className = 'impressao-caixa';
+    if (el.tagName === 'SELECT') {
+      const opt = el.options[el.selectedIndex];
+      div.textContent = opt && opt.value !== '' ? opt.text : '—';
+    } else {
+      div.textContent = (el.value && el.value.trim()) ? el.value : '—';
+    }
+    el.style.display = 'none';
+    el.insertAdjacentElement('afterend', div);
+  });
+  document.querySelectorAll('.east-body').forEach(b => b.style.maxHeight = 'none');
+}
+function restaurarAposImpressao() {
+  document.querySelectorAll('.impressao-caixa').forEach(div => div.remove());
+  document.querySelectorAll('textarea, select, input[type="text"]').forEach(el => { el.style.display = ''; });
+  document.querySelectorAll('.east-body').forEach(b => b.style.maxHeight = '');
+}
+function imprimirDocumento() { ajustarParaImpressao(); setTimeout(() => window.print(), 60); }
+window.addEventListener('beforeprint', ajustarParaImpressao);
+window.addEventListener('afterprint', restaurarAposImpressao);
+
+/* ============ CÓPIA DE SEGURANÇA ============ */
+function exportarJSON() {
+  const s = VD.sessao();
+  const dados = Object.assign({ ferramenta: 'aula3', nome: s ? s.nome : '', turma: s ? s.turma : '' }, coletar(), { exportadoEm: new Date().toISOString() });
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const nomeArq = (dados.nome || 'aula3').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g,'-');
+  a.href = url; a.download = `intervencao-bcw-east-${nomeArq}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importarJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (!confirm('Substituir as respostas atuais pelas do arquivo?')) return;
+      aplicar(dados);
+      ctl.salvarAgora();
+    } catch (err) {
+      alert('Não foi possível ler este arquivo. Verifique se é um .json exportado por esta mesma ferramenta.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+/* ============ MODAL ============ */
+function abrirModal(id) { document.getElementById(id).classList.add('aberto'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('aberto'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', (e) => { if (e.target === m) fecharModal(m.id); });
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.aberto').forEach(m => fecharModal(m.id)); });
+
+/* ============ Salvamento automático (planilha + navegador) ============ */
+const ctl = VD.ferramenta({
+  id: 'aula3',
+  titulo: 'Aula 3 · Da barreira à intervenção',
+  crumb: 'Aula 3 · Atividade',
+  coletar, aplicar, resumo
+});
+</script>
+</body>
+</html>

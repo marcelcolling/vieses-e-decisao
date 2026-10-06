@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conheça seus vieses: Ancoragem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#402C4F; --purple-deep:#2C1E37;
+  --navy:#455066; --navy-deep:#2E3646;
+  --paper:#FCFCFA; --paper-dim:#EFEEE7; --paper-line:rgba(64,44,79,0.14);
+  --amber:#EFB93C; --amber-ink:#5B4212;
+  --ink-on-dark:#FCFCFA; --dim-on-dark:rgba(252,252,250,0.7);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, sans-serif;
+  --sidebar-w:272px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:var(--font-body); background:var(--paper); color:var(--purple);
+  line-height:1.7; overflow-x:hidden; font-size:17px;
+}
+::selection{ background:var(--amber); color:var(--purple-deep); }
+a{ color:var(--purple); }
+:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; }
+
+/* ---------- PROGRESS BAR ---------- */
+#progress-bar{ position:fixed; top:0; left:0; height:3px; width:0%; background:var(--amber); z-index:1000; transition:width .1s linear; }
+
+/* ---------- SIDEBAR ---------- */
+#sidebar-toggle{
+  position:fixed; top:1.1rem; left:1rem; z-index:200; display:none;
+  background:var(--purple-deep); border:1px solid rgba(252,252,250,0.25);
+  color:var(--ink-on-dark); width:42px; height:42px; border-radius:10px;
+  cursor:pointer; align-items:center; justify-content:center; flex-direction:column; gap:4px;
+}
+#sidebar-toggle span{ display:block; width:18px; height:2px; background:var(--ink-on-dark); border-radius:2px; transition:transform .25s, opacity .25s; }
+#sidebar-toggle.active span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+#sidebar-toggle.active span:nth-child(2){ opacity:0; }
+#sidebar-toggle.active span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+#overlay{ display:none; position:fixed; inset:0; background:rgba(44,30,55,0.55); z-index:90; }
+
+#sidebar{
+  position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w);
+  background:var(--purple-deep); padding:2.2rem 0 2rem; z-index:100; overflow-y:auto;
+}
+.sidebar-badge{ display:flex; align-items:center; gap:0.6rem; padding:0 1.6rem 1.4rem; }
+.sidebar-badge .dot{ width:13px; height:13px; border-radius:50%; border:2px solid var(--amber); flex-shrink:0; }
+.sidebar-badge span{ font-family:var(--font-body); font-weight:700; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--dim-on-dark); }
+.sidebar-title{
+  font-family:var(--font-display); font-style:italic; font-weight:500; font-size:1.05rem;
+  color:var(--ink-on-dark); padding:0 1.6rem 1.3rem; border-bottom:1px solid rgba(252,252,250,0.14); margin-bottom:0.6rem;
+}
+.nav-item{
+  display:block; padding:0.6rem 1.6rem; color:var(--dim-on-dark); text-decoration:none;
+  font-size:0.87rem; font-weight:500; border-left:3px solid transparent;
+  transition:color .2s, background .2s, border-color .2s;
+}
+.nav-item:hover, .nav-item.active{ color:var(--ink-on-dark); background:rgba(252,252,250,0.06); border-left-color:var(--amber); }
+.nav-item.sub{ padding-left:2.6rem; font-size:0.82rem; }
+
+/* ---------- LAYOUT ---------- */
+.wrapper{ max-width:740px; margin:0 auto; padding:0 2rem 7rem; margin-left:calc(var(--sidebar-w) + 2vw); position:relative; }
+@media (max-width:980px){
+  #sidebar{ transform:translateX(-100%); transition:transform .4s cubic-bezier(.4,0,.2,1); }
+  #sidebar.open{ transform:translateX(0); }
+  #sidebar-toggle{ display:flex; }
+  .wrapper{ margin-left:auto; max-width:720px; padding:0 1.3rem 5rem; }
+}
+
+/* ---------- HERO ---------- */
+.hero{ padding:6rem 0 3.5rem; }
+.hero-tag{
+  display:inline-flex; align-items:center; gap:0.55rem; border:1px solid var(--paper-line);
+  border-radius:100px; padding:0.4rem 1rem 0.4rem 0.7rem; font-size:0.75rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); margin-bottom:2rem;
+}
+.hero-tag .dot{ width:9px; height:9px; border-radius:50%; background:var(--amber); }
+.hero h1{ font-family:var(--font-display); font-weight:700; font-size:clamp(2.8rem,7vw,4.6rem); line-height:1.03; color:var(--purple); }
+.hero-sub{ font-family:var(--font-display); font-style:italic; font-weight:400; font-size:clamp(1.15rem,2vw,1.4rem); color:var(--navy); max-width:34ch; margin-top:1.3rem; line-height:1.5; }
+.hero-meta{ display:flex; gap:2.4rem; flex-wrap:wrap; margin-top:2.8rem; padding-top:1.8rem; border-top:1px solid var(--paper-line); }
+.meta-item{ display:flex; flex-direction:column; gap:0.25rem; }
+.meta-label{ font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); opacity:0.7; }
+.meta-value{ font-size:0.92rem; font-weight:600; color:var(--purple); }
+
+/* ---------- SECTIONS ---------- */
+.section{ padding:3.6rem 0; border-top:1px solid var(--paper-line); opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+.section.in-view{ opacity:1; transform:translateY(0); }
+.section-eyebrow{ display:flex; align-items:center; gap:0.6rem; font-size:0.76rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber-ink); margin-bottom:0.9rem; }
+.section-eyebrow .dot{ width:8px; height:8px; border-radius:50%; border:2px solid var(--amber); }
+.section-title{ font-family:var(--font-display); font-weight:600; font-size:clamp(1.7rem,4vw,2.35rem); color:var(--purple); margin-bottom:1.3rem; line-height:1.15; }
+.section p{ font-size:1rem; color:var(--navy); line-height:1.8; margin-bottom:1.15rem; max-width:66ch; }
+.section p strong{ color:var(--purple); }
+.section h4.sub{ font-family:var(--font-display); font-weight:600; font-size:1.2rem; color:var(--purple); margin:1.6rem 0 0.7rem; }
+
+/* ---------- EXPERIMENTO (componente de assinatura) ---------- */
+.experiment{
+  background:var(--purple-deep); color:var(--ink-on-dark); border-radius:18px;
+  padding:2rem 2.1rem 2.2rem; margin:2rem 0; position:relative; overflow:hidden;
+}
+.experiment:before{ content:''; position:absolute; top:-40px; right:-40px; width:140px; height:140px; border-radius:50%; border:2px solid rgba(239,185,60,0.25); }
+.experiment-eyebrow{ font-size:0.74rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber); margin-bottom:0.7rem; }
+.experiment h4{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; margin-bottom:0.8rem; }
+.experiment p{ color:var(--dim-on-dark); font-size:0.94rem; max-width:none; }
+.experiment-prompt{ font-style:italic; color:var(--ink-on-dark); margin-top:1rem; }
+.reveal-btn{
+  margin-top:1.2rem; background:var(--amber); color:var(--amber-ink); border:none;
+  font-family:var(--font-body); font-weight:700; font-size:0.88rem; padding:0.7rem 1.3rem;
+  border-radius:8px; cursor:pointer; transition:transform .15s, background .15s;
+}
+.reveal-btn:hover{ background:#f5c968; transform:translateY(-1px); }
+.reveal-btn:disabled{ opacity:0.5; cursor:default; transform:none; }
+.reveal-result{
+  max-height:0; overflow:hidden; opacity:0; transition:max-height .5s ease, opacity .4s ease, margin-top .5s ease;
+}
+.reveal-result.open{ max-height:400px; opacity:1; margin-top:1.3rem; }
+.result-bars{ display:flex; gap:1.6rem; margin-top:1rem; }
+.result-bar-col{ display:flex; flex-direction:column; align-items:center; gap:0.5rem; flex:1; }
+.result-bar-track{ height:120px; width:100%; display:flex; align-items:flex-end; justify-content:center; }
+.result-bar{ width:100%; max-width:80px; background:var(--amber); border-radius:6px 6px 0 0; height:0; transition:height 1s cubic-bezier(.2,.8,.2,1); }
+.result-bar-label{ font-size:0.78rem; color:var(--dim-on-dark); text-align:center; }
+.result-bar-val{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; color:var(--ink-on-dark); }
+.result-note{ font-size:0.85rem; color:var(--dim-on-dark); border-top:1px solid rgba(252,252,250,0.14); padding-top:0.9rem; margin-top:1.1rem; }
+
+/* ---------- MECANISMO: DUAS COLUNAS ---------- */
+.mech-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin:1.6rem 0 2rem; }
+@media (max-width:680px){ .mech-grid{ grid-template-columns:1fr; } }
+.mech-card{ background:var(--paper-dim); border:1px solid var(--paper-line); border-radius:14px; padding:1.5rem 1.6rem; }
+.mech-card .mech-icon{ width:38px; height:38px; border-radius:50%; border:2px solid var(--navy); display:flex; align-items:center; justify-content:center; margin-bottom:0.9rem; }
+.mech-card h5{ font-family:var(--font-display); font-weight:600; font-size:1.08rem; color:var(--purple); margin-bottom:0.5rem; }
+.mech-card p{ font-size:0.9rem; color:var(--navy); max-width:none; margin-bottom:0; }
+
+/* ---------- QUATRO LENTES (abas) ---------- */
+.lens-tabs{ display:flex; gap:0.6rem; flex-wrap:wrap; margin:1.6rem 0 0; }
+.lens-btn{
+  display:flex; align-items:center; gap:0.55rem; font-family:var(--font-body); font-weight:700;
+  font-size:0.86rem; padding:0.65rem 1.1rem 0.65rem 0.7rem; background:var(--paper); border:1.5px solid var(--paper-line);
+  color:var(--navy); border-radius:100px; cursor:pointer; transition:border-color .15s, background .15s, color .15s;
+}
+.lens-btn .lens-icon{ width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--paper-dim); flex-shrink:0; }
+.lens-btn:hover{ border-color:var(--navy); }
+.lens-btn.active{ background:var(--purple); border-color:var(--purple); color:var(--paper); }
+.lens-btn.active .lens-icon{ background:rgba(252,252,250,0.15); }
+.lens-panels{ margin-top:1.5rem; }
+.lens-panel{ display:none; animation:fadeUp .4s ease; }
+.lens-panel.active{ display:block; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.lens-panel p{ font-size:1rem; }
+
+/* ---------- MÉTODOS ---------- */
+.methods-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:1.6rem; }
+@media (max-width:780px){ .methods-grid{ grid-template-columns:1fr; } }
+.method-col{ border-radius:16px; padding:1.7rem 1.8rem; }
+.method-col.defend{ background:var(--paper-dim); border:1px solid var(--paper-line); }
+.method-col.ethical{ background:var(--navy-deep); color:var(--ink-on-dark); }
+.method-col h4{ font-family:var(--font-display); font-weight:600; font-size:1.2rem; margin-bottom:0.3rem; }
+.method-col.defend h4{ color:var(--purple); }
+.method-col.ethical h4{ color:var(--ink-on-dark); }
+.method-col .method-eyebrow{ font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; }
+.method-col.defend .method-eyebrow{ color:var(--amber-ink); }
+.method-col.ethical .method-eyebrow{ color:var(--amber); }
+.method-item{ margin-top:1.1rem; padding-top:1.1rem; border-top:1px dashed rgba(64,44,79,0.18); }
+.method-col.ethical .method-item{ border-top-color:rgba(252,252,250,0.16); }
+.method-item:first-of-type{ border-top:none; margin-top:1rem; padding-top:0; }
+.method-item h5{ font-family:var(--font-body); font-weight:700; font-size:0.92rem; margin-bottom:0.35rem; }
+.method-col.defend .method-item h5{ color:var(--purple); }
+.method-col.ethical .method-item h5{ color:var(--ink-on-dark); }
+.method-item p{ font-size:0.88rem; margin-bottom:0; max-width:none; }
+.method-col.defend .method-item p{ color:var(--navy); }
+.method-col.ethical .method-item p{ color:var(--dim-on-dark); }
+
+/* ---------- ATENÇÃO (avisos) ---------- */
+.callout{
+  display:flex; gap:1rem; background:var(--paper-dim); border:1px solid var(--paper-line);
+  border-left:4px solid var(--amber); border-radius:0 12px 12px 0; padding:1.2rem 1.5rem; margin:1.6rem 0;
+}
+.callout-text{ font-size:0.92rem; color:var(--navy); line-height:1.65; }
+.callout-text strong{ color:var(--purple); }
+
+/* ---------- PERGUNTAS PARA A PRÁTICA ---------- */
+.reflexao-grid{ display:flex; flex-direction:column; gap:1.1rem; margin-top:1.6rem; }
+.reflexao-item{ background:var(--paper-dim); border:1px solid var(--paper-line); border-radius:14px; padding:1.4rem 1.6rem; }
+.reflexao-top{ display:flex; gap:1.1rem; }
+.reflexao-num{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; color:var(--amber-ink); opacity:0.55; flex-shrink:0; }
+.reflexao-top p{ font-size:0.96rem; color:var(--purple); margin-bottom:0; }
+.reflexao-note{
+  margin-top:0.9rem; margin-left:2.7rem; border:1.5px dashed var(--navy); border-radius:10px;
+  padding:0.8rem 1rem; min-height:60px; font-size:0.9rem; color:var(--purple); background:var(--paper);
+}
+.reflexao-note:empty:before{ content:'Clique aqui e escreva sua resposta...'; color:var(--navy); opacity:0.6; font-style:italic; }
+
+/* ---------- REFERÊNCIAS ---------- */
+.ref-list{ list-style:none; margin-top:1rem; }
+.ref-list li{ font-size:0.87rem; color:var(--navy); padding:0.85rem 0; border-bottom:1px solid var(--paper-line); display:flex; gap:1rem; }
+.ref-list li:last-child{ border-bottom:none; }
+.ref-num{ color:var(--amber-ink); font-weight:700; font-size:0.8rem; flex-shrink:0; }
+.ref-list em{ color:var(--purple); }
+
+#back-to-top{
+  position:fixed; bottom:2rem; right:2rem; width:46px; height:46px; background:var(--purple);
+  border:none; border-radius:12px; color:var(--paper); font-size:1.2rem; cursor:pointer;
+  display:none; align-items:center; justify-content:center; z-index:100; box-shadow:0 10px 30px -8px rgba(44,30,55,0.5);
+}
+#back-to-top:hover{ background:var(--purple-deep); }
+
+@media (prefers-reduced-motion: reduce){
+  .section, .reveal-result, .result-bar{ transition:none !important; }
+  .lens-panel{ animation:none !important; }
+}
+</style>
+<!-- portal-vd -->
+<link rel="stylesheet" href="../assets/css/portal.css">
+<style>
+  .nav-item.vd-voltar{ color:var(--amber); font-weight:600; }
+  @media print{
+    .section{ opacity:1 !important; transform:none !important; }
+    #sidebar, #sidebar-toggle, #overlay, #progress-bar, #back-to-top{ display:none !important; }
+    .wrapper{ margin:0 auto !important; }
+    .lens-panel{ display:block !important; }
+    .reveal-result{ max-height:none !important; opacity:1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<button id="sidebar-toggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+<div id="overlay"></div>
+
+<nav id="sidebar">
+  <div class="sidebar-badge"><span class="dot"></span><span>Conheça seus vieses · 01</span></div>
+  <div class="sidebar-title">Ancoragem</div>
+  <a class="nav-item vd-voltar" href="../index.html">← Voltar ao portal</a>
+  <a class="nav-item" href="#intro">Início</a>
+  <a class="nav-item" href="#o-que-e">O que é o viés</a>
+  <a class="nav-item" href="#como-funciona">Como funciona</a>
+  <a class="nav-item" href="#quatro-lentes">Onde aparece</a>
+  <a class="nav-item sub" href="#quatro-lentes">→ Líder, equipe, clientes</a>
+  <a class="nav-item" href="#metodos">Métodos</a>
+  <a class="nav-item sub" href="#metodos">→ Defesa e uso ético</a>
+  <a class="nav-item" href="#pratica">Perguntas para a prática</a>
+  <a class="nav-item" href="#referencias">Referências</a>
+</nav>
+
+<main class="wrapper">
+
+  <section class="hero" id="intro">
+    <div class="hero-tag"><span class="dot"></span>Conheça seus vieses · Ancoragem</div>
+    <h1>Por que comparamos<br>tudo com o primeiro<br>número que ouvimos</h1>
+    <p class="hero-sub">Material de leitura e referência sobre o viés cognitivo mais estudado da economia comportamental.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-label">Tempo de leitura</span><span class="meta-value">12 min</span></div>
+      <div class="meta-item"><span class="meta-label">Base teórica</span><span class="meta-value">Tversky &amp; Kahneman, 1974</span></div>
+      <div class="meta-item"><span class="meta-label">Aplicação</span><span class="meta-value">Liderança de equipes</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="o-que-e">
+    <div class="section-eyebrow"><span class="dot"></span>O que é</div>
+    <h2 class="section-title">O viés de ancoragem</h2>
+    <p>A ancoragem é a tendência de depender demais da primeira informação recebida sobre um assunto ao fazer uma estimativa ou julgamento logo em seguida. Essa primeira informação é a sua "âncora". Nós calibramos a resposta em relação a esse ponto de partida ao invés de avaliar a nova pergunta de forma independente. O ajuste que fazemos a partir dele normalmente é insuficiente.</p>
+    <p>O conceito apareceu em 1974, em um artigo de Amos Tversky e Daniel Kahneman que se tornaria um dos mais citados da psicologia moderna.</p>
+
+    <div class="experiment" id="exp-roleta">
+      <div class="experiment-eyebrow">O experimento original</div>
+      <h4>A roleta viciada</h4>
+      <p>Pesquisadores giravam uma roleta manipulada para parar sempre em <strong style="color:var(--ink-on-dark)">10</strong> ou em <strong style="color:var(--ink-on-dark)">65</strong>, na frente dos participantes, e perguntavam em seguida qual seria o percentual de países africanos entre os membros das Nações Unidas.</p>
+      <p class="experiment-prompt">O número da roleta não tinha relação nenhuma com a pergunta. Antes de continuar: você acha que ele influenciou a resposta das pessoas?</p>
+      <button class="reveal-btn" data-target="result-roleta">Ver o resultado</button>
+      <div class="reveal-result" id="result-roleta">
+        <div class="result-bars">
+          <div class="result-bar-col"><div class="result-bar-track"><div class="result-bar" data-height="25"></div></div><div class="result-bar-val">25%</div><div class="result-bar-label">Roleta parou em 10</div></div>
+          <div class="result-bar-col"><div class="result-bar-track"><div class="result-bar" data-height="45"></div></div><div class="result-bar-val">45%</div><div class="result-bar-label">Roleta parou em 65</div></div>
+        </div>
+        <p class="result-note">Estimativa média do percentual de países africanos na ONU, conforme o número visto na roleta. Uma diferença de mais de 15 pontos percentuais, gerada por um número aleatório e irrelevante.</p>
+      </div>
+    </div>
+
+    <p>O que torna esse viés particularmente difícil de neutralizar é que nem sempre é preciso acreditar na âncora, nem que ela venha de uma fonte confiável, para ser afetado por ela. Ela simplesmente acontece!</p>
+  </section>
+
+  <section class="section" id="como-funciona">
+    <div class="section-eyebrow"><span class="dot"></span>O mecanismo</div>
+    <h2 class="section-title">Como a ancoragem funciona</h2>
+    <p>Existem, na verdade, dois mecanismos diferentes por trás do mesmo efeito, dependendo de onde vem a âncora.</p>
+
+    <div class="mech-grid">
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></div>
+        <h5>Âncora autogerada</h5>
+        <p>Quando a pessoa parte de um valor que ela mesma lembra (como usar 1500 para tentar situar outra data histórica), ela de fato ajusta a partir daí, só que para muito pouco, parando assim que chega à borda mais próxima de uma faixa plausível. Descrito por Nicholas Epley e Thomas Gilovich.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="5"/></svg></div>
+        <h5>Âncora externa</h5>
+        <p>Quando o número vem de fora. (Por exemplo: de um vendedor, um preço já impresso, uma sugestão de terceiro). A mente busca automaticamente informações compatíveis com ele. Essa <strong>acessibilidade seletiva</strong>, descrita por Fritz Strack e Thomas Mussweiler, pesa na resposta sem ajuste deliberado.</p>
+      </div>
+    </div>
+
+    <p>Na prática, mesmo sabendo que a âncora é arbitrária, irrelevante ou obviamente absurda, a estimativa continua sendo puxada na direção dela. Inclusive entre pessoas que deveriam estar mais protegidas do erro por treino e experiência profissional.</p>
+
+    <h4 class="sub">Nem a experiência protege</h4>
+    <p>Gregory Northcraft e Margaret Neale (1987) levaram corretores de imóveis experientes e estudantes para visitar o mesmo imóvel, cada grupo vendo uma placa de preço de listagem manipulada, e pediram uma avaliação de valor justo. Corretores e estudantes tiveram a avaliação puxada de forma estatisticamente idêntica. Ou seja, o treino profissional não reduziu o efeito. O detalhe mais interessante: quando perguntados quais fatores haviam considerado, só 19% dos corretores mencionaram o preço de listagem, contra 37% dos estudantes. No fim das contas, os profissionais estavam menos conscientes de que a âncora havia operado.</p>
+
+    <div class="experiment" id="exp-juizes">
+      <div class="experiment-eyebrow">Evidência com especialistas</div>
+      <h4>Juízes jogando dados</h4>
+      <p>Birte Englich, Thomas Mussweiler e Fritz Strack (2006) pediram a juízes alemães experientes que decidissem uma sentença criminal depois de receber um número aleatório. Em uma das rodadas, os próprios juízes jogaram o dado que gerou o número, na frente dos pesquisadores.</p>
+      <p class="experiment-prompt">Mesmo sabendo, com certeza absoluta, que o número era aleatório: você acha que a sentença variou de acordo com o valor do dado?</p>
+      <button class="reveal-btn" data-target="result-juizes">Ver o resultado</button>
+      <div class="reveal-result" id="result-juizes">
+        <p style="color:var(--ink-on-dark);font-size:0.98rem;">Sim. Juízes que tiraram um número alto no dado deram sentenças mais longas do que juízes que tiraram um número baixo, mesmo tendo jogado o dado com as próprias mãos.</p>
+        <p class="result-note">"Sentenças judiciais deveriam ser guiadas por fatos, não pelo acaso", escrevem os autores. E, ainda assim, não foram. Nem a experiência, nem a formação jurídica reduziram o efeito.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="quatro-lentes">
+    <div class="section-eyebrow"><span class="dot"></span>Onde aparece</div>
+    <h2 class="section-title">Quatro lentes</h2>
+    <p>Todos estamos sujeitos à ancoragem. Ela aparece na cabeça de quem decide, de quem executa, e de quem está do outro lado de qualquer negociação. Clique em cada lente.</p>
+
+    <div class="lens-tabs" id="lens-tabs">
+      <button class="lens-btn active" data-lens="lider"><span class="lens-icon">👤</span> Quem lidera</button>
+      <button class="lens-btn" data-lens="equipe"><span class="lens-icon">👥</span> Equipe</button>
+      <button class="lens-btn" data-lens="externo"><span class="lens-icon">🛒</span> Cliente externo</button>
+      <button class="lens-btn" data-lens="interno"><span class="lens-icon">🏢</span> Cliente interno</button>
+    </div>
+
+    <div class="lens-panels">
+      <div class="lens-panel active" id="lens-lider">
+        <p>Um gestor que abre uma reunião de orçamento perguntando "dá pra fazer com R$ 200 mil?" já ancorou toda a discussão que vem a seguir, mesmo que a pergunta tenha sido feita apenas para "ter um ponto de partida". A equipe vai orbitar em torno desse número, em vez de calcular de forma independente o que o projeto realmente custaria.</p>
+        <p>O mesmo padrão aparece na definição de metas: um gestor que estabelece o crescimento do próximo ano ancorado apenas no crescimento do ano anterior ("fizemos 8%, vamos tentar 10%") está deixando o histórico decidir o teto da ambição, em vez de avaliar de forma independente o potencial real daquele momento.</p>
+        <p>Um terceiro exemplo: aceitar a primeira proposta de um fornecedor como referência de mercado. A pesquisa de Adam Galinsky e Thomas Mussweiler (2001) sobre negociação mostra que quem faz a primeira oferta tende a levar vantagem, porque a outra parte passa a negociar em torno daquele número, e não do próprio ponto de reserva.</p>
+      </div>
+      <div class="lens-panel" id="lens-equipe">
+        <p>Estimativas de prazo são o terreno mais fértil para a ancoragem dentro de uma equipe. A "falácia do planejamento" (quando subestimamos quanto tempo um projeto vai levar) tem a ancoragem como um dos motores: se o projeto parecido anterior levou três meses, o novo tende a ser estimado em torno de três meses, mesmo com escopo bem maior.</p>
+        <p>Avaliações de desempenho sofrem de um problema parecido, ao longo do tempo: a primeira nota formal recebida por um funcionário tende a ancorar as avaliações seguintes, mesmo diante de mudanças reais e visíveis de desempenho.</p>
+        <p>E há o exemplo mais pessoal: candidatos que revelam o salário atual durante uma negociação tendem a receber ofertas mais próximas desse valor, independentemente do que valem no mercado para o novo cargo.</p>
+      </div>
+      <div class="lens-panel" id="lens-externo">
+        <p>A etiqueta clássica "de R$ 800 por R$ 300" fornece uma âncora (R$ 800) que faz R$ 300 parecer uma pechincha, mesmo que R$ 800 nunca tenha sido, de fato, um preço praticado. Planos de assinatura que listam a opção mais cara primeiro fazem o plano intermediário parecer mais razoável só por comparação.</p>
+        <div class="experiment" id="exp-ssn" style="margin-top:1.6rem;">
+          <div class="experiment-eyebrow">O experimento mais citado da área</div>
+          <h4>Os dois últimos dígitos do seu documento</h4>
+          <p>Dan Ariely, George Loewenstein e Drazen Prelec (2003) pediram a um grupo de estudantes que escrevesse os dois últimos dígitos do próprio número de identificação social antes de decidir quanto pagariam por vinho, chocolate e teclados de computador.</p>
+          <p class="experiment-prompt">Um número que não tem nenhuma relação com o valor de nada. Você acha que ele influenciou o quanto os estudantes se dispuseram a pagar?</p>
+          <button class="reveal-btn" data-target="result-ssn">Ver o resultado</button>
+          <div class="reveal-result" id="result-ssn">
+            <p style="color:var(--ink-on-dark);font-size:0.98rem;">Sim. Estudantes com dígitos finais altos ofereceram valores consistentemente mais altos do que estudantes com dígitos finais baixos para os mesmos produtos, vistos pelas mesmas pessoas, no mesmo momento.</p>
+            <p class="result-note">Os próprios autores batizaram o fenômeno de "arbitrariedade coerente": a valoração nasce de um número aleatório, mas, uma vez ancorada, se comporta de forma consistente. Isso dá a falsa impressão de refletir uma preferência estável. O efeito não diminuiu com a experiência dos participantes com o produto.</p>
+          </div>
+        </div>
+      </div>
+      <div class="lens-panel" id="lens-interno">
+        <p>Esse é o contexto é um contexto que não envolve necessariamente dinheiro trocando de mãos, mas opera exatamente do mesmo jeito. Quando uma área interna pede um serviço a outra ("preciso disso até sexta, dá pra fazer?"), o prazo mencionado na primeira conversa, ainda que informal, tende a se tornar o padrão contra o qual toda entrega futura será julgada.</p>
+        <p>O mesmo vale para precedentes internos: se uma área de tecnologia atendeu um pedido excepcionalmente rápido uma vez, esse atendimento vira a âncora implícita de expectativa para os pedidos seguinte, mesmo quando as circunstâncias que permitiram a rapidez daquela vez não existem mais.</p>
+        <p>Orçamentos internos entre departamentos seguem o mesmo roteiro dos orçamentos com fornecedores externos: a primeira cifra pedida por uma área, ainda que estimada às pressas, tende a ancorar toda a negociação de aprovação que vem a seguir dentro do próprio comitê financeiro da empresa.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="metodos">
+    <div class="section-eyebrow"><span class="dot"></span>O que fazer com isso</div>
+    <h2 class="section-title">Métodos para lidar com a ancoragem</h2>
+
+    <div class="callout">
+      <div class="callout-text">A má notícia, documentada desde os anos 1980: <strong>simplesmente avisar alguém para "não se deixar ancorar" não funciona.</strong> Um experimento de George Quattrone e colegas mostrou que instruir participantes explicitamente para evitar o viés não reduziu o efeito. Neste caso, conhecer o viés não não vai te proteger dele. É preciso mudar o processo da decisão.</div>
+    </div>
+
+    <div class="methods-grid">
+      <div class="method-col defend">
+        <div class="method-eyebrow">Para se proteger</div>
+        <h4>Defesa</h4>
+        <div class="method-item">
+          <h5>Considere o oposto</h5>
+          <p>Antes de aceitar uma âncora, gere deliberadamente razões pelas quais o valor real poderia estar bem mais baixo ou bem mais alto do que ela sugere. A técnica com melhor sustentação experimental (Mussweiler, Strack &amp; Pfeiffer, 2000).</p>
+        </div>
+        <div class="method-item">
+          <h5>Estime antes de ver o número</h5>
+          <p>Gerar a própria estimativa antes de ver o orçamento do fornecedor, a oferta salarial ou o prazo sugerido dá uma base de comparação independente.</p>
+        </div>
+        <div class="method-item">
+          <h5>Revele estimativas em sigilo</h5>
+          <p>O planning poker, comum em equipes ágeis, revela todas as estimativas ao mesmo tempo para que a primeira opinião não vire âncora coletiva.</p>
+        </div>
+        <div class="method-item">
+          <h5>Busque múltiplas referências</h5>
+          <p>Várias cotações, várias faixas salariais, mais de uma avaliação são formas de reduzir o peso de qualquer âncora isolada.</p>
+        </div>
+      </div>
+      <div class="method-col ethical">
+        <div class="method-eyebrow">Para usar bem</div>
+        <h4>Uso ético</h4>
+        <div class="method-item">
+          <h5>Valores sugeridos com honestidade</h5>
+          <p>A Charity: Water documentou um aumento substancial na doação média só por trocar o texto de sugestão de "$20" para "$60" (sem alterar a taxa de conversão). A diferença entre ético e manipulador está na calibragem: sugerir um valor plausível, não inflar uma âncora artificial.</p>
+        </div>
+        <div class="method-item">
+          <h5>Metas específicas e ambiciosas</h5>
+          <p>A pesquisa de Edwin Locke e Gary Latham sobre definição de metas mostra que um número concreto e desafiador funciona como âncora positiva para o esforço de toda a equipe, desde que seja alcançável.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pratica">
+    <div class="section-eyebrow"><span class="dot"></span>Para levar com você</div>
+    <h2 class="section-title">Perguntas para a prática</h2>
+    <div class="reflexao-grid">
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">01</div><p>Pense na última negociação que você fez (salário, fornecedor, prazo interno). Quem disse o primeiro número? Quanto esse número específico moveu o resultado final?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">02</div><p>Existe, na sua rotina de gestão, algum "primeiro número" que você costuma soltar antes de pedir uma estimativa independente da equipe? O que mudaria se você invertesse essa ordem?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">03</div><p>Pense em um pedido recorrente que sua área faz a outra equipe interna. Existe um precedente antigo funcionando como âncora, mesmo que as condições que o originaram já não existam mais?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">04</div><p>Escolha uma meta que você vai definir em breve para sua equipe. Como formular um número específico e desafiador, sem que ele se torne inalcançável?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="referencias">
+    <div class="section-eyebrow"><span class="dot"></span>Fontes</div>
+    <h2 class="section-title">Referências</h2>
+    <ul class="ref-list">
+      <li><span class="ref-num">01</span><span>Ariely, D., Loewenstein, G., &amp; Prelec, D. (2003). "Coherent Arbitrariness". <em>Quarterly Journal of Economics</em>, 118(1), 73–105.</span></li>
+      <li><span class="ref-num">02</span><span>Englich, B., Mussweiler, T., &amp; Strack, F. (2006). "Playing Dice With Criminal Sentences". <em>Personality and Social Psychology Bulletin</em>, 32(2), 188–200.</span></li>
+      <li><span class="ref-num">03</span><span>Epley, N., &amp; Gilovich, T. (2006). "The Anchoring-and-Adjustment Heuristic". <em>Psychological Science</em>, 17(4), 311–318.</span></li>
+      <li><span class="ref-num">04</span><span>Galinsky, A. D., &amp; Mussweiler, T. (2001). "First Offers as Anchors". <em>Journal of Personality and Social Psychology</em>, 81(4), 657–669.</span></li>
+      <li><span class="ref-num">05</span><span>Locke, E. A., &amp; Latham, G. P. (2002). "Building a Practically Useful Theory of Goal Setting and Task Motivation". <em>American Psychologist</em>, 57(9), 705–717.</span></li>
+      <li><span class="ref-num">06</span><span>Mussweiler, T., Strack, F., &amp; Pfeiffer, T. (2000). "Overcoming the Inevitable Anchoring Effect". <em>Personality and Social Psychology Bulletin</em>, 26(9), 1142–1150.</span></li>
+      <li><span class="ref-num">07</span><span>Northcraft, G. B., &amp; Neale, M. A. (1987). "Experts, Amateurs, and Real Estate". <em>Organizational Behavior and Human Decision Processes</em>, 39(1), 84–97.</span></li>
+      <li><span class="ref-num">08</span><span>Quattrone, G. A. et al. (1981). Estudo sobre a ineficácia de instruções diretas para evitar o viés de ancoragem.</span></li>
+      <li><span class="ref-num">09</span><span>Strack, F., &amp; Mussweiler, T. (1997). "Explaining the Enigmatic Anchoring Effect". <em>Journal of Personality and Social Psychology</em>, 73(3), 437–446.</span></li>
+      <li><span class="ref-num">10</span><span>Tversky, A., &amp; Kahneman, D. (1974). "Judgment Under Uncertainty: Heuristics and Biases". <em>Science</em>, 185(4157), 1124–1131.</span></li>
+      <li><span class="ref-num">11</span><span>The Decision Lab. "Anchoring Bias". thedecisionlab.com</span></li>
+    </ul>
+  </section>
+
+</main>
+
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">&#8593;</button>
+
+<script>
+  // barra de progresso + scrollspy + back-to-top
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('back-to-top').style.display = window.scrollY > 500 ? 'flex' : 'none';
+    const sections = document.querySelectorAll('section[id]');
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+    document.querySelectorAll('.nav-item').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+  });
+
+  // sidebar off-canvas (mobile)
+  const toggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  toggle.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open');
+    toggle.classList.toggle('active', open);
+    overlay.style.display = open ? 'block' : 'none';
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open'); toggle.classList.remove('active'); overlay.style.display = 'none';
+  });
+  sidebar.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    sidebar.classList.remove('open'); toggle.classList.remove('active'); overlay.style.display = 'none';
+  }));
+
+  // reveal de seções ao rolar (com fallback se o navegador não suportar)
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.section').forEach(s => io.observe(s));
+  } else {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('in-view'));
+  }
+
+  // experimentos: revelar resultado + animar barras
+  document.querySelectorAll('.reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      target.classList.add('open');
+      btn.disabled = true;
+      btn.textContent = 'Resultado revelado';
+      target.querySelectorAll('.result-bar').forEach(bar => {
+        const h = parseInt(bar.dataset.height, 10);
+        requestAnimationFrame(() => { bar.style.height = h + '%'; });
+      });
+    });
+  });
+
+  // quatro lentes (abas)
+  const lensTabs = document.getElementById('lens-tabs');
+  lensTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.lens-btn');
+    if(!btn) return;
+    const key = btn.dataset.lens;
+    lensTabs.querySelectorAll('.lens-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.lens-panel').forEach(p => p.classList.toggle('active', p.id === 'lens-' + key));
+  });
+</script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/portal.js"></script>
+<script>VD.notas({ id: 'vies-ancoragem', titulo: 'Conheça seus vieses · Ancoragem' });</script>
+</body>
+</html>

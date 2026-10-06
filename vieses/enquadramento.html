@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conheça seus vieses: Efeito de Enquadramento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#402C4F; --purple-deep:#2C1E37;
+  --navy:#455066; --navy-deep:#2E3646;
+  --paper:#FCFCFA; --paper-dim:#EFEEE7; --paper-line:rgba(64,44,79,0.14);
+  --amber:#EFB93C; --amber-ink:#5B4212;
+  --ink-on-dark:#FCFCFA; --dim-on-dark:rgba(252,252,250,0.7);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, sans-serif;
+  --sidebar-w:272px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:var(--font-body); background:var(--paper); color:var(--purple);
+  line-height:1.7; overflow-x:hidden; font-size:17px;
+}
+::selection{ background:var(--amber); color:var(--purple-deep); }
+a{ color:var(--purple); }
+:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; }
+
+/* ---------- PROGRESS BAR ---------- */
+#progress-bar{ position:fixed; top:0; left:0; height:3px; width:0%; background:var(--amber); z-index:1000; transition:width .1s linear; }
+
+/* ---------- SIDEBAR ---------- */
+#sidebar-toggle{
+  position:fixed; top:1.1rem; left:1rem; z-index:200; display:none;
+  background:var(--purple-deep); border:1px solid rgba(252,252,250,0.25);
+  color:var(--ink-on-dark); width:42px; height:42px; border-radius:10px;
+  cursor:pointer; align-items:center; justify-content:center; flex-direction:column; gap:4px;
+}
+#sidebar-toggle span{ display:block; width:18px; height:2px; background:var(--ink-on-dark); border-radius:2px; transition:transform .25s, opacity .25s; }
+#sidebar-toggle.active span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+#sidebar-toggle.active span:nth-child(2){ opacity:0; }
+#sidebar-toggle.active span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+#overlay{ display:none; position:fixed; inset:0; background:rgba(44,30,55,0.55); z-index:90; }
+
+#sidebar{
+  position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w);
+  background:var(--purple-deep); padding:2.2rem 0 2rem; z-index:100; overflow-y:auto;
+}
+.sidebar-badge{ display:flex; align-items:center; gap:0.6rem; padding:0 1.6rem 1.4rem; }
+.sidebar-badge .dot{ width:13px; height:13px; border-radius:50%; border:2px solid var(--amber); flex-shrink:0; }
+.sidebar-badge span{ font-family:var(--font-body); font-weight:700; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--dim-on-dark); }
+.sidebar-title{
+  font-family:var(--font-display); font-style:italic; font-weight:500; font-size:1.05rem;
+  color:var(--ink-on-dark); padding:0 1.6rem 1.3rem; border-bottom:1px solid rgba(252,252,250,0.14); margin-bottom:0.6rem;
+}
+.nav-item{
+  display:block; padding:0.6rem 1.6rem; color:var(--dim-on-dark); text-decoration:none;
+  font-size:0.87rem; font-weight:500; border-left:3px solid transparent;
+  transition:color .2s, background .2s, border-color .2s;
+}
+.nav-item:hover, .nav-item.active{ color:var(--ink-on-dark); background:rgba(252,252,250,0.06); border-left-color:var(--amber); }
+.nav-item.sub{ padding-left:2.6rem; font-size:0.82rem; }
+
+/* ---------- LAYOUT ---------- */
+.wrapper{ max-width:740px; margin:0 auto; padding:0 2rem 7rem; margin-left:calc(var(--sidebar-w) + 2vw); position:relative; }
+@media (max-width:980px){
+  #sidebar{ transform:translateX(-100%); transition:transform .4s cubic-bezier(.4,0,.2,1); }
+  #sidebar.open{ transform:translateX(0); }
+  #sidebar-toggle{ display:flex; }
+  .wrapper{ margin-left:auto; max-width:720px; padding:0 1.3rem 5rem; }
+}
+
+/* ---------- HERO ---------- */
+.hero{ padding:6rem 0 3.5rem; }
+.hero-tag{
+  display:inline-flex; align-items:center; gap:0.55rem; border:1px solid var(--paper-line);
+  border-radius:100px; padding:0.4rem 1rem 0.4rem 0.7rem; font-size:0.75rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); margin-bottom:2rem;
+}
+.hero-tag .dot{ width:9px; height:9px; border-radius:50%; background:var(--amber); }
+.hero h1{ font-family:var(--font-display); font-weight:700; font-size:clamp(2.8rem,7vw,4.6rem); line-height:1.03; color:var(--purple); }
+.hero-sub{ font-family:var(--font-display); font-style:italic; font-weight:400; font-size:clamp(1.15rem,2vw,1.4rem); color:var(--navy); max-width:34ch; margin-top:1.3rem; line-height:1.5; }
+.hero-meta{ display:flex; gap:2.4rem; flex-wrap:wrap; margin-top:2.8rem; padding-top:1.8rem; border-top:1px solid var(--paper-line); }
+.meta-item{ display:flex; flex-direction:column; gap:0.25rem; }
+.meta-label{ font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); opacity:0.7; }
+.meta-value{ font-size:0.92rem; font-weight:600; color:var(--purple); }
+
+/* ---------- SECTIONS ---------- */
+.section{ padding:3.6rem 0; border-top:1px solid var(--paper-line); opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+.section.in-view{ opacity:1; transform:translateY(0); }
+.section-eyebrow{ display:flex; align-items:center; gap:0.6rem; font-size:0.76rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber-ink); margin-bottom:0.9rem; }
+.section-eyebrow .dot{ width:8px; height:8px; border-radius:50%; border:2px solid var(--amber); }
+.section-title{ font-family:var(--font-display); font-weight:600; font-size:clamp(1.7rem,4vw,2.35rem); color:var(--purple); margin-bottom:1.3rem; line-height:1.15; }
+.section p{ font-size:1rem; color:var(--navy); line-height:1.8; margin-bottom:1.15rem; max-width:66ch; }
+.section p strong{ color:var(--purple); }
+.section h4.sub{ font-family:var(--font-display); font-weight:600; font-size:1.2rem; color:var(--purple); margin:1.6rem 0 0.7rem; }
+
+/* ---------- EXPERIMENTO (componente de assinatura) ---------- */
+.experiment{
+  background:var(--purple-deep); color:var(--ink-on-dark); border-radius:18px;
+  padding:2rem 2.1rem 2.2rem; margin:2rem 0; position:relative; overflow:hidden;
+}
+.experiment:before{ content:''; position:absolute; top:-40px; right:-40px; width:140px; height:140px; border-radius:50%; border:2px solid rgba(239,185,60,0.25); }
+.experiment-eyebrow{ font-size:0.74rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber); margin-bottom:0.7rem; }
+.experiment h4{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; margin-bottom:0.8rem; }
+.experiment p{ color:var(--dim-on-dark); font-size:0.94rem; max-width:none; }
+.experiment-prompt{ font-style:italic; color:var(--ink-on-dark); margin-top:1rem; }
+.reveal-btn{
+  margin-top:1.2rem; background:var(--amber); color:var(--amber-ink); border:none;
+  font-family:var(--font-body); font-weight:700; font-size:0.88rem; padding:0.7rem 1.3rem;
+  border-radius:8px; cursor:pointer; transition:transform .15s, background .15s;
+}
+.reveal-btn:hover{ background:#f5c968; transform:translateY(-1px); }
+.reveal-btn:disabled{ opacity:0.5; cursor:default; transform:none; }
+.reveal-result{
+  max-height:0; overflow:hidden; opacity:0; transition:max-height .5s ease, opacity .4s ease, margin-top .5s ease;
+}
+.reveal-result.open{ max-height:400px; opacity:1; margin-top:1.3rem; }
+.result-bars{ display:flex; gap:1.6rem; margin-top:1rem; }
+.result-bar-col{ display:flex; flex-direction:column; align-items:center; gap:0.5rem; flex:1; }
+.result-bar-track{ height:120px; width:100%; display:flex; align-items:flex-end; justify-content:center; }
+.result-bar{ width:100%; max-width:80px; background:var(--amber); border-radius:6px 6px 0 0; height:0; transition:height 1s cubic-bezier(.2,.8,.2,1); }
+.result-bar-label{ font-size:0.78rem; color:var(--dim-on-dark); text-align:center; }
+.result-bar-val{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; color:var(--ink-on-dark); }
+.result-note{ font-size:0.85rem; color:var(--dim-on-dark); border-top:1px solid rgba(252,252,250,0.14); padding-top:0.9rem; margin-top:1.1rem; }
+
+/* ---------- MECANISMO: DUAS COLUNAS ---------- */
+.mech-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin:1.6rem 0 2rem; }
+@media (max-width:680px){ .mech-grid{ grid-template-columns:1fr; } }
+.mech-card{ background:var(--paper-dim); border:1px solid var(--paper-line); border-radius:14px; padding:1.5rem 1.6rem; }
+.mech-card .mech-icon{ width:38px; height:38px; border-radius:50%; border:2px solid var(--navy); display:flex; align-items:center; justify-content:center; margin-bottom:0.9rem; }
+.mech-card h5{ font-family:var(--font-display); font-weight:600; font-size:1.08rem; color:var(--purple); margin-bottom:0.5rem; }
+.mech-card p{ font-size:0.9rem; color:var(--navy); max-width:none; margin-bottom:0; }
+
+/* ---------- QUATRO LENTES (abas) ---------- */
+.lens-tabs{ display:flex; gap:0.6rem; flex-wrap:wrap; margin:1.6rem 0 0; }
+.lens-btn{
+  display:flex; align-items:center; gap:0.55rem; font-family:var(--font-body); font-weight:700;
+  font-size:0.86rem; padding:0.65rem 1.1rem 0.65rem 0.7rem; background:var(--paper); border:1.5px solid var(--paper-line);
+  color:var(--navy); border-radius:100px; cursor:pointer; transition:border-color .15s, background .15s, color .15s;
+}
+.lens-btn .lens-icon{ width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--paper-dim); flex-shrink:0; }
+.lens-btn:hover{ border-color:var(--navy); }
+.lens-btn.active{ background:var(--purple); border-color:var(--purple); color:var(--paper); }
+.lens-btn.active .lens-icon{ background:rgba(252,252,250,0.15); }
+.lens-panels{ margin-top:1.5rem; }
+.lens-panel{ display:none; animation:fadeUp .4s ease; }
+.lens-panel.active{ display:block; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.lens-panel p{ font-size:1rem; }
+
+/* ---------- MÉTODOS ---------- */
+.methods-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:1.6rem; }
+@media (max-width:780px){ .methods-grid{ grid-template-columns:1fr; } }
+.method-col{ border-radius:16px; padding:1.7rem 1.8rem; }
+.method-col.defend{ background:var(--paper-dim); border:1px solid var(--paper-line); }
+.method-col.ethical{ background:var(--navy-deep); color:var(--ink-on-dark); }
+.method-col h4{ font-family:var(--font-display); font-weight:600; font-size:1.2rem; margin-bottom:0.3rem; }
+.method-col.defend h4{ color:var(--purple); }
+.method-col.ethical h4{ color:var(--ink-on-dark); }
+.method-col .method-eyebrow{ font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; }
+.method-col.defend .method-eyebrow{ color:var(--amber-ink); }
+.method-col.ethical .method-eyebrow{ color:var(--amber); }
+.method-item{ margin-top:1.1rem; padding-top:1.1rem; border-top:1px dashed rgba(64,44,79,0.18); }
+.method-col.ethical .method-item{ border-top-color:rgba(252,252,250,0.16); }
+.method-item:first-of-type{ border-top:none; margin-top:1rem; padding-top:0; }
+.method-item h5{ font-family:var(--font-body); font-weight:700; font-size:0.92rem; margin-bottom:0.35rem; }
+.method-col.defend .method-item h5{ color:var(--purple); }
+.method-col.ethical .method-item h5{ color:var(--ink-on-dark); }
+.method-item p{ font-size:0.88rem; margin-bottom:0; max-width:none; }
+.method-col.defend .method-item p{ color:var(--navy); }
+.method-col.ethical .method-item p{ color:var(--dim-on-dark); }
+
+/* ---------- ATENÇÃO (avisos) ---------- */
+.callout{
+  display:flex; gap:1rem; background:var(--paper-dim); border:1px solid var(--paper-line);
+  border-left:4px solid var(--amber); border-radius:0 12px 12px 0; padding:1.2rem 1.5rem; margin:1.6rem 0;
+}
+.callout-text{ font-size:0.92rem; color:var(--navy); line-height:1.65; }
+.callout-text strong{ color:var(--purple); }
+
+/* ---------- PERGUNTAS PARA A PRÁTICA ---------- */
+.reflexao-grid{ display:flex; flex-direction:column; gap:1.1rem; margin-top:1.6rem; }
+.reflexao-item{ background:var(--paper-dim); border:1px solid var(--paper-line); border-radius:14px; padding:1.4rem 1.6rem; }
+.reflexao-top{ display:flex; gap:1.1rem; }
+.reflexao-num{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; color:var(--amber-ink); opacity:0.55; flex-shrink:0; }
+.reflexao-top p{ font-size:0.96rem; color:var(--purple); margin-bottom:0; }
+.reflexao-note{
+  margin-top:0.9rem; margin-left:2.7rem; border:1.5px dashed var(--navy); border-radius:10px;
+  padding:0.8rem 1rem; min-height:60px; font-size:0.9rem; color:var(--purple); background:var(--paper);
+}
+.reflexao-note:empty:before{ content:'Clique aqui e escreva sua resposta...'; color:var(--navy); opacity:0.6; font-style:italic; }
+
+/* ---------- REFERÊNCIAS ---------- */
+.ref-list{ list-style:none; margin-top:1rem; }
+.ref-list li{ font-size:0.87rem; color:var(--navy); padding:0.85rem 0; border-bottom:1px solid var(--paper-line); display:flex; gap:1rem; }
+.ref-list li:last-child{ border-bottom:none; }
+.ref-num{ color:var(--amber-ink); font-weight:700; font-size:0.8rem; flex-shrink:0; }
+.ref-list em{ color:var(--purple); }
+
+#back-to-top{
+  position:fixed; bottom:2rem; right:2rem; width:46px; height:46px; background:var(--purple);
+  border:none; border-radius:12px; color:var(--paper); font-size:1.2rem; cursor:pointer;
+  display:none; align-items:center; justify-content:center; z-index:100; box-shadow:0 10px 30px -8px rgba(44,30,55,0.5);
+}
+#back-to-top:hover{ background:var(--purple-deep); }
+
+@media (prefers-reduced-motion: reduce){
+  .section, .reveal-result, .result-bar{ transition:none !important; }
+  .lens-panel{ animation:none !important; }
+}
+</style>
+<!-- portal-vd -->
+<link rel="stylesheet" href="../assets/css/portal.css">
+<style>
+  .nav-item.vd-voltar{ color:var(--amber); font-weight:600; }
+  @media print{
+    .section{ opacity:1 !important; transform:none !important; }
+    #sidebar, #sidebar-toggle, #overlay, #progress-bar, #back-to-top{ display:none !important; }
+    .wrapper{ margin:0 auto !important; }
+    .lens-panel{ display:block !important; }
+    .reveal-result{ max-height:none !important; opacity:1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<button id="sidebar-toggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+<div id="overlay"></div>
+
+<nav id="sidebar">
+  <div class="sidebar-badge"><span class="dot"></span><span>Conheça seus vieses · 05</span></div>
+  <div class="sidebar-title">Enquadramento</div>
+  <a class="nav-item vd-voltar" href="../index.html">← Voltar ao portal</a>
+  <a class="nav-item" href="#intro">Início</a>
+  <a class="nav-item" href="#o-que-e">O que é o viés</a>
+  <a class="nav-item" href="#como-funciona">Como funciona</a>
+  <a class="nav-item" href="#quatro-lentes">Onde aparece</a>
+  <a class="nav-item sub" href="#quatro-lentes">→ Líder, equipe, clientes</a>
+  <a class="nav-item" href="#metodos">Métodos</a>
+  <a class="nav-item sub" href="#metodos">→ Defesa e escolha do enquadramento</a>
+  <a class="nav-item" href="#pratica">Perguntas para a prática</a>
+  <a class="nav-item" href="#referencias">Referências</a>
+</nav>
+
+<main class="wrapper">
+
+  <section class="hero" id="intro">
+    <div class="hero-tag"><span class="dot"></span>Conheça seus vieses · Enquadramento</div>
+    <h1>Por que a mesma<br>notícia muda quando<br>contada ao contrário</h1>
+    <p class="hero-sub">Material de leitura e referência sobre o viés que atravessa quase todos os outros desta série.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-label">Tempo de leitura</span><span class="meta-value">9 min</span></div>
+      <div class="meta-item"><span class="meta-label">Base teórica</span><span class="meta-value">Tversky &amp; Kahneman, 1981</span></div>
+      <div class="meta-item"><span class="meta-label">Aplicação</span><span class="meta-value">Liderança de equipes</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="o-que-e">
+    <div class="section-eyebrow"><span class="dot"></span>O que é</div>
+    <h2 class="section-title">O efeito de enquadramento</h2>
+    <p>O efeito de enquadramento é a descoberta de que pessoas respondem de formas diferentes a descrições objetivamente equivalentes do mesmo problema. Não é gostar mais de um número do que de outro: a forma como uma informação é apresentada muda a própria decisão tomada em cima dela, mesmo quando os fatos por trás são exatamente os mesmos.</p>
+
+    <div class="experiment" id="exp-doenca">
+      <div class="experiment-eyebrow">O experimento fundador</div>
+      <h4>O problema da doença asiática</h4>
+      <p>Amos Tversky e Daniel Kahneman (1981) apresentaram um cenário hipotético: uma doença rara ameaça matar 600 pessoas, com dois programas de combate possíveis, e as mesmas probabilidades descritas de dois jeitos — em termos de vidas salvas, ou em termos de vidas perdidas.</p>
+      <p class="experiment-prompt">Antes de continuar: você acha que a forma de descrever mudou a escolha das pessoas, mesmo com os números idênticos?</p>
+      <button class="reveal-btn" data-target="result-doenca">Ver o resultado</button>
+      <div class="reveal-result" id="result-doenca">
+        <div class="result-bars">
+          <div class="result-bar-col"><div class="result-bar-track"><div class="result-bar" data-height="72"></div></div><div class="result-bar-val">72%</div><div class="result-bar-label">Moldura de ganho: escolheu a opção segura</div></div>
+          <div class="result-bar-col"><div class="result-bar-track"><div class="result-bar" data-height="78"></div></div><div class="result-bar-val">78%</div><div class="result-bar-label">Moldura de perda: escolheu a opção arriscada</div></div>
+        </div>
+        <p class="result-note">Mesmas probabilidades, mesmos números — só a moldura mudou. Ganhos deixam as pessoas mais avessas ao risco; perdas, mais dispostas a arriscar.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="como-funciona">
+    <div class="section-eyebrow"><span class="dot"></span>O mecanismo</div>
+    <h2 class="section-title">Como o efeito de enquadramento funciona</h2>
+    <p>Levin, Schneider e Gaeth (1998) organizaram décadas de pesquisa dispersa numa distinção de três tipos, que operam por mecanismos diferentes.</p>
+
+    <div class="mech-grid">
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><path d="M3 12h18M12 3v18"/></svg></div>
+        <h5>Escolha arriscada</h5>
+        <p>O tipo original: a escolha entre uma opção certa e uma arriscada, descrita em termos de ganho ou perda. É o único dos três em que a decisão muda a disposição a correr risco.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 12h6"/></svg></div>
+        <h5>Atributo</h5>
+        <p>Afeta como avaliamos uma característica única de algo, sem envolver risco. Carne "75% magra" é avaliada como mais saborosa do que a mesma carne rotulada "25% de gordura".</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#455066" stroke-width="2"><path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"/></svg></div>
+        <h5>Meta</h5>
+        <p>Afeta o quanto uma comunicação convence alguém a agir. Duchon, Dunegan &amp; Barton (1989): gestores reagiram de forma diferente ao mesmo histórico de uma equipe de P&amp;D, descrito como "30 sucessos em 50" ou "20 fracassos em 50".</p>
+      </div>
+    </div>
+
+    <div class="experiment" id="exp-medicos">
+      <div class="experiment-eyebrow">Evidência com especialistas</div>
+      <h4>424 médicos escolhendo tratamento</h4>
+      <p>Barbara McNeil e colegas (1982) pediram a médicos experientes, pacientes e estudantes que escolhessem entre cirurgia e radioterapia para câncer de pulmão, com os mesmos dados descritos como taxa de sobrevivência ou como taxa de mortalidade.</p>
+      <p class="experiment-prompt">Antes de continuar: você acha que médicos experientes seriam afetados pelo enquadramento tanto quanto pacientes leigos?</p>
+      <button class="reveal-btn" data-target="result-medicos">Ver o resultado</button>
+      <div class="reveal-result" id="result-medicos">
+        <p style="color:var(--ink-on-dark);font-size:0.98rem;">Sim. A cirurgia foi escolhida com frequência significativamente maior quando os resultados vinham enquadrados como sobrevivência — inclusive entre os médicos mais experientes da amostra.</p>
+        <p class="result-note">Anos de treinamento clínico não neutralizaram o efeito. A mesma informação estatística, só reformulada, mudou a decisão de tratar uma doença real.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-text"><strong>Uma ressalva sobre o experimento original:</strong> parte da literatura mais recente questiona se o efeito do problema da doença asiática, na forma clássica, é tão robusto quanto pareceu nos anos 1980 — um estudo de réplica sugeriu que uma palavra específica do enunciado original, proposto por David Mandel, poderia estar inflando o tamanho do efeito. Réplicas subsequentes encontraram o efeito se mantendo em magnitude parecida mesmo após corrigir esse detalhe — o achado central resistiu ao escrutínio, ainda que o tamanho exato continue sendo refinado.</div>
+    </div>
+  </section>
+
+  <section class="section" id="quatro-lentes">
+    <div class="section-eyebrow"><span class="dot"></span>Onde aparece</div>
+    <h2 class="section-title">Quatro lentes</h2>
+    <p>O efeito de enquadramento atravessa qualquer momento em que um número precisa ser comunicado — o que significa que ele aparece em praticamente todas as conversas de liderança. Clique em cada lente.</p>
+
+    <div class="lens-tabs" id="lens-tabs">
+      <button class="lens-btn active" data-lens="lider"><span class="lens-icon">👤</span> Quem lidera</button>
+      <button class="lens-btn" data-lens="equipe"><span class="lens-icon">👥</span> Equipe</button>
+      <button class="lens-btn" data-lens="externo"><span class="lens-icon">🛒</span> Cliente externo</button>
+      <button class="lens-btn" data-lens="interno"><span class="lens-icon">🏢</span> Cliente interno</button>
+    </div>
+
+    <div class="lens-panels">
+      <div class="lens-panel active" id="lens-lider">
+        <p>Um gestor que decide se aprova mais orçamento para uma equipe está sujeito ao mesmo mecanismo do estudo de Duchon e colegas: o histórico dessa equipe, contado como taxa de sucesso ou como taxa de fracasso, muda a disposição de continuar investindo nela, mesmo quando o histórico real é idêntico nos dois casos.</p>
+        <p>Um líder que apresenta resultados ao conselho ("90% de satisfação dos clientes" em vez de "10% de insatisfação") está tomando, consciente ou não, uma decisão de enquadramento que vai influenciar como a diretoria reage aos mesmos números.</p>
+      </div>
+      <div class="lens-panel" id="lens-equipe">
+        <p>Uma retrospectiva de sprint contada como "batemos 80% das metas" tende a gerar uma reação de equipe bem diferente da mesma retrospectiva contada como "deixamos 20% das metas sem cumprir" — mesmo sendo exatamente o mesmo resultado.</p>
+        <p>O enquadramento que um líder de equipe escolhe para comunicar um resultado misto molda se o time sai da reunião motivado a continuar ou preocupado com o que ficou para trás, antes mesmo de qualquer discussão sobre o que causou aquele resultado.</p>
+      </div>
+      <div class="lens-panel" id="lens-externo">
+        <p>O estudo da carne moída de Levin e Gaeth se replica em qualquer prateleira de supermercado: iogurte "90% sem gordura" vende de forma diferente do mesmo produto rotulado "10% de gordura", mesmo sendo o mesmo iogurte.</p>
+        <p>Do lado da saúde, uma meta-análise de Kristin Gallagher e John Updegraff (2012) encontrou um padrão útil: mensagens de perda funcionam melhor para convencer alguém a fazer um exame ou rastreamento; mensagens de ganho funcionam pelo menos tão bem, e às vezes melhor, para convencer alguém a adotar um hábito preventivo. O enquadramento certo depende do comportamento que se quer motivar.</p>
+      </div>
+      <div class="lens-panel" id="lens-interno">
+        <p>Um painel interno de indicadores que mostra "98% de disponibilidade do sistema" tende a ser lido como um sinal de que tudo está bem, enquanto o mesmo dado mostrado como "2% de indisponibilidade" tende a soar como um problema que precisa de atenção imediata — mesmo descrevendo exatamente a mesma taxa real.</p>
+        <p>Uma área que depende de outra para resolver um incidente técnico reage de forma diferente dependendo de qual desses dois números aparece primeiro no relatório que recebe.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="metodos">
+    <div class="section-eyebrow"><span class="dot"></span>O que fazer com isso</div>
+    <h2 class="section-title">Métodos para lidar com o efeito de enquadramento</h2>
+
+    <div class="methods-grid">
+      <div class="method-col defend">
+        <div class="method-eyebrow">Para se proteger</div>
+        <h4>Defesa</h4>
+        <div class="method-item">
+          <h5>Peça sempre os dois enquadramentos</h5>
+          <p>Antes de reagir a um número, pergunte como ele soaria descrito do jeito oposto. "90% de sobrevivência" e "10% de mortalidade" descrevem a mesma realidade — comparar os dois neutraliza boa parte do efeito.</p>
+        </div>
+        <div class="method-item">
+          <h5>Prefira números absolutos a proporções isoladas</h5>
+          <p>"30 de 50 projetos" carrega mais informação verificável do que "60% de sucesso", e dificulta que um enquadramento manipule a impressão geral.</p>
+        </div>
+        <div class="method-item">
+          <h5>Busque a experiência direta quando for possível</h5>
+          <p>O estudo da carne mostrou que provar o produto reduziu o efeito do rótulo. Testar, verificar ou usar a coisa em si funciona como uma correção parecida.</p>
+        </div>
+      </div>
+      <div class="method-col ethical">
+        <div class="method-eyebrow">Escolhendo bem</div>
+        <h4>O enquadramento certo para motivar</h4>
+        <div class="method-item">
+          <h5>Combine o comportamento ao enquadramento</h5>
+          <p>Mensagens de perda funcionam melhor para convencer alguém a fazer uma checagem ou diagnóstico; mensagens de ganho funcionam bem, ou melhor, para motivar a adoção de um hábito novo.</p>
+        </div>
+        <div class="method-item">
+          <h5>Seja transparente sobre o enquadramento, não sobre os números</h5>
+          <p>A linha ética não está em qual dos dois enquadramentos válidos se escolhe usar — está em nunca inflar, esconder ou distorcer o dado real por trás de qualquer um deles.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pratica">
+    <div class="section-eyebrow"><span class="dot"></span>Para levar com você</div>
+    <h2 class="section-title">Perguntas para a prática</h2>
+    <div class="reflexao-grid">
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">01</div><p>Pense num relatório ou apresentação recente que você fez. Você escolheu o enquadramento de forma deliberada, ou foi só o primeiro jeito que veio à cabeça?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">02</div><p>Escolha uma decisão recente baseada num número apresentado por outra pessoa. Como ela teria sido diferente se o mesmo número tivesse vindo enquadrado do jeito oposto?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">03</div><p>Existe, na sua organização, algum indicador sempre apresentado do mesmo jeito? O que mudaria se ele fosse apresentado dos dois jeitos lado a lado?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+      <div class="reflexao-item"><div class="reflexao-top"><div class="reflexao-num">04</div><p>Pense numa mensagem que você precisa passar para motivar um comportamento da sua equipe. Ela pede um enquadramento de ganho ou de perda — e você já escolheu isso conscientemente?</p></div><div class="reflexao-note" contenteditable="true"></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="referencias">
+    <div class="section-eyebrow"><span class="dot"></span>Fontes</div>
+    <h2 class="section-title">Referências</h2>
+    <ul class="ref-list">
+      <li><span class="ref-num">01</span><span>Duchon, D., Dunegan, K. J., &amp; Barton, S. L. (1989). "Framing the Problem and Making Decisions". <em>IEEE Transactions on Engineering Management</em>, 36(1), 25–27.</span></li>
+      <li><span class="ref-num">02</span><span>Gallagher, K. M., &amp; Updegraff, J. A. (2012). "Health Message Framing Effects on Attitudes, Intentions, and Behavior". <em>Annals of Behavioral Medicine</em>, 43(1), 101–116.</span></li>
+      <li><span class="ref-num">03</span><span>Levin, I. P., &amp; Gaeth, G. J. (1988). "How Consumers Are Affected by the Framing of Attribute Information". <em>Journal of Consumer Research</em>, 15(3), 374–378.</span></li>
+      <li><span class="ref-num">04</span><span>Levin, I. P., Schneider, S. L., &amp; Gaeth, G. J. (1998). "All Frames Are Not Created Equal". <em>Organizational Behavior and Human Decision Processes</em>, 76(2), 149–188.</span></li>
+      <li><span class="ref-num">05</span><span>McNeil, B. J., Pauker, S. G., Sox, H. C., &amp; Tversky, A. (1982). "On the Elicitation of Preferences for Alternative Therapies". <em>New England Journal of Medicine</em>, 306(21), 1259–1262.</span></li>
+      <li><span class="ref-num">06</span><span>Tversky, A., &amp; Kahneman, D. (1981). "The Framing of Decisions and the Psychology of Choice". <em>Science</em>, 211(4481), 453–458.</span></li>
+      <li><span class="ref-num">07</span><span>The Decision Lab. "Framing Effect". thedecisionlab.com</span></li>
+    </ul>
+  </section>
+
+</main>
+
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">&#8593;</button>
+
+<script>
+  // barra de progresso + scrollspy + back-to-top
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('back-to-top').style.display = window.scrollY > 500 ? 'flex' : 'none';
+    const sections = document.querySelectorAll('section[id]');
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+    document.querySelectorAll('.nav-item').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+  });
+
+  // sidebar off-canvas (mobile)
+  const toggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  toggle.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open');
+    toggle.classList.toggle('active', open);
+    overlay.style.display = open ? 'block' : 'none';
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open'); toggle.classList.remove('active'); overlay.style.display = 'none';
+  });
+  sidebar.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    sidebar.classList.remove('open'); toggle.classList.remove('active'); overlay.style.display = 'none';
+  }));
+
+  // reveal de seções ao rolar (com fallback se o navegador não suportar)
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.section').forEach(s => io.observe(s));
+  } else {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('in-view'));
+  }
+
+  // experimentos: revelar resultado + animar barras
+  document.querySelectorAll('.reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      target.classList.add('open');
+      btn.disabled = true;
+      btn.textContent = 'Resultado revelado';
+      target.querySelectorAll('.result-bar').forEach(bar => {
+        const h = parseInt(bar.dataset.height, 10);
+        requestAnimationFrame(() => { bar.style.height = h + '%'; });
+      });
+    });
+  });
+
+  // quatro lentes (abas)
+  const lensTabs = document.getElementById('lens-tabs');
+  lensTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.lens-btn');
+    if(!btn) return;
+    const key = btn.dataset.lens;
+    lensTabs.querySelectorAll('.lens-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.lens-panel').forEach(p => p.classList.toggle('active', p.id === 'lens-' + key));
+  });
+</script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/portal.js"></script>
+<script>VD.notas({ id: 'vies-enquadramento', titulo: 'Conheça seus vieses · Enquadramento' });</script>
+</body>
+</html>

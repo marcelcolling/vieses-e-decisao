@@ -1,0 +1,200 @@
+/* =========================================================
+   Portal Vieses e Decisão — componentes compartilhados
+   (barra superior, sessão, status de salvamento, modal)
+   Tudo prefixado com "vd-" para não colidir com o CSS
+   próprio de cada ferramenta e de cada material.
+   ========================================================= */
+:root {
+  --vd-roxo: #402C4F;
+  --vd-roxo-deep: #2C1E37;
+  --vd-roxo-tint: rgba(64,44,79,0.06);
+  --vd-azul: #455066;
+  --vd-fundo: #FCFCFA;
+  --vd-fundo-alt: #F2EFEA;
+  --vd-amarelo: #EFB93C;
+  --vd-amarelo-ink: #5B4212;
+  --vd-texto: #2A2432;
+  --vd-muted: #6b6478;
+  --vd-border: rgba(64,44,79,0.16);
+  --vd-ok: #2f8f5f;
+  --vd-erro: #b0475a;
+  --vd-display: 'Fraunces', Georgia, serif;
+  --vd-body: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ---------- Barra superior ---------- */
+.vd-topbar {
+  position: sticky; top: 0; z-index: 400;
+  background: var(--vd-roxo-deep); color: #fff;
+  font-family: var(--vd-body);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.vd-topbar-inner {
+  max-width: 980px; margin: 0 auto; padding: 0 1.5rem; height: 58px;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.vd-left { display: flex; align-items: center; gap: 0.9rem; min-width: 0; }
+.vd-brand {
+  display: inline-flex; align-items: center; gap: 0.55rem; color: #fff; text-decoration: none;
+  font-family: var(--vd-display); font-weight: 600; font-size: 1rem; white-space: nowrap;
+}
+.vd-brand:hover { color: var(--vd-amarelo); }
+.vd-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--vd-amarelo); flex-shrink: 0; display: inline-block; }
+.vd-crumb {
+  font-size: 0.8rem; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  padding-left: 0.9rem; border-left: 1px solid rgba(255,255,255,0.18);
+}
+.vd-right { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; position: relative; }
+
+/* botões próprios do portal — redefinem tudo para não herdar o CSS das ferramentas */
+.vd-btn {
+  font-family: var(--vd-body); font-weight: 600; font-size: 0.84rem; line-height: 1.2;
+  border-radius: 8px; padding: 0.55rem 1rem; min-height: 0; cursor: pointer;
+  border: 1px solid transparent; transition: background .15s, border-color .15s, color .15s;
+  transform: none !important; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+  text-decoration: none;
+}
+.vd-btn-amarelo { background: var(--vd-amarelo); color: var(--vd-texto); }
+.vd-btn-amarelo:hover { background: #f5c968; }
+.vd-btn-roxo { background: var(--vd-roxo); color: #fff; }
+.vd-btn-roxo:hover { background: var(--vd-roxo-deep); }
+.vd-btn-claro { background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); }
+.vd-btn-claro:hover { border-color: var(--vd-amarelo); color: var(--vd-amarelo); }
+.vd-btn-ghost { background: var(--vd-fundo-alt); color: var(--vd-azul); border-color: var(--vd-border); }
+.vd-btn-ghost:hover { border-color: var(--vd-azul); }
+.vd-btn-link { background: none; border: none; color: var(--vd-azul); text-decoration: underline; padding: 0.3rem 0; font-weight: 600; }
+.vd-btn:disabled { opacity: 0.55; cursor: default; }
+.vd-btn:focus-visible { outline: 2px solid var(--vd-amarelo); outline-offset: 2px; }
+
+/* ---------- Status de salvamento ---------- */
+.vd-status {
+  display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.76rem; font-weight: 500;
+  color: rgba(255,255,255,0.78); white-space: nowrap;
+}
+.vd-status[hidden] { display: none; }
+.vd-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); flex-shrink: 0; }
+.vd-status[data-estado="ok"]::before { background: #4cc38a; }
+.vd-status[data-estado="salvando"]::before { background: var(--vd-amarelo); animation: vd-pulse 1s infinite; }
+.vd-status[data-estado="pendente"]::before { background: var(--vd-amarelo); }
+.vd-status[data-estado="erro"]::before { background: #ef6b7f; }
+.vd-status[data-estado="local"]::before { background: rgba(255,255,255,0.45); }
+@keyframes vd-pulse { 50% { opacity: 0.35; } }
+
+/* ---------- Chip do usuário + menu ---------- */
+.vd-user {
+  display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18); color: #fff; border-radius: 100px; padding: 0.35rem 0.8rem 0.35rem 0.4rem;
+  font-family: var(--vd-body); font-size: 0.82rem; font-weight: 600; cursor: pointer; min-height: 0; transform: none !important;
+  max-width: 220px;
+}
+.vd-user:hover { border-color: var(--vd-amarelo); }
+.vd-avatar {
+  width: 26px; height: 26px; border-radius: 50%; background: var(--vd-amarelo); color: var(--vd-roxo-deep);
+  display: inline-flex; align-items: center; justify-content: center; font-family: var(--vd-display); font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+}
+.vd-user-nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vd-menu {
+  position: absolute; top: calc(100% + 8px); right: 0; background: #fff; color: var(--vd-texto);
+  border: 1px solid var(--vd-border); border-radius: 12px; box-shadow: 0 16px 40px -12px rgba(44,30,55,0.35);
+  min-width: 250px; padding: 0.5rem; z-index: 450; font-family: var(--vd-body);
+}
+.vd-menu[hidden] { display: none; }
+.vd-menu-info { padding: 0.6rem 0.75rem 0.7rem; border-bottom: 1px solid var(--vd-border); margin-bottom: 0.35rem; font-size: 0.8rem; color: var(--vd-muted); line-height: 1.5; }
+.vd-menu-info strong { display: block; color: var(--vd-texto); font-size: 0.9rem; }
+.vd-menu button {
+  display: block; width: 100%; text-align: left; background: none; border: none; border-radius: 8px;
+  padding: 0.6rem 0.75rem; font-family: var(--vd-body); font-size: 0.85rem; color: var(--vd-texto); cursor: pointer;
+  min-height: 0; transform: none !important; font-weight: 500;
+}
+.vd-menu button:hover { background: var(--vd-fundo-alt); }
+
+/* ---------- Modal ---------- */
+.vd-modal {
+  position: fixed; inset: 0; background: rgba(42,36,50,0.6); z-index: 1000;
+  display: flex; align-items: center; justify-content: center; padding: 1.2rem; font-family: var(--vd-body);
+}
+.vd-modal[hidden] { display: none; }
+.vd-modal-box {
+  background: var(--vd-fundo); color: var(--vd-texto); border-radius: 18px; width: 100%; max-width: 460px;
+  max-height: 92vh; overflow-y: auto; padding: 2rem 2rem 1.7rem; position: relative;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.3);
+}
+.vd-modal-x {
+  position: absolute; top: 1rem; right: 1rem; width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: var(--vd-roxo-tint); color: var(--vd-roxo); font-size: 1rem; cursor: pointer; padding: 0; min-height: 0; transform: none !important;
+}
+.vd-modal-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--vd-amarelo-ink); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+.vd-modal h3 { font-family: var(--vd-display); font-weight: 700; color: var(--vd-roxo); font-size: 1.4rem; margin: 0 0 0.6rem; line-height: 1.2; }
+.vd-modal p { font-size: 0.88rem; color: var(--vd-muted); line-height: 1.6; margin: 0 0 1rem; }
+.vd-modal p strong { color: var(--vd-texto); }
+.vd-campo { margin-bottom: 0.95rem; }
+.vd-campo label { display: block; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--vd-azul); margin-bottom: 0.35rem; }
+.vd-campo input {
+  width: 100%; box-sizing: border-box; border: 1px solid var(--vd-border); border-radius: 9px; background: var(--vd-fundo-alt);
+  padding: 0.7rem 0.8rem; font-family: var(--vd-body); font-size: 16px; color: var(--vd-texto); min-height: 0;
+}
+.vd-campo input:focus { outline: 2px solid var(--vd-amarelo); outline-offset: 1px; }
+.vd-campo small { display: block; margin-top: 0.35rem; font-size: 0.76rem; color: var(--vd-muted); line-height: 1.45; }
+.vd-acoes { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.2rem; }
+.vd-acoes .vd-btn { flex: 1 1 auto; padding: 0.75rem 1rem; font-size: 0.9rem; }
+.vd-erro { background: rgba(176,71,90,0.08); border: 1px solid rgba(176,71,90,0.3); color: #8a2f40; border-radius: 9px; padding: 0.65rem 0.8rem; font-size: 0.84rem; margin-top: 0.8rem; line-height: 1.5; }
+.vd-erro[hidden] { display: none; }
+.vd-aviso { background: rgba(239,185,60,0.12); border-left: 3px solid var(--vd-amarelo); border-radius: 0 9px 9px 0; padding: 0.7rem 0.9rem; font-size: 0.8rem; color: var(--vd-texto); line-height: 1.55; margin: 0 0 1rem; }
+
+/* ---------- Escolher dados da aula anterior ---------- */
+.vd-trazer { margin-top: 0.6rem; }
+.vd-trazer .vd-btn { font-size: 0.78rem; padding: 0.45rem 0.85rem; }
+.vd-picker { margin-top: 0.7rem; display: flex; flex-direction: column; gap: 0.45rem; }
+.vd-picker[hidden] { display: none; }
+.vd-picker-titulo { font-size: 0.74rem; color: rgba(255,255,255,0.75); font-style: italic; }
+.vd-picker button {
+  text-align: left; background: rgba(255,255,255,0.94); color: var(--vd-texto); border: 1px solid transparent; border-radius: 10px;
+  padding: 0.65rem 0.85rem; font-family: var(--vd-body); font-size: 0.84rem; line-height: 1.45; cursor: pointer; min-height: 0; transform: none !important;
+}
+.vd-picker button:hover { border-color: var(--vd-amarelo); }
+.vd-picker button .vd-tag { display: inline-block; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.12rem 0.5rem; border-radius: 100px; background: rgba(52,160,107,0.15); color: #1f6b45; margin-bottom: 0.25rem; }
+.vd-picker button .vd-tag.neutra { background: var(--vd-fundo-alt); color: var(--vd-muted); }
+.vd-picker-vazio { font-size: 0.8rem; color: rgba(255,255,255,0.75); font-style: italic; }
+
+/* ---------- Bloco de status nas anotações dos materiais ---------- */
+.vd-notas {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap;
+  background: var(--vd-fundo-alt); border: 1px solid var(--vd-border); border-radius: 12px; padding: 0.75rem 1rem;
+  font-family: var(--vd-body); font-size: 0.84rem; color: var(--vd-azul); margin: 0.4rem 0 0.2rem;
+}
+.vd-notas .vd-status { color: var(--vd-azul); }
+.vd-notas .vd-status::before { background: rgba(69,80,102,0.4); }
+.vd-notas .vd-status[data-estado="ok"]::before { background: var(--vd-ok); }
+.vd-notas .vd-status[data-estado="erro"]::before { background: var(--vd-erro); }
+.vd-notas .vd-status[data-estado="salvando"]::before,
+.vd-notas .vd-status[data-estado="pendente"]::before { background: var(--vd-amarelo); }
+
+/* ---------- Toast ---------- */
+.vd-toast {
+  position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%) translateY(20px); opacity: 0;
+  background: var(--vd-roxo-deep); color: #fff; font-family: var(--vd-body); font-size: 0.86rem;
+  padding: 0.75rem 1.15rem; border-radius: 10px; box-shadow: 0 14px 40px -10px rgba(0,0,0,0.4);
+  z-index: 1100; transition: opacity .25s, transform .25s; pointer-events: none; max-width: calc(100% - 2rem); text-align: center;
+}
+.vd-toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- Identificação impressa ---------- */
+.vd-print-id { display: none; }
+
+@media (max-width: 720px) {
+  .vd-crumb { display: none; }
+  .vd-topbar-inner { padding: 0 1rem; gap: 0.5rem; }
+  .vd-status .vd-status-txt { display: none; }
+  .vd-user { max-width: 150px; }
+}
+@media (max-width: 400px) {
+  .vd-brand-txt { display: none; }
+}
+@media print {
+  .vd-topbar, .vd-modal, .vd-toast, .vd-trazer, .vd-picker, .vd-notas { display: none !important; }
+  .vd-print-id { display: block !important; font-family: var(--vd-body); font-size: 11px; color: rgba(255,255,255,0.9); margin-top: 0.6rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vd-status[data-estado="salvando"]::before { animation: none; }
+  .vd-toast { transition: none; }
+}
