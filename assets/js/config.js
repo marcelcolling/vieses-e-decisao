@@ -7,7 +7,7 @@
  * ficam salvas apenas no navegador de cada estudante.
  */
 window.VD_CONFIG = {
-  APPS_SCRIPT_URL: '',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw0f2OMicKfgwltriWk6rOYHQ2cLPx3FJv5RSNSCRR5h7CJOU1LyL_REkN2EFurYv0JhA/exec',
 
   NOME_DISCIPLINA: 'Vieses e Decisão',
   PROGRAMA: 'Pós-graduação em Liderança'
