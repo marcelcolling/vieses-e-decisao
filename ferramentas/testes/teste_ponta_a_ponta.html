@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>teste</title></head>
+<body>
+<pre id="log">rodando</pre>
+<iframe id="fr" style="width:1200px;height:900px"></iframe>
+<script>
+const log = [];
+const ok = (c, m) => log.push((c ? 'PASS ' : 'FAIL ') + m);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fr = document.getElementById('fr');
+const carregar = url => new Promise(r => { fr.onload = () => r(fr.contentWindow); fr.src = url; });
+const estado = async () => (await fetch('/__estado')).json();
+const digitar = (w, el, v) => { el.value = v; el.dispatchEvent(new w.Event('input', { bubbles: true })); };
+const escolher = (w, el, v) => { el.value = v; el.dispatchEvent(new w.Event('change', { bubbles: true })); };
+const A1 = '/atividades/aula-1-comportamento-alvo.html';
+
+(async () => {
+  try {
+    localStorage.clear();
+    let w = await carregar(A1);
+    await sleep(1200);
+    ok(!w.document.querySelector('.vd-modal').hidden, 'sem sessão, o modal de login abre');
+    digitar(w, w.document.querySelector('#corpoObjetivos textarea'), 'Reduzir rotatividade');
+    await sleep(1500);
+    ok(w.document.querySelector('.vd-status').textContent.includes('navegador'), 'rascunho anônimo salvo no navegador');
+
+    let r = await w.VD.entrar({ nome: 'Grupo  Teste', chave: 'abcd' });
+    ok(r.naoEncontrado, 'nome novo pede confirmação de cadastro');
+    r = await w.VD.entrar({ nome: 'Grupo Teste', chave: 'abcd', turma: 'T1', criar: true });
+    ok(r.ok && r.criado, 'cadastro criado');
+    await sleep(12000);
+    let est = await estado();
+    ok(JSON.stringify(est.dados).includes('Reduzir rotatividade'), 'rascunho anônimo adotado e enviado à planilha');
+    ok(w.document.querySelector('#corpoObjetivos textarea').value === 'Reduzir rotatividade', 'texto continua na tela após entrar');
+
+    const tas = w.document.querySelectorAll('#corpoComportamentos textarea');
+    digitar(w, tas[1], 'Gestor faz 1:1 mensal com cada liderado');
+    await sleep(300);
+    const sels = w.document.querySelectorAll('#listaClassificar select');
+    escolher(w, sels[0], 'alta'); escolher(w, sels[1], 'alto');
+    await sleep(14000);
+    est = await estado();
+    const reg1 = est.dados['grupo teste|aula1'];
+    ok(reg1 && reg1.json.includes('Gestor faz 1:1'), 'comportamento-alvo salvo na planilha');
+    ok(reg1 && JSON.stringify(reg1.resumo).includes('Prioridade máxima'), 'resumo legível enviado para a aba do estudante');
+    ok(w.document.querySelector('.vd-status').textContent.includes('Salvo na planilha'), 'indicador mostra "Salvo na planilha" (' + w.document.querySelector('.vd-status').textContent + ')');
+
+    // novos: botão Salvar respostas, caixas que crescem, sem JSON
+    ok(typeof w.exportarJSON === 'undefined' && !w.document.querySelector('input[type=file]'), 'exportação/importação JSON removida');
+    const taLonga = w.document.querySelectorAll('#corpoComportamentos textarea')[0];
+    const h0 = taLonga.offsetHeight;
+    digitar(w, taLonga, 'linha\n'.repeat(15) + 'fim');
+    await sleep(100);
+    ok(taLonga.offsetHeight > h0 + 100, 'caixa de texto cresce com o conteúdo (' + h0 + 'px → ' + taLonga.offsetHeight + 'px)');
+    const botao = w.document.querySelector('.barra-acoes [data-vd-salvar]');
+    botao.click();
+    await sleep(3000);
+    est = await estado();
+    ok(est.dados['grupo teste|aula1'].json.includes('linha\\nlinha'), 'botão "Salvar respostas" grava na planilha na hora');
+    ok(w.document.querySelector('.vd-toast').textContent.includes('salvas na planilha'), 'confirmação após salvar: "' + w.document.querySelector('.vd-toast').textContent + '"');
+
+    r = await w.VD.entrar({ nome: 'grupo teste', chave: 'errada' });
+    ok(r.chaveIncorreta, 'palavra-chave errada é recusada');
+
+    // outro computador: navegador limpo
+    localStorage.clear();
+    w = await carregar(A1);
+    await sleep(800);
+    r = await w.VD.entrar({ nome: 'GRUPO TESTE', chave: 'ABCD' });
+    await sleep(800);
+    ok(r.ok && w.document.querySelector('#corpoObjetivos textarea').value === 'Reduzir rotatividade', 'em outro computador, as respostas voltam da planilha');
+
+    // Aula 2: trazer da Aula 1
+    w = await carregar('/atividades/aula-2-barreiras.html');
+    await sleep(1500);
+    w.trazerDaAula1();
+    const b = w.document.querySelector('#pickerAula1 button');
+    ok(b && b.textContent.includes('Prioridade máxima'), 'Aula 2 lista os comportamentos da Aula 1 com o prioritário em destaque');
+    b.click();
+    ok(w.document.getElementById('campoComportamento').value.startsWith('Gestor faz 1:1'), 'Aula 2 recebe o comportamento-alvo');
+    ok(w.document.querySelector('.pergunta-item').textContent.includes('Gestor faz 1:1'), 'perguntas do COM-B usam o comportamento');
+    digitar(w, w.document.getElementById('ev-oSocial'), 'Ninguém da liderança faz 1:1');
+    await sleep(500);
+    const ss = w.document.querySelectorAll('#score-oSocial select');
+    escolher(w, ss[0], '3'); escolher(w, ss[1], '2'); escolher(w, ss[2], '3');
+    digitar(w, w.document.getElementById('hipoPorque'), 'todas as fontes citam a norma');
+    digitar(w, w.document.getElementById('hipoErrado'), 'a liderança já fizer e nada mudar');
+    await sleep(14000);
+    est = await estado();
+    ok(est.dados['grupo teste|aula2'] && JSON.stringify(est.dados['grupo teste|aula2'].resumo).includes('Nossa hipótese é que a barreira principal é O Social'), 'Aula 2 salva com hipótese final no resumo');
+
+    // Aula 3: trazer da Aula 2
+    w = await carregar('/atividades/aula-3-intervencao.html');
+    await sleep(1500);
+    w.trazerDaAula2();
+    ok(w.document.getElementById('campoComponente').value === 'os', 'Aula 3 recebe o componente priorizado (O Social)');
+    ok(w.document.querySelectorAll('.funcao-card').length === 3, 'Aula 3 mostra as 3 funções ligadas a O Social');
+
+    // conflito entre membros do grupo
+    w = await carregar(A1);
+    await sleep(2500);
+    await fetch('/__mexer');
+    digitar(w, w.document.getElementById('campoEquipe'), 'RH');
+    await sleep(14000);
+    const corpo = w.document.querySelector('.vd-modal-corpo');
+    ok(!w.document.querySelector('.vd-modal').hidden && corpo.textContent.includes('Alguém do grupo'), 'conflito entre membros do grupo é detectado');
+    corpo.querySelector('[data-a=carregar]').click();
+    await sleep(500);
+    ok(w.document.getElementById('campoEquipe').value === 'ALTERADO POR OUTRO', 'opção "carregar a versão da planilha" funciona');
+
+    // anotações dos vieses
+    w = await carregar('/vieses/ancoragem.html');
+    await sleep(1500);
+    ok(!!w.document.querySelector('.vd-notas'), 'material de viés mostra o aviso de salvamento');
+    const nota = w.document.querySelector('.reflexao-note');
+    nota.innerText = 'Minha reflexão sobre ancoragem';
+    nota.dispatchEvent(new w.Event('input', { bubbles: true }));
+    await sleep(14000);
+    est = await estado();
+    const rv = est.dados['grupo teste|vies-ancoragem'];
+    ok(rv && JSON.stringify(rv.resumo).includes('Minha reflexão') && JSON.stringify(rv.resumo).includes('última negociação'), 'anotação do viés salva com a pergunta');
+
+    // home
+    w = await carregar('/index.html');
+    await sleep(2000);
+    const card = w.document.getElementById('sessaoCard').textContent;
+    ok(card.includes('Grupo Teste') && card.includes('Salva'), 'home mostra o progresso do estudante');
+    ok(w.document.querySelector('[data-ferramenta="vies-ancoragem"]').textContent.includes('Anotações salvas'), 'home marca o material de viés com anotações');
+
+    w.VD.sair();
+    await sleep(300);
+    ok(!w.VD.sessao(), 'sair encerra a sessão');
+  } catch (e) {
+    log.push('ERRO ' + e.message + ' ' + e.stack);
+  }
+  document.getElementById('log').textContent = log.join('\n');
+  document.title = 'FIM';
+})();
+</script>
+</body></html>
