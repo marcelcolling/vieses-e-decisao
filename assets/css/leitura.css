@@ -248,6 +248,9 @@ ul.checklist input:focus-visible + .chk-caixa{ outline:2px solid var(--amber); o
   border-radius:10px; font-size:0.92rem; position:relative; z-index:1; white-space:nowrap;
 }
 .cta-btn:hover{ background:#f5c968; }
+.cta-pratica{ background:var(--purple-deep); margin-bottom:0.9rem; }
+.cta-pratica + .cta-atividade{ margin-top:0; }
+.nav-pratica + .nav-atividade{ margin-top:0; border-top:none; padding-top:0.5rem; }
 
 /* fontes */
 .secao-fontes p, .secao-fontes li{ font-size:0.87rem !important; }

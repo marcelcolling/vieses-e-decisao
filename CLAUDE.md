@@ -18,6 +18,9 @@ Portal de uma disciplina de pós-graduação (Pós em Liderança, Biopark). Os e
 ```
 index.html                    home: hero + cartão de sessão, faixa "Conheça seus vieses", trilha de 5 etapas
 atividades/aula-N-*.html      uma ferramenta por aula (CSS e JS próprios + portal.js)
+atividades/aula-2-clinica.html  Clínica de diagnóstico (prática em grupo da Aula 2), monta tudo a partir de:
+atividades/clinica-dados.js   GERADO por ferramentas/gerar_clinica.py a partir de conteudo/clinica-aula-2.md (Parte E)
+atividades/clinica-gabarito.js GERADO e CIFRADO (AES-GCM) a partir do guia do professor, que fica fora do repositório
 leituras/*.html               GERADO por ferramentas/gerar_leitura.py a partir de conteudo/*.md (não editar à mão)
 vieses/*.html                 GERADO por ferramentas/preparar_vieses.py a partir dos HTML originais (conteúdo íntegro)
 assets/js/portal.js           núcleo: sessão, login, salvamento automático, sincronização, conflito, barra superior, guia de uso, auto-altura de textarea
@@ -39,7 +42,7 @@ README.md                     instruções para o professor
 - O portal grava no `localStorage` na hora e envia para o Apps Script (`acao: 'salvar'`) alguns segundos depois. Há detecção de conflito por timestamp (`base`) para grupos.
 - Qualquer elemento com o atributo `data-vd-salvar` vira o botão "Salvar respostas" (envio imediato).
 - As anotações das "Perguntas para a prática" dos vieses usam `VD.notas({ id: 'vies-<slug>', titulo })`.
-- **Ids existentes não podem mudar** (`aula1`, `aula2`, `aula3`, `vies-ancoragem`, `vies-confirmacao`, `vies-aversao-a-perda`, `vies-dunning-kruger`, `vies-enquadramento`). Também não podem mudar as chaves já usadas em `coletar()`. As respostas já salvas dependem disso. Para mudar a estrutura de uma atividade, mantenha `aplicar()` compatível com os dados antigos.
+- **Ids existentes não podem mudar** (`aula1`, `aula2`, `aula3`, `clinica-aula2`, `vies-ancoragem`, `vies-confirmacao`, `vies-aversao-a-perda`, `vies-dunning-kruger`, `vies-enquadramento`). Também não podem mudar as chaves já usadas em `coletar()`. As respostas já salvas dependem disso. Para mudar a estrutura de uma atividade, mantenha `aplicar()` compatível com os dados antigos.
 - O JSON de exportação/importação foi removido de propósito. Não reintroduzir.
 
 ## Receitas
@@ -54,6 +57,14 @@ README.md                     instruções para o professor
 
 ### Recursos interativos da leitura da Aula 2 (`"recursos_comb": True`)
 A entrada da Aula 2 em `LEITURAS` liga recursos que só mudam a apresentação: siglas do COM-B (CF, CP, OF, OS, MR, MA) e marcações (F, L, RUÍDO) coloridas e clicáveis, com explicação curta (`#dados-siglas`); mapa dos seis componentes no fim da A1; fichas dos componentes A2 a A7 (rótulos em `CAMPOS`); tabela "Frase" vira cartões para revelar; tabela "Degrau" vira escada; tabela "# | Movimento" vira cartões; indicador do movimento nas seções C1 a C4; caixa "Exemplo completo"; citações `>` (as que começam com "Acreditamos" viram caixa de hipótese); tabelas compactas no celular; botão "Cartão de bolso", que abre "O passo em uma página" numa gaveta. Nomes, perguntas e âncoras são lidos do próprio `.md` (`preparar_comb`), que falha com mensagem clara se o texto mudar de formato. O `.md` em `conteudo/` é o original até o fim da Parte D, mais as Fontes. As Partes E (Clínica de diagnóstico) e F ficam para a atividade.
+
+### Clínica de diagnóstico (Aula 2)
+- Página `atividades/aula-2-clinica.html`, id `clinica-aula2`. Abas: Como funciona (E1, E2), Rodada 1 (seis mini-casos com voto por sigla), Rodada 2 (escolha do dossiê e seis etapas: caso, passos e palpite, dados nos passos, barreiras, prioridade, hipótese, mais a ficha do grupo E7 para imprimir), Rodada 3, Rodada 4 (com "Trazer da Aula 1") e Gabarito. Botão flutuante "Estacionamento" guarda as soluções (regra 1).
+- Todo o estado fica num objeto `S` (campos com `data-b="caminho"`, botões de escolha com `data-c`/`data-v`). Mudou a estrutura? Mantenha `aplicar()` aceitando os dados antigos.
+- Texto: edite `conteudo/clinica-aula-2.md` e rode `python ferramentas/gerar_clinica.py` (só os dados; o gabarito não muda). O script valida o formato (casos, dossiês, dez cartas por dossiê) e para com mensagem se algo mudar.
+- **Gabarito:** vem das seções 4, 5 e 6 do guia do professor (`guia-do-professor-clinica-de-diagnostico-aula-02.md`, na pasta do OneDrive). Para gerar ou trocar a palavra-chave: `python ferramentas/gerar_clinica.py --gabarito "<caminho do guia>" --chave <palavra>` (precisa de `python -m pip install --user cryptography`). **Nunca grave o guia, o texto do gabarito nem a palavra-chave no repositório** (é público): o arquivo publicado é só o cifrado. A palavra-chave é informada pelo professor em aula; não a registre aqui. No navegador, a página guarda a palavra digitada no `localStorage` para não pedir de novo.
+- Na home, o cartão da Clínica tem `data-ferramenta="clinica-aula2"`, mas a Clínica **não** está no array `ATIVIDADES` de propósito: o botão "Continuar" mandaria de volta à Clínica quem já fez a Aula 2. No Painel da planilha não há coluna da Clínica (as respostas aparecem na aba de cada estudante, depois das aulas).
+- A leitura da Aula 2 aponta para a Clínica pela opção `"pratica"` em `LEITURAS` (link na barra lateral e convite antes da atividade principal).
 
 ### Nova atividade (ex.: Aula 4)
 1. Crie `atividades/aula-4-*.html` partindo de uma atividade existente. Mantenha o padrão visual (hero roxo, `passo` numerado, callouts, `hipotese-box`), o CSS extra do portal (`.page` com `--vd-largura`, `.btn-salvar`) e a barra de ações (`[data-vd-salvar]` + Imprimir).
@@ -76,6 +87,8 @@ Não há como publicar o Apps Script por aqui: o professor precisa colar o `Codi
 - **PowerShell 5.1:** depois de instalar algo, recarregue o PATH com `$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")`. O `git` e o `gh` já estão instalados e autenticados (`gh auth setup-git` feito).
 - Logo depois de uma implantação nova, o Apps Script pode devolver 404 ou uma página HTML por alguns minutos. O portal trata isso: guarda no navegador e tenta de novo.
 - Arquivos sem BOM: gravar com `New-Object Text.UTF8Encoding $false`.
+- **Edge headless e WebCrypto:** com `--virtual-time-budget`, o relógio virtual avança enquanto o PBKDF2 roda em outra thread, e o `--dump-dom` sai antes de o gabarito abrir. Para testar a abertura, sirva a página com uma rota lenta (um `fetch` pendente segura o relógio virtual). `--timeout` não ajuda: o dump sai no `load`. Aspas duplas (`%22`) na URL passada ao Edge quebram o roteiro do ajudante: chame funções diretamente (`w.irPara('r1')`) ou carregue o roteiro de um arquivo. Depois de trocar de aba (que dispara `resize` e recalcula as caixas de texto), rolar no mesmo instante às vezes deixa a captura em branco: espere ~400 ms antes de rolar. É artefato do headless (contei: só 2 eventos `resize`, sem laço).
+- `rodar_testes.ps1` e scripts parecidos: o Edge pode segurar o arquivo de saída por alguns instantes depois de sair; leia com novas tentativas.
 - Capturas de seções no Edge headless: `pagina.html#ancora` com `--screenshot` sai em branco. Use uma página auxiliar temporária na raiz (não publicar) que carrega a leitura num `<iframe>` do mesmo endereço, rola com `contentWindow.scrollTo` e, se preciso, clica em botões (cartão de bolso, "Revelar todas"). Elementos abertos com atraso (como a explicação das siglas) às vezes não aparecem na captura: confira por `--dump-dom` (posição e `display`). As âncoras são cortadas em 60 caracteres.
 
 ## Como validar antes de publicar
@@ -91,6 +104,6 @@ Roxo `#402C4F` / roxo escuro `#2C1E37`, azul `#455066`, papel `#FCFCFA` / `#F2EF
 
 ## Pendências conhecidas
 
-- Leitura da Aula 2 publicada (`leituras/passo-2-explorar-o-comportamento.html`, a partir de `material-passo-2-explorar-comportamento-e-atividade (NOVO).md`, Partes A a D e Fontes). Falta a atividade em sala, a Clínica de diagnóstico (Parte E do mesmo arquivo; o professor mandará as instruções). O texto da leitura cita as Partes E e F, que ainda não existem no portal. A leitura antiga `aula-2-leitura-com-b-diagnostico-barreiras.md` não foi publicada.
+- Aula 2: leitura (Partes A a D e Fontes) e Clínica de diagnóstico (Parte E) publicadas, a partir de `material-passo-2-explorar-comportamento-e-atividade (NOVO).md`. A Parte F (Ficha de Exploração, plano de 10 dias, lista de passagem) ainda não está no portal; a atividade principal da Aula 2 (`aula-2-barreiras.html`) continua a mesma. A leitura antiga `aula-2-leitura-com-b-diagnostico-barreiras.md` não foi publicada.
 - A Aula 4 (plano de aplicação) e as mentorias aparecem como "Em breve".
 - Erros de digitação nos originais dos vieses, mantidos por fidelidade: "não não vai te proteger" e "Esse é o contexto é um contexto" (Ancoragem).

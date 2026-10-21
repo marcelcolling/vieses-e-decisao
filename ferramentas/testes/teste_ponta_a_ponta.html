@@ -5,7 +5,7 @@
 <iframe id="fr" style="width:1200px;height:900px"></iframe>
 <script>
 const log = [];
-const ok = (c, m) => log.push((c ? 'PASS ' : 'FAIL ') + m);
+const ok = (c, m) => { log.push((c ? 'PASS ' : 'FAIL ') + m); document.getElementById('log').textContent = log.join('\n') + '\n(em andamento)'; };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fr = document.getElementById('fr');
 const carregar = url => new Promise(r => { fr.onload = () => r(fr.contentWindow); fr.src = url; });
@@ -120,12 +120,32 @@ const A1 = '/atividades/aula-1-comportamento-alvo.html';
     const rv = est.dados['grupo teste|vies-ancoragem'];
     ok(rv && JSON.stringify(rv.resumo).includes('Minha reflexão') && JSON.stringify(rv.resumo).includes('última negociação'), 'anotação do viés salva com a pergunta');
 
+    // Clínica de diagnóstico (Aula 2)
+    w = await carregar('/atividades/aula-2-clinica.html');
+    await sleep(1500);
+    const cq = s => w.document.querySelector(s);
+    ok(w.document.querySelectorAll('.caso').length === 6 && w.document.querySelectorAll('.dossie-bt').length === 4, 'Clínica mostra 6 mini-casos e 4 dossiês');
+    cq('[data-c="r1.1.voto"][data-v="MA"]').click();
+    cq('[data-dossie="2"]').click();
+    await sleep(100);
+    ok(w.document.querySelectorAll('.carta').length === 10, 'Clínica: o dossiê escolhido mostra 10 cartas');
+    cq('[data-c="d.2.cartas.2A.onde"][data-v="4"]').click();
+    cq('[data-c="d.2.cartas.2A.b1"][data-v="MR"]').click();
+    ok(cq('#mural').textContent.includes('2A') && cq('#decisao').textContent.includes('motivação reflexiva'), 'Clínica: a carta vai para o mural e para a tabela de decisão');
+    await sleep(14000);
+    est = await estado();
+    const rc = est.dados['grupo teste|clinica-aula2'];
+    ok(rc && JSON.stringify(rc.resumo).includes('Carta 2A') && JSON.stringify(rc.resumo).includes('Caso 1'), 'Clínica salva na planilha com resumo legível');
+    const gtxt = await (await fetch('/atividades/clinica-gabarito.js')).text();
+    ok(!!w.CLINICA_GABARITO && w.CLINICA_GABARITO.dados.length > 1000 && !/Hipótese-modelo|armadilha|Reprografia/i.test(gtxt), 'gabarito publicado está cifrado (sem texto legível)');
+
     // home
     w = await carregar('/index.html');
     await sleep(2000);
     const card = w.document.getElementById('sessaoCard').textContent;
     ok(card.includes('Grupo Teste') && card.includes('Salva'), 'home mostra o progresso do estudante');
     ok(w.document.querySelector('[data-ferramenta="vies-ancoragem"]').textContent.includes('Anotações salvas'), 'home marca o material de viés com anotações');
+    ok(w.document.querySelector('[data-ferramenta="clinica-aula2"]').textContent.includes('Salva'), 'home mostra a Clínica como salva');
 
     w.VD.sair();
     await sleep(300);

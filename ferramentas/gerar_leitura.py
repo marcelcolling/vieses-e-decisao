@@ -46,6 +46,8 @@ LEITURAS = [
         "aula": "2 · Explore",
         "atividade": ("../atividades/aula-2-barreiras.html", "Levantamento, triangulação e priorização de barreiras"),
         "cta_texto": "Leve os quatro movimentos para o seu comportamento-alvo na atividade da aula. Suas respostas são salvas automaticamente.",
+        "pratica": ("../atividades/aula-2-clinica.html", "Clínica de diagnóstico",
+                    "A Parte E: treino em grupo com casos prontos (mini-casos e dossiês), antes da atividade principal."),
         "recursos_comb": True,
     },
 ]
@@ -629,6 +631,14 @@ def gerar(cfg):
         f'<p>{html.escape(cfg.get("cta_texto", CTA_PADRAO))}</p></div>'
         f'<a class="cta-btn" href="{url_ativ}">Abrir a atividade →</a></aside>'
     )
+    if cfg.get("pratica"):
+        url_p, nome_p, texto_p = cfg["pratica"]
+        cta = (
+            '<aside class="cta-atividade cta-pratica">'
+            '<div><span class="cta-eyebrow">Em sala · prática em grupo</span>'
+            f'<h3>{html.escape(nome_p)}</h3><p>{html.escape(texto_p)}</p></div>'
+            f'<a class="cta-btn" href="{url_p}">Abrir a Clínica →</a></aside>'
+        ) + cta
     # coloca o convite à atividade antes das Fontes
     corpo_html = "\n".join(corpo)
     marcador = '<section class="secao secao-fontes"'
@@ -650,6 +660,8 @@ def gerar(cfg):
         nav="\n  ".join(nav),
         corpo=corpo_html,
         url_ativ=url_ativ,
+        nav_pratica=(f'<a class="nav-item nav-atividade nav-pratica" href="{cfg["pratica"][0]}">✎ {html.escape(cfg["pratica"][1])}</a>\n  '
+                     if cfg.get("pratica") else ""),
         chave=cfg["destino"].stem,
         extras=extras_comb() if comb else "",
     )
@@ -707,7 +719,7 @@ MODELO = """<!DOCTYPE html>
   <a class="nav-item nav-ajuda" href="../index.html#ajuda">? Como usar o portal</a>
   <a class="nav-item" href="#intro">Início</a>
   {nav}
-  <a class="nav-item nav-atividade" href="{url_ativ}">✎ Ir para a atividade</a>
+  {nav_pratica}<a class="nav-item nav-atividade" href="{url_ativ}">✎ Ir para a atividade</a>
 </nav>
 
 <main class="wrapper">

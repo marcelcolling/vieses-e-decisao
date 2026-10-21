@@ -16,7 +16,9 @@ try {
 } finally {
   Stop-Process -Id $srv.Id -Force -ErrorAction SilentlyContinue
 }
-$t = [IO.File]::ReadAllText($saida, [Text.Encoding]::UTF8)
+# o Edge às vezes ainda segura o arquivo por alguns instantes depois de sair
+$t = $null
+for ($i = 0; $i -lt 20 -and $t -eq $null; $i++) { try { $t = [IO.File]::ReadAllText($saida, [Text.Encoding]::UTF8) } catch { Start-Sleep -Milliseconds 500 } }
 if ($t -match '(?s)<pre id="log">(.*?)</pre>') {
   $log = [System.Net.WebUtility]::HtmlDecode($matches[1])
   Write-Host $log
