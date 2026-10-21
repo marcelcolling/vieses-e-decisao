@@ -48,8 +48,12 @@ README.md                     instruções para o professor
 1. Copie o `.md` para `conteudo/`.
 2. Acrescente uma entrada em `LEITURAS` no `ferramentas/gerar_leitura.py` (selo, título curto, tag, base, aula, atividade relacionada). Se o documento tiver estruturas novas (rótulos de destaque, partes, exemplos), ajuste `CALLOUTS` ou o parser.
 3. Rode `python ferramentas/gerar_leitura.py`.
-4. **Confira a integridade:** compare as palavras do `.md` com o texto visível do HTML (difflib sobre tokens `\w+`). Só podem faltar os números das listas numeradas, que viram estilo visual.
+4. **Confira a integridade:** compare as palavras do `.md` com o texto visível do HTML (difflib sobre tokens `\w+`). Só podem faltar os números das listas numeradas, que viram estilo visual. Quando a leitura usa recursos que repetem cabeçalhos de tabela em cartões, o difflib acusa deslocamentos falsos: complemente com uma contagem por palavra (sem diferenciar maiúsculas) e exija que nenhuma palavra apareça menos vezes na página que no original.
 5. Coloque o cartão `rec rec-leitura` na etapa certa da trilha, em `index.html`.
+6. Depois de mexer no gerador, regenere e confirme que as leituras antigas saem **byte a byte iguais** (salve uma cópia antes e compare com `cmp`). Recursos novos entram atrás de uma opção por leitura, nunca por detecção automática: a leitura da Aula 1 também tem tabelas "Degrau" e "#".
+
+### Recursos interativos da leitura da Aula 2 (`"recursos_comb": True`)
+A entrada da Aula 2 em `LEITURAS` liga recursos que só mudam a apresentação: siglas do COM-B (CF, CP, OF, OS, MR, MA) e marcações (F, L, RUÍDO) coloridas e clicáveis, com explicação curta (`#dados-siglas`); mapa dos seis componentes no fim da A1; fichas dos componentes A2 a A7 (rótulos em `CAMPOS`); tabela "Frase" vira cartões para revelar; tabela "Degrau" vira escada; tabela "# | Movimento" vira cartões; indicador do movimento nas seções C1 a C4; caixa "Exemplo completo"; citações `>` (as que começam com "Acreditamos" viram caixa de hipótese); tabelas compactas no celular; botão "Cartão de bolso", que abre "O passo em uma página" numa gaveta. Nomes, perguntas e âncoras são lidos do próprio `.md` (`preparar_comb`), que falha com mensagem clara se o texto mudar de formato. O `.md` em `conteudo/` é o original até o fim da Parte D, mais as Fontes. As Partes E (Clínica de diagnóstico) e F ficam para a atividade.
 
 ### Nova atividade (ex.: Aula 4)
 1. Crie `atividades/aula-4-*.html` partindo de uma atividade existente. Mantenha o padrão visual (hero roxo, `passo` numerado, callouts, `hipotese-box`), o CSS extra do portal (`.page` com `--vd-largura`, `.btn-salvar`) e a barra de ações (`[data-vd-salvar]` + Imprimir).
@@ -72,6 +76,7 @@ Não há como publicar o Apps Script por aqui: o professor precisa colar o `Codi
 - **PowerShell 5.1:** depois de instalar algo, recarregue o PATH com `$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")`. O `git` e o `gh` já estão instalados e autenticados (`gh auth setup-git` feito).
 - Logo depois de uma implantação nova, o Apps Script pode devolver 404 ou uma página HTML por alguns minutos. O portal trata isso: guarda no navegador e tenta de novo.
 - Arquivos sem BOM: gravar com `New-Object Text.UTF8Encoding $false`.
+- Capturas de seções no Edge headless: `pagina.html#ancora` com `--screenshot` sai em branco. Use uma página auxiliar temporária na raiz (não publicar) que carrega a leitura num `<iframe>` do mesmo endereço, rola com `contentWindow.scrollTo` e, se preciso, clica em botões (cartão de bolso, "Revelar todas"). Elementos abertos com atraso (como a explicação das siglas) às vezes não aparecem na captura: confira por `--dump-dom` (posição e `display`). As âncoras são cortadas em 60 caracteres.
 
 ## Como validar antes de publicar
 
@@ -86,6 +91,6 @@ Roxo `#402C4F` / roxo escuro `#2C1E37`, azul `#455066`, papel `#FCFCFA` / `#F2EF
 
 ## Pendências conhecidas
 
-- A Aula 2 tem uma leitura pronta em Markdown (`aula-2-leitura-com-b-diagnostico-barreiras.md`) e em HTML (`AULA 02 - MATERIAL DE LEITURA.html`) na pasta do OneDrive, ainda não publicada no portal.
+- Leitura da Aula 2 publicada (`leituras/passo-2-explorar-o-comportamento.html`, a partir de `material-passo-2-explorar-comportamento-e-atividade (NOVO).md`, Partes A a D e Fontes). Falta a atividade em sala, a Clínica de diagnóstico (Parte E do mesmo arquivo; o professor mandará as instruções). O texto da leitura cita as Partes E e F, que ainda não existem no portal. A leitura antiga `aula-2-leitura-com-b-diagnostico-barreiras.md` não foi publicada.
 - A Aula 4 (plano de aplicação) e as mentorias aparecem como "Em breve".
 - Erros de digitação nos originais dos vieses, mantidos por fidelidade: "não não vai te proteger" e "Esse é o contexto é um contexto" (Ancoragem).

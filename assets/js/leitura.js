@@ -103,4 +103,124 @@
     });
     atualizar();
   }
+
+  /* ---- recursos COM-B (só nas leituras geradas com "recursos_comb") ---- */
+  function escHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* frases para revelar */
+  document.querySelectorAll('.revelar').forEach(function (bloco) {
+    var cartoes = Array.prototype.slice.call(bloco.querySelectorAll('details.revela'));
+    var btnTodas = bloco.querySelector('.revelar-todas');
+    if (!btnTodas) return;
+    function rotuloTodas() { btnTodas.textContent = cartoes.every(function (d) { return d.open; }) ? 'Esconder todas' : 'Revelar todas'; }
+    btnTodas.addEventListener('click', function () {
+      var abrir = !cartoes.every(function (d) { return d.open; });
+      cartoes.forEach(function (d) { d.open = abrir; });
+      rotuloTodas();
+    });
+    cartoes.forEach(function (d) { d.addEventListener('toggle', rotuloTodas); });
+  });
+  var revelas = Array.prototype.slice.call(document.querySelectorAll('details.revela'));
+  var revelasAntes = [];
+  window.addEventListener('beforeprint', function () {
+    revelasAntes = revelas.map(function (d) { return d.open; });
+    revelas.forEach(function (d) { d.open = true; });
+  });
+  window.addEventListener('afterprint', function () {
+    revelas.forEach(function (d, i) { d.open = revelasAntes[i]; });
+  });
+
+  /* explicação curta ao tocar numa sigla */
+  var dadosSiglas = document.getElementById('dados-siglas');
+  if (dadosSiglas) {
+    var SIG = {};
+    try { SIG = JSON.parse(dadosSiglas.textContent); } catch (e) {}
+    var pop = document.createElement('div');
+    pop.className = 'sigla-pop';
+    pop.setAttribute('role', 'dialog');
+    pop.hidden = true;
+    document.body.appendChild(pop);
+    var popDe = null;
+    var fecharPop = function () { pop.hidden = true; popDe = null; };
+    var abrirPop = function (el) {
+      var d = SIG[el.dataset.sigla];
+      if (!d) return;
+      var cod = /^[A-D]\d$/.test(d.cod) ? d.cod : 'a seção';
+      pop.innerHTML =
+        '<span class="pop-fam">' + escHtml(d.familia) + '</span>' +
+        '<div class="pop-cab"><span class="sigla s-' + escHtml(d.classe) + '">' + escHtml(el.dataset.sigla) + '</span><strong>' + escHtml(d.nome) + '</strong></div>' +
+        '<p>' + escHtml(d.pergunta) + '</p>' +
+        '<a href="#' + escHtml(d.id) + '">Ler ' + escHtml(cod) + ' →</a>';
+      pop.hidden = false;
+      var r = el.getBoundingClientRect();
+      var largura = pop.offsetWidth;
+      var esquerda = Math.min(Math.max(12, r.left + window.scrollX - 12), window.scrollX + document.documentElement.clientWidth - largura - 12);
+      var topo = r.bottom + window.scrollY + 8;
+      if (r.bottom + pop.offsetHeight + 16 > window.innerHeight && r.top > pop.offsetHeight + 16) topo = r.top + window.scrollY - pop.offsetHeight - 8;
+      pop.style.left = esquerda + 'px';
+      pop.style.top = topo + 'px';
+      popDe = el;
+    };
+    document.addEventListener('click', function (e) {
+      var alvo = e.target.closest ? e.target : e.target.parentElement;
+      var s = alvo.closest('abbr.sigla');
+      if (s) { e.preventDefault(); if (popDe === s) fecharPop(); else abrirPop(s); return; }
+      if (alvo.closest('.sigla-pop a')) { fecharPop(); fecharCartao(); return; }
+      if (!alvo.closest('.sigla-pop')) fecharPop();
+    });
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('abbr.sigla')) { e.preventDefault(); abrirPop(e.target); }
+      if (e.key === 'Escape') fecharPop();
+    });
+    // no celular a barra de endereço dispara resize ao rolar: só fecha se a largura mudar
+    var larguraAntes = window.innerWidth;
+    window.addEventListener('resize', function () { if (window.innerWidth !== larguraAntes) { larguraAntes = window.innerWidth; fecharPop(); } });
+    var gavetaCorpo = document.querySelector('.cartao-corpo');
+    if (gavetaCorpo) gavetaCorpo.addEventListener('scroll', fecharPop, { passive: true });
+  }
+
+  /* cartão de bolso: o resumo "O passo em uma página" numa gaveta lateral */
+  var btnCartao = document.getElementById('btn-cartao');
+  var gaveta = document.getElementById('cartao');
+  var fundo = document.getElementById('cartao-fundo');
+  var cartaoAberto = false;
+  function fecharCartao() {
+    if (!gaveta || !cartaoAberto) return;
+    cartaoAberto = false;
+    gaveta.classList.remove('aberto');
+    fundo.hidden = true;
+    btnCartao.setAttribute('aria-expanded', 'false');
+    setTimeout(function () { if (!cartaoAberto) gaveta.hidden = true; }, 300);
+    btnCartao.focus();
+  }
+  if (btnCartao && gaveta) {
+    var corpoCartao = gaveta.querySelector('.cartao-corpo');
+    var abrirCartao = function () {
+      if (!corpoCartao.childElementCount) {
+        var origem = document.getElementById(corpoCartao.dataset.origem);
+        if (origem) {
+          var copia = origem.cloneNode(true);
+          copia.removeAttribute('id');
+          copia.querySelectorAll('[id]').forEach(function (el) { el.removeAttribute('id'); });
+          corpoCartao.appendChild(copia);
+        }
+      }
+      cartaoAberto = true;
+      gaveta.hidden = false;
+      fundo.hidden = false;
+      btnCartao.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(function () { gaveta.classList.add('aberto'); });
+      gaveta.querySelector('.cartao-fechar').focus();
+    };
+    btnCartao.addEventListener('click', function () { if (cartaoAberto) fecharCartao(); else abrirCartao(); });
+    fundo.addEventListener('click', fecharCartao);
+    gaveta.querySelector('.cartao-fechar').addEventListener('click', fecharCartao);
+    corpoCartao.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('a[href^="#"]')) fecharCartao();
+    });
+    document.querySelectorAll('a.link-cartao').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); abrirCartao(); });
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') fecharCartao(); });
+  }
 })();
