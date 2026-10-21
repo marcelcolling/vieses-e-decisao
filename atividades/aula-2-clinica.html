@@ -10,9 +10,9 @@
 <link rel="stylesheet" href="../assets/css/portal.css">
 <style>
   :root {
-    --roxo:#402C4F; --roxo-deep:#2C1E37; --roxo-tint:rgba(64,44,79,0.06); --azul:#455066; --azul-tint:rgba(69,80,102,0.09);
-    --fundo:#FCFCFA; --fundo-alt:#F2EFEA; --papel-dim:#EFEEE7; --amarelo:#EFB93C; --amarelo-ink:#5B4212;
-    --texto:#2A2432; --muted:#6b6478; --branco:#fff; --border:rgba(64,44,79,0.16); --ok:#2f8f5f; --erro:#b0475a;
+    --roxo:#402C4F; --roxo-deep:#2C1E37; --azul:#455066; --azul-tint:rgba(69,80,102,0.09);
+    --fundo:#FCFCFA; --fundo-alt:#F2EFEA; --amarelo:#EFB93C; --amarelo-ink:#5B4212;
+    --texto:#2A2432; --muted:#6b6478; --border:rgba(64,44,79,0.16); --ok:#2f8f5f; --erro:#b0475a;
     --fam-c:#455066; --fam-o:#B9861A; --fam-m:#402C4F;
     --display:'Fraunces', Georgia, serif; --body:'Inter', -apple-system, sans-serif;
   }
@@ -24,21 +24,19 @@
   .page { padding-bottom:6rem; }
   h2, h3, h4 { font-family:var(--display); color:var(--roxo); line-height:1.2; }
   p { margin:0 0 0.9rem; }
-  strong { color:inherit; }
 
   /* hero */
-  header.hero { background:var(--roxo); color:#fff; padding:clamp(2rem,6vw,3.2rem) 0 clamp(1.6rem,4vw,2.4rem); position:relative; overflow:hidden; }
+  header.hero { background:var(--roxo); color:#fff; padding:clamp(1.8rem,5vw,2.8rem) 0 clamp(1.5rem,4vw,2.2rem); position:relative; overflow:hidden; }
   header.hero::before { content:''; position:absolute; right:-120px; top:-150px; width:420px; height:420px; border-radius:50%; border:2px solid rgba(239,185,60,0.2); }
+  .hero-grid { display:grid; grid-template-columns:1.5fr 1fr; gap:2rem; align-items:end; position:relative; z-index:1; }
   .hero .tag { display:inline-flex; align-items:center; gap:0.5rem; border:1px solid rgba(239,185,60,0.5); color:var(--amarelo); font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.32rem 0.9rem; border-radius:100px; font-weight:600; }
   .hero .tag i { width:8px; height:8px; border-radius:50%; background:var(--amarelo); }
-  .hero h1 { font-family:var(--display); font-weight:700; font-size:clamp(2rem,5vw,3.2rem); margin:0.9rem 0 0.5rem; line-height:1.05; color:#fff; }
+  .hero h1 { font-family:var(--display); font-weight:700; font-size:clamp(2rem,5vw,3.1rem); margin:0.8rem 0 0.45rem; line-height:1.05; color:#fff; }
   .hero h1 em { color:var(--amarelo); font-weight:500; }
-  .hero-sub { font-family:var(--display); font-style:italic; color:rgba(255,255,255,0.82); max-width:70ch; margin:0; font-size:1.05rem; }
-  .identifica { display:grid; grid-template-columns:1.2fr repeat(4, 1fr); gap:0.8rem; margin-top:1.6rem; position:relative; z-index:1; }
-  .identifica label { font-size:0.68rem; letter-spacing:0.09em; text-transform:uppercase; color:rgba(255,255,255,0.65); display:block; margin-bottom:0.3rem; font-weight:600; }
-  .identifica input[type="text"] { background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.28); border-radius:8px; padding:0.6rem 0.75rem; color:#fff; font-family:var(--body); font-size:15px; width:100%; }
-  .identifica input::placeholder { color:rgba(255,255,255,0.42); }
-  .identifica input:focus { outline:2px solid var(--amarelo); outline-offset:1px; }
+  .hero-sub { font-family:var(--display); font-style:italic; color:rgba(255,255,255,0.82); max-width:62ch; margin:0; font-size:1.02rem; }
+  .hero label { font-size:0.68rem; letter-spacing:0.09em; text-transform:uppercase; color:rgba(255,255,255,0.65); display:block; margin-bottom:0.3rem; font-weight:600; }
+  .hero input[type="text"] { background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.28); border-radius:8px; padding:0.65rem 0.8rem; color:#fff; font-family:var(--body); font-size:16px; width:100%; }
+  .hero input::placeholder { color:rgba(255,255,255,0.42); }
 
   /* abas */
   .abas { position:sticky; top:58px; z-index:300; background:var(--fundo); border-bottom:1px solid var(--border); box-shadow:0 10px 24px -22px rgba(44,30,55,0.6); }
@@ -50,35 +48,93 @@
   .aba[aria-selected="true"] .aba-n { background:var(--amarelo); color:var(--amarelo-ink); }
   .aba-badge { font-size:0.68rem; font-weight:700; padding:0.1rem 0.45rem; border-radius:100px; background:rgba(47,143,95,0.14); color:#1f6a45; }
   .aba[aria-selected="true"] .aba-badge { background:rgba(255,255,255,0.18); color:#bff0d6; }
-  .aba-gab .aba-n { background:rgba(239,185,60,0.25); }
   .painel { display:none; padding-top:2rem; }
   .painel.ativo { display:block; }
 
-  /* blocos de texto */
+  /* texto */
   .eyebrow { display:flex; align-items:center; gap:0.55rem; font-size:0.74rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amarelo-ink); margin-bottom:0.5rem; }
   .eyebrow i { width:8px; height:8px; border-radius:50%; border:2px solid var(--amarelo); }
-  h2.tit { font-size:clamp(1.6rem,3.4vw,2.1rem); margin:0 0 0.8rem; display:flex; align-items:baseline; gap:0.7rem; flex-wrap:wrap; }
+  h2.tit { font-size:clamp(1.55rem,3.3vw,2rem); margin:0 0 0.7rem; display:flex; align-items:baseline; gap:0.7rem; flex-wrap:wrap; }
+  h3.sub { font-size:1.2rem; margin:2rem 0 0.8rem; }
   .cod { font-family:var(--body); font-size:0.72rem; font-weight:700; letter-spacing:0.06em; color:var(--amarelo-ink); background:rgba(239,185,60,0.2); border-radius:6px; padding:0.2rem 0.5rem; position:relative; top:-0.2em; }
-  .legenda-rodadas { display:flex; gap:0.4rem; flex-wrap:wrap; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin:1.2rem 0 0.5rem; }
-  .ficha-cab { display:grid; grid-template-columns:230px 1fr; gap:1rem; font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); padding-bottom:0.3rem; border-bottom:2px solid var(--border); margin-top:0.8rem; }
-  .lead { font-size:1rem; color:var(--azul); line-height:1.75; max-width:90ch; }
+  .lead { font-size:1rem; color:var(--azul); line-height:1.75; max-width:88ch; }
   .lead p:last-child { margin-bottom:0; }
-  .texto { color:var(--azul); font-size:0.95rem; line-height:1.75; }
-  .texto strong, .lead strong { color:var(--roxo); }
-  ol.num { list-style:none; padding:0; margin:0 0 1rem; counter-reset:n; }
-  ol.num li { counter-increment:n; position:relative; padding-left:2.4rem; margin-bottom:0.65rem; color:var(--azul); font-size:0.95rem; line-height:1.7; }
-  ol.num li::before { content:counter(n); position:absolute; left:0; top:0.05rem; width:1.7rem; height:1.7rem; border-radius:50%; background:var(--roxo); color:#fff; font-family:var(--display); font-weight:700; font-size:0.82rem; display:flex; align-items:center; justify-content:center; }
-  ol.num li strong { color:var(--roxo); }
-  blockquote.citacao { margin:1.2rem 0; background:#fff; border:1px solid var(--border); border-left:4px solid var(--amarelo); border-radius:0 12px 12px 0; padding:0.9rem 1.2rem; }
-  blockquote.citacao p { margin:0; font-family:var(--display); color:var(--roxo); font-size:1.02rem; }
-  .bloco { background:#fff; border:1px solid var(--border); border-radius:18px; padding:1.4rem 1.5rem; margin-bottom:1.2rem; }
-  .bloco h3 { margin:0 0 0.7rem; font-size:1.2rem; }
-  details.sobre { background:var(--fundo-alt); border:1px solid var(--border); border-radius:14px; margin-bottom:1.4rem; }
-  details.sobre summary { cursor:pointer; padding:0.85rem 1.1rem; font-weight:600; color:var(--roxo); font-size:0.92rem; list-style:none; display:flex; justify-content:space-between; gap:1rem; }
-  details.sobre summary::-webkit-details-marker { display:none; }
-  details.sobre summary::after { content:'+'; font-weight:700; }
-  details.sobre[open] summary::after { content:'–'; }
-  details.sobre .sobre-corpo { padding:0 1.1rem 0.9rem; }
+  .lead strong, .texto strong { color:var(--roxo); }
+  .texto { color:var(--azul); font-size:0.94rem; line-height:1.7; }
+  .ajuda { font-size:0.84rem; color:var(--muted); margin:0.2rem 0 0.7rem; }
+  .vazio { color:var(--muted); font-style:italic; font-size:0.9rem; }
+  .bloco { background:#fff; border:1px solid var(--border); border-radius:18px; padding:1.3rem 1.4rem; margin-bottom:1.1rem; }
+  .bloco h3 { margin:0 0 0.6rem; font-size:1.15rem; }
+  .instr { display:flex; gap:0.9rem; align-items:flex-start; background:var(--roxo-deep); color:rgba(255,255,255,0.85); border-radius:14px; padding:0.9rem 1.15rem; margin-bottom:1.1rem; font-size:0.93rem; line-height:1.6; }
+  .instr .n { width:1.9rem; height:1.9rem; border-radius:50%; background:var(--amarelo); color:var(--amarelo-ink); font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .instr strong { color:var(--amarelo); }
+  .instr p { margin:0; }
+  .acoes { display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:1rem; }
+
+  /* grades */
+  .grade { display:grid; gap:0.9rem; }
+  .g4 { grid-template-columns:repeat(4, minmax(0,1fr)); }
+  .g3 { grid-template-columns:repeat(3, minmax(0,1fr)); }
+  .g2 { grid-template-columns:repeat(2, minmax(0,1fr)); }
+
+  /* como funciona */
+  .rodada-card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:1rem 1.1rem; display:flex; flex-direction:column; gap:0.4rem; cursor:pointer; text-align:left; font:inherit; color:inherit; transition:border-color .2s, transform .2s; }
+  .rodada-card:hover { border-color:var(--roxo); transform:translateY(-2px); }
+  .rc-topo { display:flex; justify-content:space-between; align-items:center; gap:0.5rem; }
+  .rc-nome { font-family:var(--display); font-weight:600; font-size:1.06rem; color:var(--roxo); }
+  .rc-nome strong { font-weight:600; }
+  .rc-tempo { font-size:0.72rem; font-weight:700; color:var(--amarelo-ink); background:rgba(239,185,60,0.2); border-radius:100px; padding:0.12rem 0.55rem; white-space:nowrap; }
+  .rc-txt { font-size:0.87rem; color:var(--azul); }
+  .rc-entrega { margin-top:auto; font-size:0.8rem; color:var(--texto); border-top:1px dashed var(--border); padding-top:0.5rem; }
+  .rc-entrega b { display:block; font-size:0.64rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--ok); }
+  .papel { background:#fff; border:1px solid var(--border); border-radius:18px; padding:1.1rem 1.15rem; display:flex; flex-direction:column; gap:0.55rem; }
+  .papel-cab { display:flex; align-items:center; gap:0.7rem; }
+  .papel-ico { width:44px; height:44px; border-radius:12px; background:var(--roxo); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+  .papel-nome { font-family:var(--display); font-weight:700; font-size:1.15rem; color:var(--roxo); line-height:1.1; }
+  .papel-quando { display:block; font-family:var(--body); font-size:0.7rem; font-weight:600; color:var(--muted); letter-spacing:0.03em; }
+  .papel ul { margin:0; padding-left:1.1rem; font-size:0.88rem; color:var(--azul); line-height:1.55; }
+  .papel ul li { margin-bottom:0.25rem; }
+  .papel ul li::marker { color:var(--amarelo); }
+  .papel-frase { font-family:var(--display); font-style:italic; color:var(--roxo); background:rgba(239,185,60,0.14); border-radius:10px; padding:0.45rem 0.7rem; font-size:0.95rem; }
+  .papel-quem { margin-top:auto; }
+  .papel-quem label { font-size:0.66rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:0.25rem; }
+  .troca { margin-top:0.8rem; font-size:0.88rem; color:var(--azul); display:flex; gap:0.5rem; align-items:center; }
+  .regra { background:#fff; border:1px solid var(--border); border-radius:14px; padding:0.9rem 1rem; display:flex; gap:0.75rem; font-size:0.88rem; color:var(--azul); line-height:1.55; }
+  .regra-n { width:1.9rem; height:1.9rem; border-radius:50%; flex-shrink:0; background:var(--amarelo); color:var(--amarelo-ink); font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .regra strong { color:var(--roxo); }
+
+  /* siglas e chips */
+  .sigla { display:inline-block; font-weight:700; font-size:0.72rem; letter-spacing:0.04em; padding:0.06rem 0.4rem; border-radius:5px; border:1px solid; line-height:1.4; white-space:nowrap; }
+  .s-c { background:rgba(69,80,102,0.12); color:#2E3646; border-color:rgba(69,80,102,0.45); }
+  .s-o { background:rgba(239,185,60,0.22); color:var(--amarelo-ink); border-color:rgba(185,134,26,0.55); }
+  .s-m { background:rgba(64,44,79,0.11); color:var(--roxo); border-color:rgba(64,44,79,0.4); }
+  .s-f { background:rgba(47,143,95,0.13); color:#1f6a45; border-color:rgba(47,143,95,0.45); }
+  .s-l { background:rgba(107,100,120,0.12); color:#4d4759; border-color:rgba(107,100,120,0.4); }
+  .s-r { background:transparent; color:#6b6478; border-color:rgba(107,100,120,0.45); border-style:dashed; }
+  .chips { display:flex; flex-wrap:wrap; gap:0.35rem; }
+  .chip { font-family:var(--body); font-size:0.82rem; font-weight:600; border:1px solid var(--border); background:#fff; color:var(--azul); border-radius:8px; padding:0.4rem 0.7rem; cursor:pointer; min-height:38px; line-height:1.2; }
+  .chip:hover { border-color:var(--roxo); }
+  .chip:focus-visible { outline:2px solid var(--amarelo); outline-offset:2px; }
+  .chip:disabled { opacity:0.45; cursor:not-allowed; }
+  .chip.on { background:var(--roxo); border-color:var(--roxo); color:#fff; }
+  .chip.sig.c.on { background:var(--fam-c); border-color:var(--fam-c); }
+  .chip.sig.o.on { background:var(--fam-o); border-color:var(--fam-o); }
+  .chip.sig.m.on { background:var(--fam-m); border-color:var(--fam-m); }
+  .chip.sig.f.on { background:var(--ok); border-color:var(--ok); }
+  .chip.sig.l.on, .chip.sig.r.on { background:#6b6478; border-color:#6b6478; }
+  .chip-sep { width:1px; background:var(--border); margin:0 0.2rem; }
+  .rot { display:block; font-size:0.68rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); margin:0.9rem 0 0.35rem; }
+  .rot b { color:var(--roxo); }
+
+  /* campos */
+  input[type="text"], textarea, select { width:100%; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.7rem; font-family:var(--body); font-size:15px; color:var(--texto); background:var(--fundo-alt); line-height:1.5; }
+  textarea { min-height:80px; resize:vertical; overflow:hidden; }
+  select { min-height:42px; }
+  input:focus, textarea:focus, select:focus { outline:2px solid var(--amarelo); outline-offset:1px; }
+  .campo { margin-bottom:0.8rem; }
+  .campo label { display:block; font-size:0.74rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--azul); margin-bottom:0.3rem; }
+  .campos-2 { display:grid; grid-template-columns:1fr 1fr; gap:0 1rem; }
+  .campos-4 { display:grid; grid-template-columns:repeat(4, 1fr); gap:0 1rem; }
 
   /* tabelas */
   .tab-wrap { border:1px solid var(--border); border-radius:14px; overflow:hidden; background:#fff; margin:0.8rem 0 1.2rem; }
@@ -88,6 +144,7 @@
   table.tab td:first-child { color:var(--roxo); font-weight:600; }
   table.tab td strong { color:var(--roxo); }
   table.tab tbody tr:nth-child(even) td { background:rgba(239,238,231,0.45); }
+  table.tab select { font-size:14px; min-height:38px; }
   @media (max-width:760px) {
     .tab-wrap { border:none; background:transparent; overflow:visible; }
     table.tab thead { display:none; }
@@ -98,211 +155,174 @@
     table.tab td[data-label]:not([data-label=""])::before { content:attr(data-label); display:block; font-size:0.64rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--amarelo-ink); }
   }
 
-  /* cartões da visão geral */
-  .grade { display:grid; gap:0.9rem; }
-  .g4 { grid-template-columns:repeat(4, minmax(0,1fr)); }
-  .g3 { grid-template-columns:repeat(3, minmax(0,1fr)); }
-  .g2 { grid-template-columns:repeat(2, minmax(0,1fr)); }
-  .rodada-card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:1.1rem 1.15rem; display:flex; flex-direction:column; gap:0.45rem; cursor:pointer; text-align:left; font:inherit; color:inherit; transition:border-color .2s, transform .2s; }
-  .rodada-card:hover { border-color:var(--roxo); transform:translateY(-2px); }
-  .rodada-card .rc-nome { font-family:var(--display); font-weight:600; font-size:1.08rem; color:var(--roxo); }
-  .rodada-card .rc-nome strong { font-weight:600; }
-  .rodada-card .rc-txt { font-size:0.88rem; color:var(--azul); flex:1; }
-  .rodada-card .rc-tempo { align-self:flex-start; font-size:0.74rem; font-weight:700; color:var(--amarelo-ink); background:rgba(239,185,60,0.2); border-radius:100px; padding:0.15rem 0.6rem; }
-  .regra { background:#fff; border:1px solid var(--border); border-radius:14px; padding:1rem 1.05rem; display:flex; gap:0.8rem; font-size:0.9rem; color:var(--azul); line-height:1.6; }
-  .regra-n { width:2rem; height:2rem; border-radius:50%; flex-shrink:0; background:var(--amarelo); color:var(--amarelo-ink); font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; }
-  .regra strong { color:var(--roxo); }
-  .papeis { background:var(--roxo-deep); color:rgba(255,255,255,0.82); border-radius:16px; padding:1.2rem 1.4rem; margin-top:1rem; font-size:0.92rem; line-height:1.7; }
-  .papeis p { margin:0; }
-  .papeis strong { color:var(--amarelo); }
-  .links-uteis { display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:1rem; }
-
-  /* siglas e chips */
-  .sigla { display:inline-block; font-weight:700; font-size:0.74rem; letter-spacing:0.04em; padding:0.08rem 0.42rem; border-radius:5px; border:1px solid; line-height:1.4; white-space:nowrap; }
-  .s-c { background:rgba(69,80,102,0.12); color:#2E3646; border-color:rgba(69,80,102,0.45); }
-  .s-o { background:rgba(239,185,60,0.22); color:var(--amarelo-ink); border-color:rgba(185,134,26,0.55); }
-  .s-m { background:rgba(64,44,79,0.11); color:var(--roxo); border-color:rgba(64,44,79,0.4); }
-  .s-f { background:rgba(47,143,95,0.13); color:#1f6a45; border-color:rgba(47,143,95,0.45); }
-  .s-l { background:rgba(107,100,120,0.12); color:#4d4759; border-color:rgba(107,100,120,0.4); }
-  .s-r { background:transparent; color:#6b6478; border-color:rgba(107,100,120,0.45); border-style:dashed; }
-  .chips { display:flex; flex-wrap:wrap; gap:0.35rem; }
-  .chip { font-family:var(--body); font-size:0.8rem; font-weight:600; border:1px solid var(--border); background:#fff; color:var(--azul); border-radius:8px; padding:0.38rem 0.65rem; cursor:pointer; min-height:36px; line-height:1.2; transition:background .12s, border-color .12s, color .12s; }
-  .chip:hover { border-color:var(--roxo); }
-  .chip:focus-visible { outline:2px solid var(--amarelo); outline-offset:2px; }
-  .chip.on { background:var(--roxo); border-color:var(--roxo); color:#fff; }
-  .chip.sig.c.on { background:var(--fam-c); border-color:var(--fam-c); }
-  .chip.sig.o.on { background:var(--fam-o); border-color:var(--fam-o); }
-  .chip.sig.m.on { background:var(--fam-m); border-color:var(--fam-m); }
-  .chip.sig.f.on { background:var(--ok); border-color:var(--ok); }
-  .chip.sig.l.on, .chip.sig.r.on { background:#6b6478; border-color:#6b6478; }
-  .chip-sep { width:1px; background:var(--border); margin:0 0.2rem; }
-  .ctrl-rot { display:block; font-size:0.66rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); margin:0.8rem 0 0.35rem; }
-  .ctrl-rot b { color:var(--roxo); }
-
-  /* campos */
-  input[type="text"], textarea, select { width:100%; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.7rem; font-family:var(--body); font-size:15px; color:var(--texto); background:var(--fundo-alt); line-height:1.5; }
-  textarea { min-height:84px; resize:vertical; overflow:hidden; }
-  select { min-height:42px; }
-  input:focus, textarea:focus, select:focus { outline:2px solid var(--amarelo); outline-offset:1px; }
-  .campo { margin-bottom:0.8rem; }
-  .campo label { display:block; font-size:0.74rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--azul); margin-bottom:0.3rem; }
-  .campos-2 { display:grid; grid-template-columns:1fr 1fr; gap:0 1rem; }
-  .campos-4 { display:grid; grid-template-columns:repeat(4, 1fr); gap:0 1rem; }
-  .ajuda { font-size:0.82rem; color:var(--muted); font-style:italic; margin:0.2rem 0 0.6rem; }
-
   /* Rodada 1 */
   .tracker { display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center; background:var(--fundo-alt); border-radius:12px; padding:0.6rem 0.8rem; margin:1rem 0 1.2rem; font-size:0.82rem; color:var(--azul); }
   .tracker .sigla { opacity:0.35; }
   .tracker .sigla.usada { opacity:1; }
   .tracker .sigla.repetida { box-shadow:0 0 0 2px var(--erro); opacity:1; }
   .tracker .aviso { color:var(--erro); font-weight:600; }
-  .caso { background:#fff; border:1px solid var(--border); border-radius:18px; padding:1.15rem 1.2rem; display:flex; flex-direction:column; }
+  .caso { background:#fff; border:1px solid var(--border); border-radius:18px; padding:1.1rem 1.2rem; display:flex; flex-direction:column; }
   .caso.feito { border-color:rgba(64,44,79,0.4); }
   .caso-cab { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.4rem; }
   .caso-n { font-family:var(--display); font-weight:700; font-size:1.5rem; color:var(--amarelo); line-height:1; }
   .caso-comp { font-family:var(--display); font-style:italic; color:var(--roxo); font-size:1.02rem; line-height:1.35; }
   .caso-txt { font-size:0.9rem; color:var(--azul); line-height:1.65; flex:1; }
-  .caso textarea { min-height:64px; }
+  .caso textarea { min-height:60px; }
 
   /* Rodada 2 */
-  .dossies { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.8rem; margin:1rem 0 1.4rem; }
-  .dossie-bt { text-align:left; font:inherit; color:inherit; cursor:pointer; background:#fff; border:2px solid var(--border); border-radius:16px; padding:1rem 1.05rem; display:flex; flex-direction:column; gap:0.35rem; transition:border-color .2s, transform .2s; }
-  .dossie-bt:hover { border-color:var(--roxo); transform:translateY(-2px); }
-  .dossie-bt.on { border-color:var(--roxo); background:var(--roxo); color:#fff; }
-  .dossie-bt .dn { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amarelo-ink); }
-  .dossie-bt.on .dn { color:var(--amarelo); }
-  .dossie-bt .dt { font-family:var(--display); font-weight:600; font-size:1.05rem; line-height:1.25; }
-  .dossie-bt .dp { font-size:0.78rem; color:var(--muted); }
-  .dossie-bt.on .dp { color:rgba(255,255,255,0.7); }
-  .dossie-bt .dprog { font-size:0.74rem; font-weight:600; color:var(--ok); }
-  .dossie-bt.on .dprog { color:#9fe4c0; }
-  .etapas-nav { display:flex; gap:0.3rem; flex-wrap:wrap; margin:0 0 1.2rem; padding:0.4rem; background:var(--fundo-alt); border-radius:14px; }
-  .etapa-bt { display:inline-flex; align-items:center; gap:0.45rem; font:inherit; font-size:0.82rem; font-weight:600; color:var(--azul); background:transparent; border:none; border-radius:10px; padding:0.45rem 0.75rem 0.45rem 0.4rem; cursor:pointer; }
-  .etapa-bt:hover { background:#fff; }
-  .etapa-bt .en { width:1.5rem; height:1.5rem; border-radius:50%; background:#fff; color:var(--roxo); display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem; border:1px solid var(--border); }
-  .etapa-bt.on { background:var(--roxo); color:#fff; }
-  .etapa-bt.on .en { background:var(--amarelo); color:var(--amarelo-ink); border-color:var(--amarelo); }
-  .etapa-bt.feita .en { background:var(--ok); color:#fff; border-color:var(--ok); }
-  .etapa-txt { background:var(--roxo-deep); color:rgba(255,255,255,0.82); border-radius:14px; padding:0.95rem 1.2rem; margin-bottom:1.1rem; font-size:0.92rem; line-height:1.65; display:flex; gap:0.9rem; align-items:flex-start; }
-  .etapa-txt .en { width:1.9rem; height:1.9rem; border-radius:50%; background:var(--amarelo); color:var(--amarelo-ink); font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .etapa-txt strong { color:var(--amarelo); }
-  .etapa-txt p { margin:0; }
+  .dossie-barra { display:flex; justify-content:space-between; align-items:center; gap:0.8rem 1.4rem; flex-wrap:wrap; background:#fff; border:1px solid var(--border); border-radius:16px; padding:0.9rem 1.1rem; margin:1rem 0 1.1rem; }
+  .dossie-atual .dn { display:block; font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amarelo-ink); }
+  .dossie-atual .dt { font-family:var(--display); font-weight:600; font-size:1.2rem; color:var(--roxo); }
+  .dossie-outros { display:flex; align-items:center; gap:0.35rem; flex-wrap:wrap; font-size:0.78rem; color:var(--muted); }
+  .dossie-bt { font:inherit; font-size:0.8rem; font-weight:600; color:var(--azul); background:var(--fundo-alt); border:1px solid var(--border); border-radius:100px; padding:0.3rem 0.75rem; cursor:pointer; }
+  .dossie-bt.on { background:var(--roxo); border-color:var(--roxo); color:#fff; }
+  .passos-nav { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)) auto; gap:0.4rem; margin:0 0 1.2rem; }
+  .passo-nav { display:flex; align-items:center; gap:0.55rem; font:inherit; font-size:0.86rem; font-weight:600; color:var(--azul); background:var(--fundo-alt); border:1px solid var(--border); border-radius:12px; padding:0.55rem 0.75rem; cursor:pointer; text-align:left; }
+  .passo-nav .pn { width:1.6rem; height:1.6rem; border-radius:50%; background:#fff; color:var(--roxo); display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:0.78rem; border:1px solid var(--border); flex-shrink:0; }
+  .passo-nav.on { background:var(--roxo); border-color:var(--roxo); color:#fff; }
+  .passo-nav.on .pn { background:var(--amarelo); color:var(--amarelo-ink); border-color:var(--amarelo); }
+  .passo-nav.feito .pn { background:var(--ok); color:#fff; border-color:var(--ok); }
   .etapa-painel { display:none; }
   .etapa-painel.ativo { display:block; }
-  .cabecalho-dossie { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0.6rem; margin:0.8rem 0 1rem; }
-  .cd-item { background:#fff; border:1px solid var(--border); border-radius:12px; padding:0.7rem 0.9rem; font-size:0.92rem; color:var(--texto); }
+  .cab-dossie { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:0.6rem; margin:0.9rem 0 1.2rem; }
+  .cd-item { background:#fff; border:1px solid var(--border); border-radius:12px; padding:0.7rem 0.9rem; font-size:0.92rem; }
   .cd-item .cd-rot { display:block; font-size:0.66rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--amarelo-ink); margin-bottom:0.15rem; }
   .cd-item.cd-cru { grid-column:1 / -1; background:var(--fundo-alt); font-family:var(--display); font-style:italic; color:var(--roxo); }
-  .passos-lista { display:flex; flex-direction:column; gap:0.5rem; margin:0.8rem 0; }
-  .passo-bt { display:flex; align-items:center; gap:0.8rem; text-align:left; font:inherit; font-size:0.94rem; color:var(--texto); background:#fff; border:1px solid var(--border); border-radius:12px; padding:0.7rem 0.9rem; cursor:pointer; }
+  .passos-lista { display:flex; flex-direction:column; gap:0.45rem; }
+  .passo-bt { display:flex; align-items:center; gap:0.8rem; text-align:left; font:inherit; font-size:0.94rem; color:var(--texto); background:#fff; border:1px solid var(--border); border-radius:12px; padding:0.65rem 0.9rem; cursor:pointer; }
   .passo-bt:hover { border-color:var(--roxo); }
   .passo-bt .pn { width:1.8rem; height:1.8rem; border-radius:50%; background:var(--roxo); color:#fff; font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .passo-bt .pq { margin-left:auto; width:2rem; height:2rem; border-radius:50%; border:2px dashed var(--border); color:transparent; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .passo-bt.on { border-color:var(--amarelo); background:rgba(239,185,60,0.12); }
   .passo-bt.on .pq { border-style:solid; border-color:var(--amarelo); background:var(--amarelo); color:var(--amarelo-ink); }
 
-  /* mural */
-  .mural-wrap { margin:0 0 1.3rem; }
-  .mural { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(118px, 1fr); gap:0.45rem; overflow-x:auto; padding-bottom:0.4rem; }
-  .mcol { background:var(--fundo-alt); border:1px solid var(--border); border-radius:12px; padding:0.55rem; min-height:130px; display:flex; flex-direction:column; gap:0.35rem; }
-  .mcol.palpite { border:2px solid var(--amarelo); background:rgba(239,185,60,0.1); }
-  .mcol.especial { background:#fff; border-style:dashed; }
-  .mcol-cab { font-size:0.72rem; color:var(--azul); line-height:1.35; padding-bottom:0.35rem; border-bottom:1px dashed var(--border); margin-bottom:0.15rem; }
-  .mcol-cab b { display:flex; align-items:center; gap:0.35rem; font-family:var(--display); color:var(--roxo); font-size:0.9rem; }
-  .mcol-cab .q { background:var(--amarelo); color:var(--amarelo-ink); border-radius:50%; width:1.2rem; height:1.2rem; display:inline-flex; align-items:center; justify-content:center; font-size:0.72rem; font-family:var(--body); }
-  .mcarta { display:flex; align-items:center; justify-content:space-between; gap:0.3rem; background:#fff; border:1px solid var(--border); border-radius:8px; padding:0.28rem 0.4rem; font-size:0.78rem; font-weight:700; color:var(--roxo); cursor:pointer; font-family:var(--body); }
-  .mcarta:hover { border-color:var(--roxo); }
-  .mcarta .sigla { font-size:0.66rem; padding:0.02rem 0.3rem; }
-  .mural-legenda { font-size:0.78rem; color:var(--muted); margin-top:0.3rem; }
-  .sem-lugar { display:flex; gap:0.35rem; flex-wrap:wrap; align-items:center; font-size:0.8rem; color:var(--muted); margin-top:0.5rem; }
+  /* mural em faixas */
+  .contador { display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap; margin:0 0 0.8rem; }
+  .contador .pontos { display:flex; gap:4px; }
+  .contador .pontos i { width:22px; height:8px; border-radius:4px; background:var(--fundo-alt); border:1px solid var(--border); }
+  .contador .pontos i.on { background:var(--roxo); border-color:var(--roxo); }
+  .contador b { font-family:var(--display); color:var(--roxo); font-size:1.05rem; }
+  .mural { display:flex; flex-direction:column; gap:0.45rem; margin-bottom:1.6rem; }
+  .faixa { display:grid; grid-template-columns:250px 1fr; gap:0.8rem; align-items:stretch; background:var(--fundo-alt); border:1px solid var(--border); border-radius:14px; padding:0.6rem; }
+  .faixa.palpite { border:2px solid var(--amarelo); background:rgba(239,185,60,0.09); }
+  .faixa.especial { background:#fff; border-style:dashed; }
+  .faixa-cab { display:flex; gap:0.6rem; align-items:flex-start; font-size:0.84rem; color:var(--azul); line-height:1.4; padding:0.2rem; }
+  .faixa-cab .fn { width:1.7rem; height:1.7rem; border-radius:50%; background:var(--roxo); color:#fff; font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.85rem; }
+  .faixa-cab .q { display:inline-flex; width:1.25rem; height:1.25rem; border-radius:50%; background:var(--amarelo); color:var(--amarelo-ink); font-weight:700; font-size:0.75rem; align-items:center; justify-content:center; margin-left:0.3rem; }
+  .faixa-cartas { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:flex-start; min-height:44px; }
+  .faixa-vazia { font-size:0.78rem; color:var(--muted); font-style:italic; align-self:center; }
+  .faixa.vazia { padding:0.35rem 0.6rem; }
+  .faixa.vazia .faixa-cartas { min-height:0; }
+  .faixa.vazia .faixa-cab { font-size:0.8rem; }
+  .mini { width:230px; text-align:left; font:inherit; background:#fff; border:1px solid var(--border); border-radius:12px; padding:0.55rem 0.7rem; cursor:pointer; display:flex; flex-direction:column; gap:0.3rem; box-shadow:0 8px 18px -16px rgba(44,30,55,0.6); }
+  .mini:hover { border-color:var(--roxo); }
+  .mini-cab { display:flex; align-items:center; gap:0.4rem; }
+  .mini-id { font-family:var(--display); font-weight:700; color:var(--roxo); font-size:1rem; }
+  .mini-marcas { margin-left:auto; display:flex; gap:0.2rem; align-items:center; font-size:0.7rem; }
+  .mini-txt { font-size:0.78rem; color:var(--azul); line-height:1.45; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .mini-falta { font-size:0.7rem; font-weight:600; color:var(--erro); }
+  .mini-gab { font-size:0.7rem; font-weight:700; }
+  .mini-gab.sim { color:var(--ok); } .mini-gab.nao { color:var(--erro); }
 
-  /* cartas */
-  .cartas { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0.9rem; }
-  .carta { background:#fff; border:1px solid var(--border); border-radius:16px; padding:1rem 1.1rem 1.05rem; display:flex; flex-direction:column; scroll-margin-top:140px; transition:box-shadow .3s; }
-  .carta.realce { box-shadow:0 0 0 3px var(--amarelo); }
-  .carta-cab { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  /* baralho */
+  .baralho { display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:0.8rem; }
+  .carta { background:#fff; border:1px solid var(--border); border-radius:16px; padding:0.95rem 1.05rem; display:flex; flex-direction:column; gap:0.45rem; text-align:left; font:inherit; color:inherit; cursor:pointer; transition:border-color .2s, transform .2s; }
+  .carta:hover { border-color:var(--roxo); transform:translateY(-2px); }
+  .carta.no-mural { background:var(--fundo-alt); }
+  .carta-cab { display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap; }
   .carta-id { font-family:var(--display); font-weight:700; font-size:1.2rem; color:var(--roxo); }
-  .carta-tipo { font-size:0.64rem; font-weight:700; letter-spacing:0.08em; padding:0.18rem 0.55rem; border-radius:100px; background:var(--azul-tint); color:var(--azul); }
+  .carta-tipo { font-size:0.62rem; font-weight:700; letter-spacing:0.08em; padding:0.16rem 0.5rem; border-radius:100px; background:var(--azul-tint); color:var(--azul); }
   .t-OBSERVAÇÃO, .t-DADO, .t-DOCUMENTO { background:rgba(47,143,95,0.12); color:#1f6a45; }
   .t-ENTREVISTA { background:rgba(239,185,60,0.2); color:var(--amarelo-ink); }
   .t-TERCEIRO, .t-OPINIÃO { background:rgba(176,71,90,0.1); color:#8a3446; }
-  .carta-fonte { font-size:0.78rem; color:var(--muted); font-style:italic; }
-  .carta-marcas { margin-left:auto; display:flex; gap:0.25rem; }
-  .carta-txt { font-size:0.92rem; color:var(--texto); line-height:1.65; margin-bottom:0.2rem; }
-  .carta .ctrl { border-top:1px dashed var(--border); margin-top:0.7rem; }
-  [data-etapa="3"] .ctrl-barreira, [data-etapa="4"] .ctrl-onde-extra { display:none; }
-  .carta input[type="text"] { font-size:14px; padding:0.5rem 0.6rem; }
-  .gab-carta, .gab-caso { display:none; margin-top:0.8rem; border-radius:12px; background:rgba(239,185,60,0.12); border:1px solid rgba(185,134,26,0.4); padding:0.7rem 0.85rem; font-size:0.84rem; color:var(--texto); line-height:1.55; }
-  body.gab-visivel .gab-carta, body.gab-visivel .gab-caso { display:block; }
-  .gab-rot { display:flex; align-items:center; gap:0.4rem; font-size:0.64rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amarelo-ink); margin-bottom:0.35rem; }
+  .carta-fonte { font-size:0.76rem; color:var(--muted); font-style:italic; }
+  .carta-txt { font-size:0.9rem; color:var(--texto); line-height:1.6; flex:1; }
+  .carta-pe { font-size:0.76rem; font-weight:600; color:var(--azul); border-top:1px dashed var(--border); padding-top:0.45rem; display:flex; justify-content:space-between; gap:0.5rem; }
+  .carta.no-mural .carta-pe { color:var(--ok); }
+
+  /* painel da carta */
+  .modal { position:fixed; inset:0; z-index:500; background:rgba(44,30,55,0.55); display:flex; align-items:center; justify-content:center; padding:1rem; }
+  .modal[hidden] { display:none; }
+  .modal-box { background:var(--fundo); border-radius:20px; width:min(720px, 100%); max-height:92vh; overflow-y:auto; padding:1.4rem 1.5rem 1.3rem; position:relative; box-shadow:0 30px 70px -20px rgba(0,0,0,0.45); }
+  .modal-fechar { position:absolute; top:0.9rem; right:0.9rem; width:40px; height:40px; border-radius:50%; border:none; background:var(--fundo-alt); color:var(--roxo); font-size:1.3rem; cursor:pointer; }
+  .modal .carta-txt { font-size:1rem; margin:0.4rem 0 0.2rem; }
+  .modal .passo-escolha { display:flex; flex-direction:column; gap:0.35rem; }
+  .modal .passo-escolha .chip { text-align:left; display:flex; gap:0.55rem; align-items:center; }
+  .modal .passo-escolha .chip .pn { width:1.4rem; height:1.4rem; border-radius:50%; background:var(--fundo-alt); color:var(--roxo); display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:0.72rem; flex-shrink:0; }
+  .modal .passo-escolha .chip.on .pn { background:var(--amarelo); color:var(--amarelo-ink); }
+  .modal-rodape { display:flex; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; margin-top:1.1rem; padding-top:0.9rem; border-top:1px solid var(--border); }
+  .limite-aviso { background:rgba(176,71,90,0.1); color:#8a3446; border-radius:10px; padding:0.55rem 0.8rem; font-size:0.86rem; font-weight:600; margin-top:0.5rem; }
+  details.mais { margin-top:0.6rem; }
+  details.mais summary { cursor:pointer; font-size:0.82rem; font-weight:600; color:var(--azul); }
+
+  /* gabarito sobreposto */
+  .gab-box { display:none; margin-top:0.9rem; border-radius:12px; background:rgba(239,185,60,0.12); border:1px solid rgba(185,134,26,0.4); padding:0.7rem 0.85rem; font-size:0.86rem; line-height:1.55; }
+  body.gab-visivel .gab-box { display:block; }
+  .gab-box:empty { display:none !important; }
+  .gab-rot { font-size:0.64rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amarelo-ink); margin-bottom:0.35rem; }
   .conf { display:flex; flex-wrap:wrap; gap:0.35rem; margin:0.3rem 0 0.4rem; }
   .conf span { font-size:0.74rem; font-weight:600; padding:0.12rem 0.5rem; border-radius:100px; }
   .conf .sim { background:rgba(47,143,95,0.15); color:#1f6a45; }
   .conf .nao { background:rgba(176,71,90,0.12); color:#8a3446; }
   .conf .meio { background:rgba(239,185,60,0.25); color:var(--amarelo-ink); }
   .conf .neutro { background:var(--fundo-alt); color:var(--muted); }
+  .gab-hip { background:var(--azul); color:#fff; border-radius:14px; padding:1rem 1.2rem; margin:0.5rem 0 1rem; font-family:var(--display); line-height:1.7; }
+  .gab-hip strong { color:var(--amarelo); font-weight:600; }
 
   /* decisão e hipótese */
-  table.dec { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; font-size:0.86rem; }
-  table.dec th { background:var(--azul); color:#fff; font-size:0.68rem; letter-spacing:0.05em; text-transform:uppercase; text-align:left; padding:0.6rem 0.7rem; }
-  table.dec td { padding:0.6rem 0.7rem; border-top:1px solid var(--border); vertical-align:top; color:var(--azul); }
-  table.dec select { font-size:14px; min-height:38px; padding:0.35rem 0.5rem; }
-  table.dec td:last-child { min-width:150px; }
-  table.dec td:nth-child(4) { min-width:150px; }
   .alerta { font-size:0.78rem; color:var(--erro); font-weight:600; margin-top:0.3rem; }
   .ok-txt { font-size:0.78rem; color:var(--ok); font-weight:600; margin-top:0.3rem; }
-  .vazio { color:var(--muted); font-style:italic; font-size:0.9rem; }
-  .comparar { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin:1rem 0; }
-  .comparar > div { background:#fff; border:1px solid var(--border); border-radius:12px; padding:0.8rem 1rem; }
-  .comparar .rot { display:block; font-size:0.66rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--amarelo-ink); }
-  .hip-box { background:var(--azul); color:#fff; border-radius:18px; padding:1.4rem 1.5rem; margin-top:0.6rem; }
-  .hip-box h3 { color:#fff; margin:0 0 0.8rem; font-size:1.15rem; }
-  .hip-box label { color:rgba(255,255,255,0.75); }
+  .comparar { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin:0.4rem 0 0.9rem; }
+  .comparar > div { background:var(--fundo-alt); border-radius:12px; padding:0.75rem 0.95rem; font-size:0.92rem; }
+  .comparar .r { display:block; font-size:0.64rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--amarelo-ink); }
+  .hip-box { background:var(--azul); color:#fff; border-radius:18px; padding:1.3rem 1.4rem; }
+  .hip-box h3 { color:#fff; margin:0 0 0.7rem; font-size:1.15rem; }
+  .hip-box label, .hip-box .rot { color:rgba(255,255,255,0.75); }
   .hip-box input[type="text"], .hip-box textarea, .hip-box select { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.28); color:#fff; }
   .hip-box select option { color:var(--texto); }
   .hip-box input::placeholder, .hip-box textarea::placeholder { color:rgba(255,255,255,0.45); }
-  .hip-preview { background:rgba(255,255,255,0.09); border-radius:12px; padding:1rem 1.1rem; font-family:var(--display); font-size:1.02rem; line-height:1.75; margin-top:0.4rem; }
+  .hip-box .ajuda { color:rgba(255,255,255,0.65); }
+  .hip-preview { background:rgba(255,255,255,0.09); border-radius:12px; padding:1rem 1.1rem; font-family:var(--display); font-size:1.02rem; line-height:1.75; }
   .hip-preview b { color:var(--amarelo); font-weight:600; }
   .hip-preview .lac { color:rgba(255,255,255,0.45); font-style:italic; }
+  .checklist { display:flex; flex-direction:column; gap:0.4rem; }
+  .checklist label { display:flex; gap:0.6rem; align-items:flex-start; cursor:pointer; background:rgba(255,255,255,0.08); border-radius:10px; padding:0.5rem 0.75rem; font-size:0.9rem; text-transform:none; letter-spacing:0; font-weight:500; color:#fff; }
+  .checklist input { margin-top:0.25rem; width:18px; height:18px; accent-color:var(--amarelo); flex-shrink:0; }
   .mini-acoes { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0 0 0.9rem; }
   .mini-acoes .vd-btn { font-size:0.76rem; padding:0.4rem 0.8rem; }
-  .checklist { display:flex; flex-direction:column; gap:0.45rem; margin:0.4rem 0 0; }
-  .checklist label { display:flex; gap:0.65rem; align-items:flex-start; cursor:pointer; background:rgba(255,255,255,0.08); border-radius:10px; padding:0.55rem 0.75rem; font-size:0.9rem; text-transform:none; letter-spacing:0; font-weight:500; color:#fff; }
-  .checklist input { margin-top:0.25rem; width:18px; height:18px; accent-color:var(--amarelo); flex-shrink:0; }
-  .bloco .checklist label { background:var(--fundo-alt); color:var(--texto); }
-  .bloco .checklist input { accent-color:var(--roxo); }
 
   /* ficha */
-  .ficha-linha { display:grid; grid-template-columns:230px 1fr; gap:1rem; border-top:1px solid var(--border); padding:0.85rem 0; }
-  .ficha-linha:first-of-type { border-top:none; }
+  .ficha-cab { display:grid; grid-template-columns:230px 1fr; gap:1rem; font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); padding-bottom:0.3rem; border-bottom:2px solid var(--border); margin-top:0.8rem; }
+  .ficha-linha { display:grid; grid-template-columns:230px 1fr; gap:1rem; border-top:1px solid var(--border); padding:0.8rem 0; }
   .ficha-rot { font-family:var(--display); font-weight:600; color:var(--roxo); font-size:0.98rem; }
-  .ficha-rot .modelo { display:block; font-family:var(--body); font-weight:400; font-size:0.74rem; color:var(--muted); margin-top:0.25rem; line-height:1.45; }
   .ficha-val { font-size:0.9rem; color:var(--texto); line-height:1.65; white-space:pre-line; }
   .ficha-val ul { margin:0; padding-left:1.1rem; white-space:normal; }
 
   /* rodadas 3 e 4 */
-  .lados { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .lado { border-radius:18px; padding:1.3rem 1.4rem; }
-  .lado-a { background:#fff; border:1px solid var(--border); }
-  .lado-b { background:var(--fundo-alt); border:1px solid var(--border); }
-  .lado h3 { margin:0 0 0.4rem; font-size:1.15rem; }
-  .lado .texto { font-size:0.88rem; }
   .nossa { background:var(--azul); color:#fff; border-radius:14px; padding:1rem 1.2rem; margin:0.8rem 0 1.2rem; font-family:var(--display); line-height:1.7; }
-  .nossa .rot { display:block; font-family:var(--body); font-size:0.66rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amarelo); margin-bottom:0.3rem; }
-  .desafio-escuro { background:var(--roxo); color:#fff; border-radius:18px; padding:1.3rem 1.4rem; margin-bottom:1.2rem; }
-  .desafio-escuro h3 { color:#fff; margin:0 0 0.5rem; }
-  .desafio-escuro label { color:rgba(255,255,255,0.7); }
+  .nossa .r { display:block; font-family:var(--body); font-size:0.66rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amarelo); margin-bottom:0.3rem; }
+  .trio { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:0.9rem; }
+  .trio .bloco { margin:0; display:flex; flex-direction:column; }
+  .trio .bloco .campo { margin-top:auto; margin-bottom:0; }
+  .trio .num { width:1.9rem; height:1.9rem; border-radius:50%; background:var(--roxo); color:#fff; font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; margin-bottom:0.5rem; }
+  .desafio-escuro { background:var(--roxo); color:#fff; border-radius:18px; padding:1.3rem 1.4rem; margin-bottom:1.1rem; }
+  .desafio-escuro h3 { color:#fff; margin:0 0 0.5rem; font-size:1.15rem; }
+  .desafio-escuro p { color:rgba(255,255,255,0.8); font-size:0.9rem; }
+  .desafio-escuro label, .desafio-escuro .rot { color:rgba(255,255,255,0.7); }
   .desafio-escuro textarea, .desafio-escuro input[type="text"] { background:rgba(255,255,255,0.09); border-color:rgba(255,255,255,0.28); color:#fff; }
   .desafio-escuro textarea::placeholder, .desafio-escuro input::placeholder { color:rgba(255,255,255,0.45); }
   .desafio-escuro .chip { background:rgba(255,255,255,0.08); color:#fff; border-color:rgba(255,255,255,0.28); }
   .desafio-escuro .chip.on { background:var(--amarelo); color:var(--amarelo-ink); border-color:var(--amarelo); }
-  .desafio-escuro .ajuda { color:rgba(255,255,255,0.65); }
   .passos-edit { display:flex; flex-direction:column; gap:0.45rem; }
   .passo-edit { display:grid; grid-template-columns:2rem 1fr auto auto; gap:0.5rem; align-items:center; }
-  .passo-edit .pn { width:1.8rem; height:1.8rem; border-radius:50%; background:var(--roxo); color:#fff; font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; }
-  .passo-edit .chip { min-width:40px; }
+  .passo-edit .pn, .obs .pn { width:1.8rem; height:1.8rem; border-radius:50%; background:var(--roxo); color:#fff; font-family:var(--display); font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .rem { background:none; border:none; color:var(--muted); font-size:1.2rem; cursor:pointer; padding:0.2rem 0.4rem; }
-  .cta-final { margin:2rem 0 0; background:var(--roxo); color:#fff; border-radius:20px; padding:1.6rem 1.8rem; display:flex; justify-content:space-between; align-items:center; gap:1.2rem; flex-wrap:wrap; }
+  .obs { display:grid; grid-template-columns:2rem 1fr; gap:0.6rem; padding:0.7rem 0; border-top:1px dashed var(--border); }
+  .obs:first-child { border-top:none; }
+  .obs-passo { font-weight:600; color:var(--roxo); font-size:0.92rem; margin-bottom:0.35rem; }
+  .obs-passo .perde { color:var(--amarelo-ink); background:rgba(239,185,60,0.25); border-radius:100px; padding:0.05rem 0.5rem; font-size:0.72rem; margin-left:0.4rem; }
+  .obs textarea { min-height:64px; }
+  .cta-final { margin:2rem 0 0; background:var(--roxo); color:#fff; border-radius:20px; padding:1.5rem 1.7rem; display:flex; justify-content:space-between; align-items:center; gap:1.2rem; flex-wrap:wrap; }
   .cta-final h3 { color:#fff; margin:0.2rem 0 0.3rem; }
   .cta-final p { color:rgba(255,255,255,0.75); margin:0; font-size:0.92rem; max-width:70ch; }
   .cta-final .eyebrow { color:var(--amarelo); margin:0; }
@@ -323,9 +343,6 @@
   .subaba.on { background:var(--roxo); border-color:var(--roxo); color:#fff; }
   .gab-sec { display:none; }
   .gab-sec.ativo { display:block; }
-  .gab-sec .texto p, .gab-sec .texto li { color:var(--azul); }
-  .gab-hip { background:var(--azul); color:#fff; border-radius:14px; padding:1.1rem 1.3rem; margin:0.6rem 0 1.2rem; font-family:var(--display); line-height:1.75; }
-  .gab-hip strong { color:var(--amarelo); font-weight:600; }
   .placar { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.7rem; margin-bottom:1rem; }
   .placar > div { background:#fff; border:1px solid var(--border); border-radius:14px; padding:0.8rem 0.9rem; }
   .placar b { display:block; font-family:var(--display); font-size:1.6rem; color:var(--roxo); line-height:1.1; }
@@ -343,43 +360,34 @@
   #estac ul { list-style:none; margin:0.8rem 0 0; padding:0; max-height:40vh; overflow-y:auto; display:flex; flex-direction:column; gap:0.35rem; }
   #estac li { display:flex; justify-content:space-between; gap:0.5rem; align-items:flex-start; background:var(--fundo-alt); border-radius:10px; padding:0.45rem 0.6rem; font-size:0.88rem; }
 
-  .barra-acoes { display:flex; gap:0.7rem; flex-wrap:wrap; margin-top:1.6rem; align-items:center; }
+  .barra-acoes { display:flex; gap:0.7rem; flex-wrap:wrap; margin-top:1.8rem; align-items:center; }
   .btn-salvar { font-family:var(--body); background:var(--roxo); color:#fff; font-weight:600; border:none; border-radius:8px; padding:0.75rem 1.3rem; cursor:pointer; font-size:0.88rem; }
   .btn-salvar:disabled { opacity:0.7; cursor:default; }
   .btn-ghost { font-family:var(--body); background:var(--fundo-alt); color:var(--azul); border:1px solid var(--border); border-radius:8px; padding:0.75rem 1.2rem; cursor:pointer; font-size:0.88rem; font-weight:600; }
 
   @media (max-width:1000px) {
-    .g4, .dossies, .placar { grid-template-columns:repeat(2, minmax(0,1fr)); }
-    .g3 { grid-template-columns:1fr 1fr; }
-    .identifica { grid-template-columns:1fr 1fr; }
-    .identifica > div:first-child { grid-column:1 / -1; }
-    .cartas { grid-template-columns:1fr; }
+    .g4, .placar { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .g3, .trio { grid-template-columns:1fr 1fr; }
     .campos-4 { grid-template-columns:1fr 1fr; }
-  }
-  @media (max-width:760px) {
-    table.dec, table.dec tbody, table.dec tr, table.dec td { display:block; width:100%; }
-    table.dec { border:none; background:transparent; }
-    table.dec thead { display:none; }
-    table.dec tr { background:#fff; border:1px solid var(--border); border-radius:12px; padding:0.5rem 0.9rem; margin-bottom:0.7rem; }
-    table.dec td { border-top:none; padding:0.35rem 0; min-width:0 !important; }
-    table.dec td::before { content:attr(data-label); display:block; font-size:0.64rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--amarelo-ink); margin-bottom:0.15rem; }
+    .passos-nav { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .faixa { grid-template-columns:1fr; }
   }
   @media (max-width:640px) {
     .page, .hero-inner, .abas-inner { padding-left:1rem; padding-right:1rem; }
-    .g4, .g3, .g2, .dossies, .lados, .comparar, .campos-2, .campos-4, .cabecalho-dossie { grid-template-columns:1fr; }
+    .hero-grid, .g4, .g3, .g2, .trio, .comparar, .campos-2, .campos-4, .cab-dossie { grid-template-columns:1fr; }
     .ficha-linha, .ficha-cab { grid-template-columns:1fr; gap:0.3rem; }
     .ficha-cab span:last-child { display:none; }
-    .mural { grid-auto-flow:row; grid-auto-columns:auto; grid-template-columns:1fr; }
-    .mcol { min-height:0; flex-direction:row; flex-wrap:wrap; align-items:center; }
-    .mcol-cab { flex-basis:100%; }
+    .mini { width:100%; }
     .aba { padding-right:0.75rem; font-size:0.8rem; }
     #btnEstac { right:1rem; bottom:1rem; }
     #estac { right:1rem; bottom:4.4rem; }
     .cadeado form { flex-direction:column; }
+    .modal { padding:0; align-items:flex-end; }
+    .modal-box { border-radius:20px 20px 0 0; max-height:94vh; }
   }
   .impressao { display:none; }
   @media print {
-    .vd-topbar, .abas, #btnEstac, #estac, .no-print, .barra-acoes, .etapas-nav, .mini-acoes { display:none !important; }
+    .vd-topbar, .abas, #btnEstac, #estac, .no-print, .barra-acoes, .passos-nav, .mini-acoes, .modal { display:none !important; }
     body { background:#fff; }
     body.so-ficha header.hero, body.so-ficha .page { display:none !important; }
     body.so-ficha .impressao { display:block !important; padding:0.5cm; }
@@ -391,18 +399,14 @@
 <body>
 
 <header class="hero">
-  <div class="hero-inner">
-    <span class="tag"><i></i>Aula 2 · Explore · Prática em grupo</span>
-    <h1>Clínica de <em>diagnóstico</em></h1>
-    <p class="hero-sub" id="heroSub"></p>
-    <div class="vd-print-id"></div>
-    <div class="identifica">
-      <div><label for="campoGrupo">Grupo</label><input id="campoGrupo" type="text" data-b="grupo" placeholder="Nome do grupo"></div>
-      <div><label for="papLeitor">Leitor</label><input id="papLeitor" type="text" data-b="papeis.leitor" placeholder="Quem lê as cartas"></div>
-      <div><label for="papEscriba">Escriba</label><input id="papEscriba" type="text" data-b="papeis.escriba" placeholder="Quem preenche"></div>
-      <div><label for="papGuardiao">Guardião</label><input id="papGuardiao" type="text" data-b="papeis.guardiao" placeholder="Tempo e estacionamento"></div>
-      <div><label for="papAdvogados">Advogados do diabo</label><input id="papAdvogados" type="text" data-b="papeis.advogados" placeholder="Em grupos de 5"></div>
+  <div class="hero-inner hero-grid">
+    <div>
+      <span class="tag"><i></i>Aula 2 · Explore · Prática em grupo</span>
+      <h1>Clínica de <em>diagnóstico</em></h1>
+      <p class="hero-sub">Um treino com caso pronto, antes da atividade principal: o grupo faz o diagnóstico de um comportamento que não é o seu, com os mesmos passos que vai usar depois no seu desafio.</p>
+      <div class="vd-print-id"></div>
     </div>
+    <div><label for="campoGrupo">Nome do grupo</label><input id="campoGrupo" type="text" data-b="grupo" placeholder="Ex.: Grupo 3"></div>
   </div>
 </header>
 
@@ -424,10 +428,14 @@
   </div>
 </div>
 
+<div class="modal" id="cartaModal" hidden role="dialog" aria-modal="true" aria-labelledby="cartaModalTit">
+  <div class="modal-box"><button type="button" class="modal-fechar" data-fechar-carta aria-label="Fechar">×</button><div id="cartaModalCorpo"></div></div>
+</div>
+
 <button type="button" id="btnEstac" aria-controls="estac" aria-expanded="false"><span aria-hidden="true">🅿</span> Estacionamento <span class="n" id="estacN">0</span></button>
 <aside id="estac" hidden aria-label="Estacionamento de soluções">
   <h3>Estacionamento de soluções</h3>
-  <p>Regra 1: nada de solução agora. Guarde aqui as ideias que aparecerem; elas serão úteis na Aula 03.</p>
+  <p>Regra 1: nada de solução agora. O Guardião anota aqui as ideias que aparecerem; elas voltam na Aula 03.</p>
   <form id="estacForm"><input type="text" id="estacNovo" placeholder="Ex.: mandar um lembrete…" autocomplete="off"><button type="submit" class="vd-btn vd-btn-roxo">Guardar</button></form>
   <ul id="estacLista"></ul>
 </aside>
@@ -442,6 +450,7 @@
 'use strict';
 const C = window.CLINICA;
 const esc = VD.esc;
+const LIMITE = 5;
 
 /* ---------------- vocabulário ---------------- */
 const SIG = {
@@ -458,14 +467,34 @@ const TESTES_A01 = ['Uma pessoa específica', 'Uma ação observável', 'Um cont
 const CHECK_HIP = [
   ['componente', 'A frase nomeia um componente'],
   ['fontes', 'Cita duas evidências de tipos diferentes'],
-  ['errado', 'Diz o que veríamos se estivéssemos errados (algo observável, um número ou um comportamento)'],
+  ['errado', 'Diz o que veríamos se estivéssemos errados (algo observável)'],
   ['solucao', 'Não carrega uma solução disfarçada']
+];
+const PAPEIS = [
+  { k: 'leitor', ico: '📖', nome: 'Leitor', quando: 'Em todas as rodadas',
+    faz: ['Lê em voz alta cada caso e cada carta.', 'Antes de qualquer marcação, pergunta ao grupo se a carta fala mesmo do comportamento.'],
+    frase: '“Isso fala do comportamento?”' },
+  { k: 'escriba', ico: '✍️', nome: 'Escriba', quando: 'Quem mexe na página',
+    faz: ['Registra o que o grupo decide: votos, cartas no mural, hipótese.', 'Não decide sozinho: escreve só o que o grupo combinou.'],
+    frase: '“O que eu anoto?”' },
+  { k: 'guardiao', ico: '⏱️', nome: 'Guardião', quando: 'Cuida do tempo e do foco',
+    faz: ['Controla o tempo de cada rodada e avisa quando faltar pouco.', 'Quando surgir uma solução, anota no Estacionamento e traz o grupo de volta.', 'Exige que cada marcação aponte para uma carta.'],
+    frase: '“Qual carta mostra isso?”' },
+  { k: 'advogados', ico: '🤔', nome: 'Advogados do diabo', quando: 'Só em grupos de 5 (o 4º e o 5º)',
+    faz: ['Para cada marcação, propõem outra leitura possível.', 'Ajudam a decidir entre ● e ○ com um dos cinco testes.'],
+    frase: '“E se for outra barreira?”' }
+];
+const ENTREGAS = [
+  '6 votos, cada um com a frase do caso que o justifica',
+  'Um mural com até 5 cartas e a hipótese do grupo',
+  'Uma contestação à hipótese de outro grupo e o ajuste da sua',
+  'O comportamento do grupo reescrito e o que observar em cada passo'
 ];
 const ABAS = [
   ['inicio', 'i', 'Como funciona'], ['r1', '1', 'Relâmpago'], ['r2', '2', 'Mural do dossiê'],
   ['r3', '3', 'Contestação'], ['r4', '4', 'Seu desafio'], ['gab', '🔒', 'Gabarito']
 ];
-const ETAPAS = ['Caso', 'Passos e palpite', 'Dados nos passos', 'Barreiras', 'Prioridade', 'Hipótese', 'Ficha'];
+const ETAPAS = ['Caso e palpite', 'Mural', 'Decisão', 'Hipótese'];
 
 const sigla = s => s ? `<span class="sigla s-${TODAS[s] ? TODAS[s].fam : 'l'}">${esc(s)}</span>` : '';
 const txt = h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent; };
@@ -477,8 +506,8 @@ const ls = {
 
 /* ---------------- estado ---------------- */
 function novoEstado() {
-  return { v: 1, grupo: '', papeis: { leitor: '', escriba: '', guardiao: '', advogados: '' }, r1: {}, dossie: '', d: {},
-    r3: {}, r4: { passos: ['', '', '', '', '', ''], testes: {} }, estac: [], pontos: {} };
+  return { v: 2, grupo: '', papeis: { leitor: '', escriba: '', guardiao: '', advogados: '' }, r1: {}, dossie: '1', d: {},
+    r3: {}, r4: { passos: ['', '', '', '', '', ''], testes: {}, obs: {} }, estac: [], pontos: {} };
 }
 let S = novoEstado();
 function get(p) { return p.split('.').reduce((o, k) => (o == null ? undefined : o[k]), S); }
@@ -487,20 +516,23 @@ function set(p, v) {
   ks.slice(0, -1).forEach(k => { if (o[k] == null || typeof o[k] !== 'object') o[k] = {}; o = o[k]; });
   o[ks[ks.length - 1]] = v;
 }
-const D = () => (S.dossie ? C.r2.dossies[Number(S.dossie) - 1] : null);
-const dS = () => { if (!S.dossie) return {}; if (!S.d[S.dossie]) S.d[S.dossie] = {}; return S.d[S.dossie]; };
-const cartaS = id => ((dS().cartas || {})[id] || {});
+const D = () => C.r2.dossies[(Number(S.dossie) || 1) - 1];
+const dS = () => { const n = String(D().n); if (!S.d[n]) S.d[n] = {}; return S.d[n]; };
+const cartasS = () => { const ds = dS(); if (!ds.cartas) ds.cartas = {}; return ds.cartas; };
+/* posição da carta no mural: um passo ('1'…'7') ou 'todo'; vazio (ou 'fora', de versões antigas) = no baralho */
+const lugar = s => { const o = (s && s.onde) || []; const v = o.find(x => x !== 'fora'); return v || ''; };
+const noMural = d => d.cartas.filter(c => lugar((cartasS())[c.id]));
+const nomeLugar = (d, k) => k === 'todo' ? 'Todo o caminho' : 'Passo ' + k;
 
-/* ---------------- componentes de interface ---------------- */
+/* ---------------- peças de interface ---------------- */
 function chip(path, val, label, opts = {}) {
   const fam = TODAS[val] ? ' sig ' + TODAS[val].fam : '';
   const title = TODAS[val] ? ` title="${esc(TODAS[val].nome)}"` : '';
-  return `<button type="button" class="chip${fam}${opts.cls ? ' ' + opts.cls : ''}" data-c="${path}" data-v="${esc(val)}" data-m="${opts.multi ? 'multi' : 'um'}"${title} aria-pressed="false">${label}</button>`;
+  return `<button type="button" class="chip${fam}${opts.cls ? ' ' + opts.cls : ''}" data-c="${path}" data-v="${esc(val)}"${title} aria-pressed="false">${label}</button>`;
 }
-function chipsSiglas(path, incluir) {
-  const base = Object.keys(SIG).map(s => chip(path, s, s));
-  const extra = (incluir || []).map(s => chip(path, s, s));
-  return '<div class="chips">' + base.join('') + (extra.length ? '<span class="chip-sep"></span>' + extra.join('') : '') + '</div>';
+function chipsSiglas(path, extras) {
+  return '<div class="chips">' + Object.keys(SIG).map(s => chip(path, s, s)).join('') +
+    (extras && extras.length ? '<span class="chip-sep"></span>' + extras.map(s => chip(path, s, s)).join('') : '') + '</div>';
 }
 function campo(path, rotulo, opts = {}) {
   const id = 'f_' + path.replace(/[^\w]/g, '_');
@@ -509,16 +541,17 @@ function campo(path, rotulo, opts = {}) {
     : `<input type="text" id="${id}" data-b="${path}" placeholder="${esc(opts.ph || '')}">`;
   return `<div class="campo"><label for="${id}">${rotulo}</label>${ctl}</div>`;
 }
-function select(path, opcoes, rotuloVazio) {
-  return `<select data-b="${path}" aria-label="${esc(rotuloVazio || '')}"><option value="">${esc(rotuloVazio || '—')}</option>` +
+function select(path, opcoes, vazio, rotulo) {
+  return `<select data-b="${path}" aria-label="${esc(rotulo || vazio || '')}"><option value="">${esc(vazio || '—')}</option>` +
     opcoes.map(o => `<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('') + '</select>';
 }
+const instr = (n, html) => `<div class="instr"><span class="n">${n}</span><p>${html}</p></div>`;
 
 /* ---------------- abas ---------------- */
 let abaAtual = ls.get('vd_clinica_aba', 'inicio');
 function montarAbas() {
   document.getElementById('abas').innerHTML = ABAS.map(([id, n, nome]) =>
-    `<button type="button" class="aba${id === 'gab' ? ' aba-gab' : ''}" role="tab" id="aba-${id}" aria-controls="p-${id}" aria-selected="false" data-aba="${id}">` +
+    `<button type="button" class="aba" role="tab" id="aba-${id}" aria-controls="p-${id}" aria-selected="false" data-aba="${id}">` +
     `<span class="aba-n">${n}</span>${esc(nome)}<span class="aba-badge" id="badge-${id}" hidden></span></button>`).join('');
   document.getElementById('abas').addEventListener('click', e => { const b = e.target.closest('[data-aba]'); if (b) irPara(b.dataset.aba, true); });
 }
@@ -533,28 +566,40 @@ function irPara(id, rolar) {
   setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
 }
 
-/* ---------------- painel: como funciona ---------------- */
+/* ---------------- como funciona ---------------- */
 function montarInicio() {
   const e1 = C.e1;
-  document.getElementById('heroSub').innerHTML = 'Treino com casos prontos, antes da atividade principal da aula: os mesmos quatro movimentos da leitura, aplicados a um caso que não é o seu.';
   document.getElementById('p-inicio').innerHTML = `
     <div class="eyebrow"><i></i>Parte E · ${esc(C.titulo)}</div>
     <h2 class="tit"><span class="cod">E1</span>${esc(C.secoes.E1)}</h2>
     <div class="lead">${e1.intro}</div>
-    <div class="legenda-rodadas" aria-hidden="true">${e1.cab.map(c => `<span>${c}</span>`).join('<span>·</span>')}</div>
+
+    <h3 class="sub">As quatro rodadas</h3>
     <div class="grade g4">${e1.rodadas.map((r, i) => `
       <button type="button" class="rodada-card" data-ir="${['r1', 'r2', 'r3', 'r4'][i]}">
-        <span class="rc-nome">${r[0]}</span><span class="rc-txt">${r[1]}</span><span class="rc-tempo">${r[2]}</span></button>`).join('')}</div>
-    <div class="papeis">${e1.papeis}</div>
-    <div class="links-uteis no-print">
-      <a class="vd-btn vd-btn-ghost" href="../leituras/passo-2-explorar-o-comportamento.html#o-passo-em-uma-pagina" target="_blank" rel="noopener">▤ Abrir o cartão de bolso (leitura)</a>
+        <span class="rc-topo"><span class="rc-nome">${r[0]}</span><span class="rc-tempo">${r[2]}</span></span>
+        <span class="rc-txt">${r[1]}</span>
+        <span class="rc-entrega"><b>O grupo entrega</b>${ENTREGAS[i]}</span></button>`).join('')}</div>
+
+    <h3 class="sub">Os papéis no grupo</h3>
+    <p class="texto" style="margin-top:-0.3rem">Cada pessoa assume um papel. Escrevam abaixo quem fica com qual e <strong>troquem a cada rodada</strong>, para que todos passem por papéis diferentes.</p>
+    <div class="grade g4">${PAPEIS.map(p => `
+      <div class="papel">
+        <div class="papel-cab"><span class="papel-ico" aria-hidden="true">${p.ico}</span><span class="papel-nome">${p.nome}<span class="papel-quando">${p.quando}</span></span></div>
+        <ul>${p.faz.map(f => `<li>${f}</li>`).join('')}</ul>
+        <div class="papel-frase">${p.frase}</div>
+        <div class="papel-quem"><label for="pap-${p.k}">Nesta rodada</label><input type="text" id="pap-${p.k}" data-b="papeis.${p.k}" placeholder="Nome"></div>
+      </div>`).join('')}</div>
+
+    <h3 class="sub"><span class="cod">E2</span> ${esc(C.secoes.E2)}</h3>
+    <div class="grade g3">${C.regras.map((r, i) => `<div class="regra"><span class="regra-n">${i + 1}</span><div>${r}</div></div>`).join('')}</div>
+    <div class="acoes no-print">
       <button type="button" class="vd-btn vd-btn-roxo" data-ir="r1">Começar pela Rodada 1 →</button>
-    </div>
-    <h2 class="tit" style="margin-top:2.4rem"><span class="cod">E2</span>${esc(C.secoes.E2)}</h2>
-    <div class="grade g3">${C.regras.map((r, i) => `<div class="regra"><span class="regra-n">${i + 1}</span><div>${r}</div></div>`).join('')}</div>`;
+      <a class="vd-btn vd-btn-ghost" href="../leituras/passo-2-explorar-o-comportamento.html#o-passo-em-uma-pagina" target="_blank" rel="noopener">▤ Cartão de bolso (leitura)</a>
+    </div>`;
 }
 
-/* ---------------- painel: rodada 1 ---------------- */
+/* ---------------- rodada 1 ---------------- */
 function montarR1() {
   const r1 = C.r1;
   document.getElementById('p-r1').innerHTML = `
@@ -566,200 +611,191 @@ function montarR1() {
       <article class="caso" id="caso-${c.n}">
         <div class="caso-cab"><span class="caso-n">${c.n}</span><span class="caso-comp">${c.comportamento}</span></div>
         <div class="caso-txt">${c.texto}</div>
-        <span class="ctrl-rot">${r1.cab[1]}</span>
+        <span class="rot">${r1.cab[1]}</span>
         ${chipsSiglas('r1.' + c.n + '.voto')}
-        <span class="ctrl-rot">${r1.cab[2]}</span>
-        <textarea data-b="r1.${c.n}.frase" aria-label="${esc(txt(r1.cab[2]))} do caso ${c.n}" placeholder="Qual trecho do caso mostra isso?"></textarea>
-        <div class="gab-caso" id="gabCaso-${c.n}"></div>
+        <span class="rot">${r1.cab[2]}</span>
+        <textarea data-b="r1.${c.n}.frase" aria-label="Frase de evidência do caso ${c.n}" placeholder="Qual trecho do caso mostra isso?"></textarea>
+        <div class="gab-box" id="gabCaso-${c.n}"></div>
       </article>`).join('')}</div>
-    <h3 style="margin-top:2rem">Quadro da rodada</h3>
+    <h3 class="sub">Quadro da rodada</h3>
     <div class="tab-wrap"><table class="tab"><thead><tr>${r1.cab.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody id="r1Quadro"></tbody></table></div>
-    <div class="links-uteis no-print"><button type="button" class="vd-btn vd-btn-roxo" data-ir="r2">Ir para a Rodada 2 →</button></div>`;
+    <div class="acoes no-print"><button type="button" class="vd-btn vd-btn-roxo" data-ir="r2">Ir para a Rodada 2 →</button></div>`;
 }
 
-/* ---------------- painel: rodada 2 ---------------- */
-let etapaAtual = ls.get('vd_clinica_etapa', 0);
+/* ---------------- rodada 2 ---------------- */
+let etapaAtual = ls.get('vd_clinica_etapa_v2', 0);
 function montarR2() {
-  const r2 = C.r2;
   document.getElementById('p-r2').innerHTML = `
     <div class="eyebrow"><i></i>Rodada 2 · 45 min</div>
     <h2 class="tit"><span class="cod">E4</span>${esc(C.secoes.E4)}</h2>
-    <div class="lead">${r2.intro}</div>
-    <details class="sobre"><summary>Como é cada dossiê e como montar o mural</summary><div class="sobre-corpo texto">
-      <ol class="num">${r2.estrutura.map(x => `<li>${x}</li>`).join('')}</ol>${r2.mural}${r2.passo_a_passo}
-      <ol class="num">${r2.etapas.map(x => `<li>${x}</li>`).join('')}</ol>
-      <blockquote class="citacao"><p>${r2.aviso}</p></blockquote>${r2.fechamento}</div></details>
-    <h3 style="margin:0 0 0.2rem">Escolham o dossiê do grupo</h3>
-    <div class="dossies" id="dossies">${r2.dossies.map(d => `
-      <button type="button" class="dossie-bt" data-dossie="${d.n}"><span class="dn">Dossiê ${d.n}</span><span class="dt">${d.titulo}</span>
-      <span class="dp">${d.publico}</span><span class="dprog" id="dprog-${d.n}"></span></button>`).join('')}</div>
+    <p class="lead">Todos os grupos começam pelo mesmo dossiê. Em quatro passos, o grupo lê o caso, monta o mural com <strong>até ${LIMITE} cartas</strong>, decide qual barreira priorizar e escreve a hipótese.</p>
+    <div class="dossie-barra">
+      <div class="dossie-atual"><span class="dn" id="dossieN"></span><span class="dt" id="dossieT"></span></div>
+      <div class="dossie-outros no-print"><span>Se houver tempo:</span>${C.r2.dossies.map(d => `<button type="button" class="dossie-bt" data-dossie="${d.n}">Dossiê ${d.n}</button>`).join('')}</div>
+    </div>
+    <div class="passos-nav no-print" id="etapasNav">${ETAPAS.map((e, i) => `<button type="button" class="passo-nav" data-etapa-ir="${i}"><span class="pn">${i + 1}</span>${e}</button>`).join('')}
+      <button type="button" class="passo-nav" data-etapa-ir="4"><span class="pn">✓</span>Ficha</button></div>
     <div id="r2Corpo"></div>`;
-  document.getElementById('dossies').addEventListener('click', e => {
-    const b = e.target.closest('[data-dossie]'); if (!b) return;
-    if (S.dossie === b.dataset.dossie) return;
-    S.dossie = b.dataset.dossie; montarDossie(); preencher(document.getElementById('r2Corpo')); atualizar();
+  document.querySelector('#p-r2 .dossie-outros').addEventListener('click', e => {
+    const b = e.target.closest('[data-dossie]'); if (!b || S.dossie === b.dataset.dossie) return;
+    S.dossie = b.dataset.dossie; montarDossie(); preencher(document.getElementById('r2Corpo')); atualizar(); VD.alterado();
   });
+  document.getElementById('etapasNav').addEventListener('click', e => { const b = e.target.closest('[data-etapa-ir]'); if (b) irEtapa(Number(b.dataset.etapaIr), true); });
 }
 
 function montarDossie() {
-  const corpo = document.getElementById('r2Corpo');
-  const d = D();
-  if (!d) { corpo.innerHTML = '<p class="vazio">Escolham um dos quatro dossiês acima para começar.</p>'; return; }
-  const n = d.n, p = 'd.' + n, r2 = C.r2, F = C.ficha.linhas;
-  const cab = Object.fromEntries(d.cabecalho.map(l => [txt(l[0]), l]));
-  const cabHtml = d.cabecalho.map(l => `<div class="cd-item${txt(l[0]) === 'Frase crua' ? ' cd-cru' : ''}"><span class="cd-rot">${l[0]}</span>${l[1]}</div>`).join('');
-  const passosHtml = d.passos.map((ps, i) => `<button type="button" class="passo-bt" data-c="${p}.palpite" data-v="${i + 1}" data-m="um" aria-pressed="false"><span class="pn">${i + 1}</span><span>${ps}</span><span class="pq" aria-hidden="true">?</span></button>`).join('');
-  const onde = id => d.passos.map((_, i) => chip(`${p}.cartas.${id}.onde`, String(i + 1), String(i + 1), { multi: true })).join('') +
-    '<span class="chip-sep"></span>' + chip(`${p}.cartas.${id}.onde`, 'todo', 'Todo o caminho', { multi: true }) + chip(`${p}.cartas.${id}.onde`, 'fora', 'Fora do caminho', { multi: true });
-  const etapaTxt = i => `<div class="etapa-txt"><span class="en">${i + 1}</span><p>${r2.etapas[i]}</p></div>`;
-  const cartas = d.cartas.map(c => {
-    const cp = `${p}.cartas.${c.id}`;
-    return `<article class="carta" id="carta-${c.id}">
-      <div class="carta-cab"><span class="carta-id">${c.id}</span><span class="carta-tipo t-${esc(c.tipo)}">${esc(c.tipo)}</span>${c.fonte ? `<span class="carta-fonte">${c.fonte}</span>` : ''}<span class="carta-marcas" id="marcas-${c.id}"></span></div>
-      <div class="carta-txt">${c.texto}</div>
-      <div class="ctrl ctrl-onde"><span class="ctrl-rot">Isso fala de qual passo?</span><div class="chips">${onde(c.id)}</div>
-        <div class="ctrl-onde-extra"><span class="ctrl-rot">Diz <b>onde/quando</b> (L) ou mostra algo que <b>já funciona</b> (F)? Se fala de outra coisa, é RUÍDO.</span><div class="chips">${chip(cp + '.b1', 'L', 'L · localiza')}${chip(cp + '.b1', 'F', 'F · facilitador')}${chip(cp + '.b1', 'RUÍDO', 'RUÍDO')}</div></div></div>
-      <div class="ctrl ctrl-barreira">
-        <span class="ctrl-rot"><b>●</b> Barreira mais provável</span>${chipsSiglas(cp + '.b1', ['L', 'F', 'RUÍDO'])}
-        <span class="ctrl-rot"><b>○</b> Outra possível (opcional)</span>${chipsSiglas(cp + '.b2', ['L'])}
-        <span class="ctrl-rot">Degrau da escada de evidência</span><div class="chips">${DEGRAUS.map(g => chip(cp + '.degrau', g[0], g[1])).join('')}</div>
-        <span class="ctrl-rot">Por quê, em uma frase (regra 2)</span><input type="text" data-b="${cp}.porque" placeholder="Marcamos … porque …" aria-label="Por quê da carta ${c.id}">
-        <div class="se-alt" data-alt="${c.id}"><span class="ctrl-rot">Que dado decidiria entre ● e ○?</span><input type="text" data-b="${cp}.decide" placeholder="Ex.: teste da calma com dois atendentes" aria-label="Dado que decidiria, carta ${c.id}"></div>
-      </div>
-      <div class="gab-carta" id="gabCarta-${c.id}"></div>
-    </article>`;
-  }).join('');
+  const d = D(), n = d.n, p = 'd.' + n;
+  document.getElementById('dossieN').textContent = 'Dossiê ' + n + ' · ' + txt(d.publico);
+  document.getElementById('dossieT').innerHTML = d.titulo;
+  const cab = d.cabecalho.map(l => `<div class="cd-item${txt(l[0]) === 'Frase crua' ? ' cd-cru' : ''}"><span class="cd-rot">${l[0]}</span>${l[1]}</div>`).join('');
+  const passos = d.passos.map((ps, i) => `<button type="button" class="passo-bt" data-c="${p}.palpite" data-v="${i + 1}" aria-pressed="false"><span class="pn">${i + 1}</span><span>${ps}</span><span class="pq" aria-hidden="true">?</span></button>`).join('');
+  const baralho = d.cartas.map(c => `<button type="button" class="carta" id="carta-${c.id}" data-abrir-carta="${c.id}">
+      <span class="carta-cab"><span class="carta-id">${c.id}</span><span class="carta-tipo t-${esc(c.tipo)}">${esc(c.tipo)}</span>${c.fonte ? `<span class="carta-fonte">${c.fonte}</span>` : ''}</span>
+      <span class="carta-txt">${c.texto}</span>
+      <span class="carta-pe" id="pe-${c.id}"></span></button>`).join('');
 
-  corpo.innerHTML = `
-    <div class="etapas-nav" id="etapasNav">${ETAPAS.map((e, i) => `<button type="button" class="etapa-bt" data-etapa-ir="${i}"><span class="en">${i < 6 ? i + 1 : '✓'}</span>${e}</button>`).join('')}</div>
-    <div id="r2Etapas" data-etapa="${etapaAtual + 1}">
-      <div class="etapa-painel" data-e="0">
-        ${etapaTxt(0)}
-        ${d.caso.replace('<p>', '<p class="lead">')}
-        <div class="cabecalho-dossie">${cabHtml}</div>
-        <div class="bloco"><h3>${F[0][0]}</h3><p class="ajuda">Com as próprias palavras. Pergunta-guia: o que alguém <em>veria</em> se isso acontecesse?</p>
-          <div class="campos-4">${campo(p + '.quem', 'Quem')}${campo(p + '.faz', 'Faz o quê')}${campo(p + '.contexto', 'Em que contexto')}${campo(p + '.mede', 'O que se mede')}</div></div>
-      </div>
-      <div class="etapa-painel" data-e="1">
-        ${etapaTxt(1)}
-        <p class="texto"><strong>${txt(d.rotulo_passos)}</strong> Toquem no passo em que o grupo acha que o comportamento <strong>mais se perde</strong>, antes de ler as cartas.</p>
-        <div class="passos-lista">${passosHtml}</div>
-      </div>
-      <div class="etapa-painel ep-cartas" data-e="2" data-e2="3">
-        <div class="ep-txt3">${etapaTxt(2)}</div><div class="ep-txt4">${etapaTxt(3)}</div>
-        <div class="mural-wrap"><h3 style="margin:0 0 0.5rem">Mural</h3><div class="mural" id="mural"></div><div class="sem-lugar" id="semLugar"></div>
-          <p class="mural-legenda">Toque numa carta do mural para ir até ela. A coluna amarela é o palpite do grupo.</p></div>
-        <div class="cartas">${cartas}</div>
-      </div>
-      <div class="etapa-painel" data-e="4">
-        ${etapaTxt(4)}
-        <div id="decisao"></div>
-        <div class="bloco" style="margin-top:1rem"><h3>Segmentar?</h3><p class="ajuda">Há grupos de pessoas com barreiras diferentes?</p>
-          <div class="chips">${chip(p + '.seg', 'nao', 'Não')}${chip(p + '.seg', 'sim', 'Sim')}</div>
-          <div style="margin-top:0.6rem">${campo(p + '.segTxt', 'Quais grupos e que barreira cada um tem', { area: true })}</div></div>
-        <div class="bloco"><h3>${F[4][0]}</h3><div class="comparar" id="palpiteComp"></div>${campo(p + '.palpiteTxt', 'O palpite se confirmou? O que mudou?', { area: true })}</div>
-        <div class="gab-carta" id="gabDecisao"></div>
-      </div>
-      <div class="etapa-painel" data-e="5">
-        ${etapaTxt(5)}
-        <div class="hip-box"><h3>${F[5][0]}</h3>
-          <div class="mini-acoes no-print"><button type="button" class="vd-btn vd-btn-claro" id="hipUsarComp">Usar o comportamento-alvo do dossiê</button><button type="button" class="vd-btn vd-btn-claro" id="hipUsarDec">Usar a decisão da etapa 5</button></div>
-          ${campo(p + '.hip.para', 'Para… (Quem – faz o quê – em que contexto)', { area: true })}
-          <p class="ajuda" style="color:rgba(255,255,255,0.65);margin-top:-0.4rem">Dica: ajustem o verbo para o infinitivo (“para o professor <em>enviar</em> o pedido…”).</p>
-          <div class="campos-2">
-            <div class="campo"><label>A barreira principal é</label>${select(p + '.hip.principal', Object.keys(SIG).map(s => [s, SIG[s].nome + ' (' + s + ')']), 'Escolham')}</div>
-            <div class="campo"><label>A secundária é</label>${select(p + '.hip.secundaria', Object.keys(SIG).map(s => [s, SIG[s].nome + ' (' + s + ')']), 'Escolham')}</div>
-          </div>
-          <div class="campos-2">${campo(p + '.hip.ev1', 'Porque… (evidência de um tipo)', { area: true, ph: 'Ex.: … (observação 1A)' })}${campo(p + '.hip.ev2', '…e (evidência de outro tipo)', { area: true, ph: 'Ex.: … (documento 1C)' })}</div>
-          ${campo(p + '.hip.errados', 'Estaremos errados se…', { area: true, ph: 'Algo observável: um número ou um comportamento' })}
-          <span class="ctrl-rot" style="color:rgba(255,255,255,0.7)">A frase</span><div class="hip-preview" id="hipPreview"></div>
-          <span class="ctrl-rot" style="color:rgba(255,255,255,0.7)">Antes de fechar, confiram</span>
-          <div class="checklist">${CHECK_HIP.map(c => `<label><input type="checkbox" data-b="${p}.chk.${c[0]}">${esc(c[1])}</label>`).join('')}</div>
+  document.getElementById('r2Corpo').innerHTML = `
+    <div class="etapa-painel" data-e="0">
+      ${instr(1, '<strong>Leiam o caso e os passos.</strong> O Leitor lê em voz alta. Depois, <strong>antes de ver as cartas</strong>, toquem no passo em que o grupo acha que o comportamento mais se perde: é o palpite, que vocês vão comparar com os dados no fim.')}
+      <div class="lead">${d.caso}</div>
+      <div class="cab-dossie">${cab}</div>
+      <h3 class="sub" style="margin-top:0.4rem">Onde o comportamento mais se perde? <span class="ajuda" style="font-family:var(--body)">(toquem em um passo)</span></h3>
+      <div class="passos-lista">${passos}</div>
+      <div class="acoes no-print"><button type="button" class="vd-btn vd-btn-roxo" data-etapa-ir="1">Montar o mural →</button></div>
+    </div>
+
+    <div class="etapa-painel" data-e="1">
+      ${instr(2, `<strong>Escolham até ${LIMITE} cartas</strong>, as que mais ajudam a explicar por que o comportamento não acontece. Toquem numa carta para levá-la ao mural: digam de qual passo ela fala e o que ela mostra (uma barreira ●, algo que localiza <strong>L</strong> ou algo que já funciona <strong>F</strong>). Cartas que não falam deste comportamento ficam no baralho.`)}
+      <div class="contador" id="contador"></div>
+      <div class="mural" id="mural"></div>
+      <h3 class="sub">Baralho <span class="ajuda" style="font-family:var(--body)">(10 cartas · toquem para ler e marcar)</span></h3>
+      <div class="baralho">${baralho}</div>
+      <div class="acoes no-print"><button type="button" class="vd-btn vd-btn-roxo" data-etapa-ir="2">Decidir a barreira →</button></div>
+    </div>
+
+    <div class="etapa-painel" data-e="2">
+      ${instr(3, '<strong>Decidam a prioridade.</strong> A tabela junta as cartas do mural por barreira. Escolham a <strong>principal</strong> (a que atacariam primeiro), a <strong>secundária</strong> e as que ficam <strong>a verificar</strong>. Regra 4: a principal precisa de dois tipos de fonte.')}
+      <div id="decisao"></div>
+      <div class="bloco"><h3>Palpite × dados</h3><div class="comparar" id="palpiteComp"></div>
+        ${campo(p + '.palpiteTxt', 'O palpite se confirmou? O que mudou?', { ph: 'Uma frase' })}</div>
+      <div class="gab-box" id="gabDecisao"></div>
+      <div class="acoes no-print"><button type="button" class="vd-btn vd-btn-roxo" data-etapa-ir="3">Escrever a hipótese →</button></div>
+    </div>
+
+    <div class="etapa-painel" data-e="3">
+      ${instr(4, '<strong>Escrevam a hipótese</strong> na frase do cartão de bolso e indiquem a informação que pediriam a seguir.')}
+      <div class="hip-box"><h3>A hipótese do grupo</h3>
+        <div class="mini-acoes no-print"><button type="button" class="vd-btn vd-btn-claro" id="hipUsarComp">Copiar o comportamento-alvo do dossiê</button><button type="button" class="vd-btn vd-btn-claro" id="hipUsarDec">Usar a decisão do passo 3</button></div>
+        ${campo(p + '.hip.para', 'Para…', { area: true, ph: 'o professor enviar o pedido completo… até 3 dias úteis antes da aplicação' })}
+        <div class="campos-2">
+          <div class="campo"><label>A barreira principal é</label>${select(p + '.hip.principal', Object.keys(SIG).map(s => [s, SIG[s].nome + ' (' + s + ')']), 'Escolham', 'Barreira principal')}</div>
+          <div class="campo"><label>A secundária é</label>${select(p + '.hip.secundaria', Object.keys(SIG).map(s => [s, SIG[s].nome + ' (' + s + ')']), 'Escolham', 'Barreira secundária')}</div>
         </div>
-        <div class="bloco" style="margin-top:1rem"><h3>${F[6][0]}</h3><p class="ajuda">Uma informação que pediriam a seguir.</p>
-          <div class="campos-2" style="grid-template-columns:1fr 1fr 1fr">${campo(p + '.prox.oque', 'O quê')}${campo(p + '.prox.dequem', 'De quem')}${campo(p + '.prox.como', 'Como')}</div></div>
-        <div class="gab-carta" id="gabHipotese"></div>
+        <div class="campos-2">${campo(p + '.hip.ev1', 'Porque… (evidência de um tipo)', { area: true, ph: 'Ex.: … (observação 1A)' })}${campo(p + '.hip.ev2', '…e (evidência de outro tipo)', { area: true, ph: 'Ex.: … (documento 1C)' })}</div>
+        ${campo(p + '.hip.errados', 'Estaremos errados se…', { area: true, ph: 'Algo observável: um número ou um comportamento' })}
+        <span class="rot">A frase</span><div class="hip-preview" id="hipPreview"></div>
+        <span class="rot">Antes de fechar, confiram</span>
+        <div class="checklist">${CHECK_HIP.map(c => `<label><input type="checkbox" data-b="${p}.chk.${c[0]}">${esc(c[1])}</label>`).join('')}</div>
       </div>
-      <div class="etapa-painel" data-e="6">
-        <div class="bloco" id="fichaTela"></div>
-      </div>
-    </div>`;
-  corpo.querySelector('#etapasNav').addEventListener('click', e => { const b = e.target.closest('[data-etapa-ir]'); if (b) irEtapa(Number(b.dataset.etapaIr), true); });
-  corpo.querySelector('#hipUsarComp').onclick = () => {
-    const ds = dS();
-    const partes = [cab['Quem'], cab['Faz o quê'], cab['Em que contexto']].map(l => l ? txt(l[1]).trim() : '').filter(Boolean);
-    const novo = partes.map((x, i) => i === 0 ? minus(x) : minus(x)).join(' ');
-    if (ds.hip && ds.hip.para && ds.hip.para.trim() && ds.hip.para.trim() !== novo && !confirm('Substituir o texto já escrito?')) return;
-    set(p + '.hip.para', novo); preencher(corpo); atualizar(); VD.alterado();
+      <div class="bloco" style="margin-top:1rem"><h3>Próximo dado</h3>${campo(p + '.prox.txt', 'Que informação pediríamos a seguir: o quê, de quem e como', { area: true })}</div>
+      <div class="gab-box" id="gabHipotese"></div>
+      <div class="acoes no-print"><button type="button" class="vd-btn vd-btn-roxo" data-ir="r3">Ir para a Rodada 3 →</button></div>
+    </div>
+
+    <div class="etapa-painel" data-e="4"><div class="bloco" id="fichaTela"></div></div>`;
+
+  document.getElementById('hipUsarComp').onclick = () => {
+    const pega = r => { const l = d.cabecalho.find(x => txt(x[0]) === r); return l ? txt(l[1]).trim() : ''; };
+    const novo = [pega('Quem'), pega('Faz o quê'), pega('Em que contexto')].filter(Boolean).map(minus).join(' ');
+    const atual = ((dS().hip || {}).para || '').trim();
+    if (atual && atual !== novo && !confirm('Substituir o texto já escrito?')) return;
+    set(p + '.hip.para', novo); preencher(document.getElementById('r2Corpo')); atualizar(); VD.alterado();
   };
-  corpo.querySelector('#hipUsarDec').onclick = () => {
+  document.getElementById('hipUsarDec').onclick = () => {
     const dec = dS().dec || {};
     const ach = r => Object.keys(dec).find(s => dec[s] && dec[s].decisao === r) || '';
     set(p + '.hip.principal', ach('principal')); set(p + '.hip.secundaria', ach('secundaria'));
-    preencher(corpo); atualizar(); VD.alterado();
+    preencher(document.getElementById('r2Corpo')); atualizar(); VD.alterado();
   };
   irEtapa(etapaAtual, false);
 }
 function irEtapa(i, rolar) {
-  etapaAtual = i; ls.set('vd_clinica_etapa', i);
-  const box = document.getElementById('r2Etapas'); if (!box) return;
-  box.dataset.etapa = String(i + 1);
-  box.querySelectorAll('.etapa-painel').forEach(ep => {
-    const ok = Number(ep.dataset.e) === i || (ep.dataset.e2 && Number(ep.dataset.e2) === i);
-    ep.classList.toggle('ativo', ok);
-  });
-  box.querySelector('.ep-txt3').hidden = i !== 2;
-  box.querySelector('.ep-txt4').hidden = i !== 3;
-  document.querySelectorAll('#etapasNav .etapa-bt').forEach(b => b.classList.toggle('on', Number(b.dataset.etapaIr) === i));
+  etapaAtual = i; ls.set('vd_clinica_etapa_v2', i);
+  document.querySelectorAll('#r2Corpo .etapa-painel').forEach(ep => ep.classList.toggle('ativo', Number(ep.dataset.e) === i));
+  document.querySelectorAll('#etapasNav .passo-nav').forEach(b => b.classList.toggle('on', Number(b.dataset.etapaIr) === i));
+  if (rolar) { const nav = document.getElementById('etapasNav'); const t = nav.getBoundingClientRect().top + window.scrollY - 130; if (Math.abs(window.scrollY - t) > 40) window.scrollTo({ top: t }); }
   setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
-  if (rolar) { const nav = document.getElementById('etapasNav'); const t = nav.getBoundingClientRect().top + window.scrollY - 130; if (window.scrollY > t) window.scrollTo({ top: t }); }
   atualizar();
 }
 
-/* ---------------- painel: rodada 3 ---------------- */
+/* painel da carta */
+let cartaAberta = null;
+function abrirCarta(id) {
+  const d = D(), c = d.cartas.find(x => x.id === id); if (!c) return;
+  cartaAberta = id;
+  const cp = `d.${d.n}.cartas.${id}`;
+  document.getElementById('cartaModalCorpo').innerHTML = `
+    <div class="carta-cab" style="padding-right:2.6rem"><span class="carta-id" id="cartaModalTit">${c.id}</span><span class="carta-tipo t-${esc(c.tipo)}">${esc(c.tipo)}</span>${c.fonte ? `<span class="carta-fonte">${c.fonte}</span>` : ''}</div>
+    <div class="carta-txt">${c.texto}</div>
+    <span class="rot"><b>1.</b> De qual passo esta carta fala?</span>
+    <div class="passo-escolha">${d.passos.map((ps, i) => `<button type="button" class="chip" data-c="${cp}.onde" data-v="${i + 1}" aria-pressed="false"><span class="pn">${i + 1}</span><span>${esc(txt(ps))}</span></button>`).join('')}
+      <button type="button" class="chip" data-c="${cp}.onde" data-v="todo" aria-pressed="false"><span class="pn">∞</span><span>Todo o caminho (fala do processo inteiro ou de “quando”)</span></button></div>
+    <div id="limiteAviso"></div>
+    <span class="rot"><b>2.</b> O que ela mostra? <span style="text-transform:none;letter-spacing:0;font-weight:500">(● a barreira mais provável, ou L, ou F)</span></span>
+    ${chipsSiglas(cp + '.b1', ['L', 'F'])}
+    <span class="rot"><b>3.</b> Degrau da escada de evidência</span>
+    <div class="chips">${DEGRAUS.map(g => chip(cp + '.degrau', g[0], g[1])).join('')}</div>
+    <span class="rot"><b>4.</b> Por quê, em uma frase (regra 2)</span>
+    <input type="text" data-b="${cp}.porque" placeholder="Marcamos … porque …" aria-label="Por quê">
+    <details class="mais"><summary>Ficaram em dúvida entre duas barreiras? Marquem a ○ (opcional)</summary>
+      <span class="rot">○ Outra barreira possível</span>${chipsSiglas(cp + '.b2', ['L'])}
+      <span class="rot">Que dado decidiria entre ● e ○?</span><input type="text" data-b="${cp}.decide" placeholder="Ex.: teste da calma com dois atendentes" aria-label="Que dado decidiria"></details>
+    <div class="gab-box" id="gabCartaModal"></div>
+    <div class="modal-rodape"><button type="button" class="vd-btn vd-btn-ghost" data-tirar-carta="${id}" id="btnTirar">Devolver ao baralho</button><button type="button" class="vd-btn vd-btn-roxo" data-fechar-carta>Pronto</button></div>`;
+  const s = (cartasS())[id] || {};
+  document.querySelector('#cartaModalCorpo details.mais').open = !!s.b2;
+  document.getElementById('cartaModal').hidden = false;
+  preencher(document.getElementById('cartaModal'));
+  atualizar();
+  document.querySelector('#cartaModal .modal-fechar').focus();
+}
+function fecharCarta() { document.getElementById('cartaModal').hidden = true; cartaAberta = null; atualizar(); }
+
+/* ---------------- rodada 3 ---------------- */
 function montarR3() {
-  const [intro, contesta, defende, fecha] = C.r3;
   document.getElementById('p-r3').innerHTML = `
     <div class="eyebrow"><i></i>Rodada 3 · 15 min</div>
     <h2 class="tit"><span class="cod">E5</span>${esc(C.secoes.E5)}</h2>
-    <div class="lead"><p>${intro}</p></div>
-    <div class="nossa"><span class="rot">A hipótese do nosso grupo (Rodada 2)</span><span id="r3Nossa"></span></div>
-    <div class="lados">
-      <div class="lado lado-a"><h3>Quando contestamos a hipótese de outro grupo</h3><p class="texto">${contesta}</p>
-        ${campo('r3.recebida', 'Hipótese que recebemos (e de qual grupo)', { area: true })}
-        ${campo('r3.carta', 'Qual carta enfraquece ou contradiz a hipótese (ou foi ignorada)?', { area: true })}
-        ${campo('r3.troca', 'Qual marcação trocaríamos, e qual teste usaríamos?', { area: true })}
-        ${campo('r3.derruba', 'Que dado, se aparecesse amanhã, derrubaria a hipótese?', { area: true })}</div>
-      <div class="lado lado-b"><h3>Quando defendemos a nossa</h3><p class="texto">${defende}</p>
-        ${campo('r3.critica', 'O que o outro grupo apontou', { area: true })}
-        <span class="ctrl-rot">Nossa resposta</span><div class="chips">${chip('r3.resposta', 'ajustar', 'Aceitamos e ajustamos')}${chip('r3.resposta', 'rebater', 'Rebatemos com evidência')}</div>
-        <div style="margin-top:0.7rem">${campo('r3.ajuste', 'O ajuste feito ou a evidência usada', { area: true })}</div></div>
-    </div>
-    <div class="bloco" style="margin-top:1rem"><p class="texto" style="margin-bottom:0.6rem">${fecha}</p>${campo('r3.fechamento', 'Nossa frase', { area: true })}</div>`;
+    <p class="lead">Troquem a hipótese com outro grupo que trabalhou o mesmo dossiê. Cada grupo tenta derrubar a hipótese que recebeu; depois, cada um ajusta a sua. <strong>Ajustar não é perder:</strong> hipótese que sobrevive a um ataque sério vale mais.</p>
+    <div class="nossa"><span class="r">A hipótese do nosso grupo (Rodada 2)</span><span id="r3Nossa"></span></div>
+    <div class="trio">
+      <div class="bloco"><span class="num">1</span><h3>A hipótese que recebemos</h3><p class="ajuda">Copiem a frase do outro grupo (e anotem qual grupo).</p>${campo('r3.recebida', 'Hipótese recebida', { area: true })}</div>
+      <div class="bloco"><span class="num">2</span><h3>Nossa contestação</h3><p class="ajuda">Qual carta enfraquece essa hipótese (ou foi ignorada)? Que dado, se aparecesse amanhã, a derrubaria?</p>${campo('r3.contesta', 'O que apontamos', { area: true })}</div>
+      <div class="bloco"><span class="num">3</span><h3>Depois da troca</h3><p class="ajuda">O que o outro grupo apontou na nossa, e o que mudou na nossa hipótese (ou por que ela se mantém).</p>${campo('r3.mudou', 'O que mudou', { area: true })}</div>
+    </div>`;
 }
 
-/* ---------------- painel: rodada 4 ---------------- */
+/* ---------------- rodada 4 ---------------- */
 function montarR4() {
-  const r4 = C.r4, it = r4.itens;
   document.getElementById('p-r4').innerHTML = `
     <div class="eyebrow"><i></i>Rodada 4 · 20 min</div>
     <h2 class="tit"><span class="cod">E6</span>${esc(C.secoes.E6)}</h2>
-    <div class="lead">${r4.intro}</div>
-    <div class="desafio-escuro"><h3>1. Comportamento-alvo e contexto</h3><p style="color:rgba(255,255,255,0.8);font-size:0.9rem">${it[0]}</p>
-      ${campo('r4.cru', 'Como o comportamento está escrito hoje', { area: true })}
+    <p class="lead">Agora o mesmo olhar vai para o <strong>comportamento do seu grupo</strong>. O que não terminar fica para os próximos dias.</p>
+    <div class="desafio-escuro"><h3>1. Comportamento-alvo e contexto</h3>
+      <p>Passem o comportamento pelos cinco testes da Aula 01 e reescrevam no formato <em>Quem – faz o quê – em que contexto</em>, como no cabeçalho do dossiê. Duas ações? Escolham uma. Uma área? Digam qual pessoa. Um resultado (“garantir”, “reduzir”)? Perguntem o que alguém faz para isso acontecer.</p>
+      ${campo('r4.cru', 'Como está escrito hoje', { area: true })}
       <div class="vd-trazer no-print"><button type="button" class="vd-btn vd-btn-claro" id="r4Trazer">↧ Trazer da Aula 1</button></div>
       <div class="vd-picker" id="r4Picker" hidden></div>
-      <span class="ctrl-rot" style="color:rgba(255,255,255,0.7)">Os cinco testes da Aula 01 (toquem nos que já passam)</span>
+      <span class="rot">Os cinco testes (toquem nos que já passam)</span>
       <div class="chips">${TESTES_A01.map((t, i) => chip('r4.testes.t' + i, 'ok', '✓ ' + esc(t))).join('')}</div>
       <div class="campos-4" style="margin-top:0.9rem">${campo('r4.quem', 'Quem')}${campo('r4.faz', 'Faz o quê')}${campo('r4.contexto', 'Em que contexto')}${campo('r4.medida', 'O que se mede')}</div></div>
-    <div class="bloco"><h3>2. Passos</h3><p class="texto">${it[1]}</p><div class="passos-edit" id="r4Passos"></div>
+    <div class="bloco"><h3>2. Passos</h3><p class="texto">Desenhem o caminho em 6 a 8 passos, do gatilho até o comportamento concluído. Marquem com <strong>?</strong> o passo em que acham que se perde.</p>
+      <div class="passos-edit" id="r4Passos"></div>
       <div class="mini-acoes" style="margin-top:0.7rem"><button type="button" class="vd-btn vd-btn-ghost" id="r4MaisPasso">+ Acrescentar passo</button></div></div>
-    <div class="bloco"><h3>3. Dados</h3><p class="texto">${it[2]}</p>
-      ${campo('r4.dado', 'Que dado puxar', { area: true })}${campo('r4.observar', 'Quem observar', { area: true })}
-      <div class="campos-2" style="grid-template-columns:1fr 1fr 1fr">${campo('r4.naoFaz', 'Ouvir: uma pessoa que não faz', { area: true })}${campo('r4.jaFaz', 'Ouvir: uma que faz', { area: true })}${campo('r4.convive', 'Ouvir: uma que convive', { area: true })}</div></div>
-    <div class="texto">${r4.fim}</div>
+    <div class="bloco"><h3>3. O que observamos nos passos</h3><p class="texto">Para cada passo, anotem o que vocês já veem acontecer hoje: onde trava, quanto tempo leva, o que as pessoas fazem no lugar, que improvisos aparecem. Se ainda não sabem, escrevam o que precisariam observar.</p>
+      <div id="r4Obs"></div></div>
     <aside class="cta-final"><div><span class="eyebrow">Depois da Clínica</span><h3>Atividade principal da aula</h3>
-      <p>Leve o comportamento do grupo para o levantamento, a triangulação e a priorização de barreiras. Lá também há o botão “Trazer da Aula 1”.</p></div>
+      <p>Leve o comportamento do grupo para o levantamento, a triangulação e a priorização de barreiras.</p></div>
       <a class="vd-btn vd-btn-amarelo" href="aula-2-barreiras.html">Abrir a atividade →</a></aside>`;
   document.getElementById('r4MaisPasso').onclick = () => { if (S.r4.passos.length >= 10) return; S.r4.passos.push(''); montarPassosR4(); atualizar(); VD.alterado(); };
   document.getElementById('r4Trazer').onclick = trazerDaAula1;
@@ -768,15 +804,30 @@ function montarPassosR4() {
   const box = document.getElementById('r4Passos');
   box.innerHTML = S.r4.passos.map((_, i) => `<div class="passo-edit"><span class="pn">${i + 1}</span>
     <input type="text" data-b="r4.passos.${i}" aria-label="Passo ${i + 1}" placeholder="Passo ${i + 1}">
-    ${chip('r4.perde', String(i + 1), '?', { cls: 'perde' })}
+    ${chip('r4.perde', String(i + 1), '?')}
     <button type="button" class="rem" data-rem="${i}" aria-label="Remover passo ${i + 1}" title="Remover">×</button></div>`).join('');
   box.querySelectorAll('[data-rem]').forEach(b => b.onclick = () => {
     if (S.r4.passos.length <= 1) return;
     const i = Number(b.dataset.rem);
     S.r4.passos.splice(i, 1);
+    const obs = S.r4.obs || {}, novo = {};
+    Object.keys(obs).forEach(k => { const j = Number(k); if (j < i) novo[j] = obs[k]; else if (j > i) novo[j - 1] = obs[k]; });
+    S.r4.obs = novo;
     if (S.r4.perde) { const p = Number(S.r4.perde); S.r4.perde = p === i + 1 ? '' : (p > i + 1 ? String(p - 1) : S.r4.perde); }
-    montarPassosR4(); atualizar(); VD.alterado();
+    montarPassosR4(); assinaturaObs = ''; atualizar(); VD.alterado();
   });
+  preencher(box);
+}
+let assinaturaObs = '';
+function montarObsR4() {
+  const ps = S.r4.passos.map(x => (x || '').trim());
+  const assin = ps.join('|') + '#' + (S.r4.perde || '');
+  if (assin === assinaturaObs) return;
+  assinaturaObs = assin;
+  const box = document.getElementById('r4Obs');
+  const itens = ps.map((t, i) => t ? `<div class="obs"><span class="pn">${i + 1}</span><div><div class="obs-passo">${esc(t)}${String(i + 1) === S.r4.perde ? '<span class="perde">? onde se perde</span>' : ''}</div>
+    <textarea data-b="r4.obs.${i}" aria-label="O que observamos no passo ${i + 1}" placeholder="O que observamos neste passo"></textarea></div></div>` : '').join('');
+  box.innerHTML = itens || '<p class="vazio">Escrevam os passos no item 2; eles aparecem aqui para vocês anotarem as observações.</p>';
   preencher(box);
 }
 function trazerDaAula1() {
@@ -800,30 +851,27 @@ function trazerDaAula1() {
   picker.hidden = false;
 }
 
-/* ---------------- painel: gabarito ---------------- */
+/* ---------------- gabarito ---------------- */
 let G = null;
 const gabMostrar = () => !!G && ls.get('vd_clinica_gab_mostrar', true);
 function montarGabarito() {
   const p = document.getElementById('p-gab');
   if (!G) {
     p.innerHTML = `<div class="cadeado"><div class="ico" aria-hidden="true">🔒</div><h2>Gabarito</h2>
-      <p>O gabarito abre com a palavra-chave que o professor vai informar durante a aula. Antes disso, façam a rodada sem ele: as diferenças entre o mural e o gabarito são a parte mais útil da aula.</p>
+      <p>O gabarito abre com a palavra-chave que o professor vai informar durante a aula. Façam as rodadas antes: as diferenças entre o mural do grupo e o gabarito são a parte mais útil da aula.</p>
       <form id="gabForm"><input type="password" id="gabChave" placeholder="Palavra-chave" autocomplete="off" aria-label="Palavra-chave do gabarito"><button type="submit" class="vd-btn vd-btn-roxo">Abrir o gabarito</button></form>
       <p class="erro" id="gabErro" role="alert"></p></div>`;
     document.getElementById('gabForm').onsubmit = async e => {
       e.preventDefault();
-      const chave = document.getElementById('gabChave').value;
-      const erro = document.getElementById('gabErro');
+      const chave = document.getElementById('gabChave').value, erro = document.getElementById('gabErro');
       erro.textContent = 'Conferindo…';
-      const ok = await abrirGabarito(chave);
-      if (ok) { ls.set('vd_clinica_gab_chave', chave); montarGabarito(); atualizar(); }
+      if (await abrirGabarito(chave)) { ls.set('vd_clinica_gab_chave', chave); montarGabarito(); atualizar(); }
       else erro.textContent = 'Palavra-chave incorreta.';
     };
     return;
   }
-  const dn = String(gabDossie());
   p.innerHTML = `
-    <div class="gab-topo"><label><input type="checkbox" id="gabMostrar"> Mostrar o gabarito também nas cartas e nos casos</label>
+    <div class="gab-topo"><label><input type="checkbox" id="gabMostrar"> Mostrar o gabarito também nos casos e nas cartas</label>
       <button type="button" class="vd-btn vd-btn-ghost" id="gabFechar">Bloquear de novo</button></div>
     <div class="subabas" id="gabSub">
       <button type="button" class="subaba" data-g="r1">Rodada 1</button>
@@ -843,48 +891,50 @@ function montarGabarito() {
       <div class="texto">${d.resultado}</div>${d.decisao_tabela}<div class="texto">${d.apos_decisao}</div>
       <p class="texto"><strong>${txt(d.rotulo_hipotese)}</strong></p><div class="gab-hip">${d.hipotese}</div><div class="texto">${d.depois}</div></div>`).join('')}
     <div class="gab-sec" data-gs="pts"><h2 class="tit">Pontuação do grupo</h2>
-      <p class="ajuda">A pontuação torna visível onde a leitura do grupo divergiu do gabarito; não declara vencedor. Os itens automáticos usam o que o grupo marcou nesta página.</p>
+      <p class="ajuda">A pontuação mostra onde a leitura do grupo divergiu do gabarito; não declara vencedor. Os itens automáticos usam o que o grupo marcou nesta página. No mural, vale 1 ponto por carta no passo certo com a barreira certa (até ${LIMITE}).</p>
       <div class="placar" id="placar"></div>
       <h2 class="tit" style="margin-top:1.6rem">${esc(G.titulos['6'])}</h2><div class="texto">${G.pontuacao}</div></div>`;
   const sub = document.getElementById('gabSub');
   const abrirSub = g => { ls.set('vd_clinica_gab_sub', g); sub.querySelectorAll('.subaba').forEach(b => b.classList.toggle('on', b.dataset.g === g)); p.querySelectorAll('.gab-sec').forEach(s => s.classList.toggle('ativo', s.dataset.gs === g)); };
   sub.addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (b) abrirSub(b.dataset.g); });
-  abrirSub(ls.get('vd_clinica_gab_sub', S.dossie ? 'd' + dn : 'r1'));
+  abrirSub(ls.get('vd_clinica_gab_sub', 'r1'));
   const mostrar = document.getElementById('gabMostrar');
   mostrar.checked = gabMostrar();
   mostrar.onchange = () => { ls.set('vd_clinica_gab_mostrar', mostrar.checked); atualizar(); };
   document.getElementById('gabFechar').onclick = () => { G = null; try { localStorage.removeItem('vd_clinica_gab_chave'); } catch (e) {} montarGabarito(); atualizar(); };
 }
-const gabDossie = () => Number(S.dossie) || 1;
 async function abrirGabarito(chave) {
   const X = window.CLINICA_GABARITO;
   if (!X || !chave || !window.crypto || !crypto.subtle) return false;
   try {
     const b = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-    const enc = new TextEncoder();
-    const base = await crypto.subtle.importKey('raw', enc.encode(chave.trim().toLowerCase()), 'PBKDF2', false, ['deriveKey']);
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(chave.trim().toLowerCase()), 'PBKDF2', false, ['deriveKey']);
     const k = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b(X.sal), iterations: X.iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
     const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b(X.iv) }, k, b(X.dados));
     G = JSON.parse(new TextDecoder().decode(pt));
     return true;
   } catch (e) { return false; }
 }
-
-/* ---------------- comparação com o gabarito ---------------- */
 const principalR1 = n => { const c = G && G.r1.casos.find(x => x.n === n); return c ? c.principal.split(/\s/)[0] : ''; };
 function gabCarta(n, id) { const d = G && G.r2.dossies.find(x => x.n === Number(n)); return d ? d.cartas.find(c => c.id === id) : null; }
 function comparar(n, id) {
   const g = gabCarta(n, id); if (!g) return null;
   const s = ((S.d[n] || {}).cartas || {})[id] || {};
-  const onde = s.onde || [];
-  const passo = g.passos.some(x => onde.includes(String(x)));
+  const k = lugar(s);
+  const passo = !!k && g.passos.some(x => String(x) === k);
   const barreira = !!s.b1 && (s.b1 === g.b1 || s.b2 === g.b1);
   const alt = !barreira && !!g.b2 && (s.b1 === g.b2 || s.b2 === g.b2);
-  return { g, s, passo, barreira, alt, degrau: !!s.degrau && s.degrau === g.degrau, ponto: passo && barreira, vazio: !onde.length && !s.b1 };
+  return { g, s, k, passo, barreira, alt, degrau: !!s.degrau && s.degrau === g.degrau, ponto: passo && barreira, noMural: !!k };
 }
 const tag = (ok, sim, nao, meio) => ok === 'meio' ? `<span class="meio">${meio}</span>` : ok ? `<span class="sim">✓ ${sim}</span>` : `<span class="nao">✗ ${nao}</span>`;
+function gabCartaHtml(n, id) {
+  const r = comparar(n, id); if (!r) return '';
+  return `<div class="gab-rot">Gabarito · carta ${esc(id)}</div>
+    <div class="conf">${!r.noMural ? '<span class="neutro">Carta fora do mural do grupo</span>' : tag(r.passo, 'Passo', 'Passo') + tag(r.barreira ? true : (r.alt ? 'meio' : false), 'Barreira', 'Barreira', '≈ Coincide com a ○') + tag(r.degrau, 'Degrau', 'Degrau')}</div>
+    Passo ${r.g.passo} · ● ${sigla(r.g.b1)}${r.g.b2 ? ' ○ ' + sigla(r.g.b2) : ''} · ${r.g.degrau_txt}<br>${r.g.porque}`;
+}
 
-/* ---------------- atualizar a tela a partir do estado ---------------- */
+/* ---------------- atualizar a tela ---------------- */
 function preencher(raiz) {
   (raiz || document).querySelectorAll('[data-b]').forEach(el => {
     const v = get(el.dataset.b);
@@ -894,13 +944,12 @@ function preencher(raiz) {
 }
 function atualizar() {
   document.body.classList.toggle('gab-visivel', gabMostrar());
-  // chips
   document.querySelectorAll('[data-c]').forEach(b => {
     const v = get(b.dataset.c);
-    const on = b.dataset.m === 'multi' ? Array.isArray(v) && v.includes(b.dataset.v) : v === b.dataset.v;
+    const on = Array.isArray(v) ? v.includes(b.dataset.v) : v === b.dataset.v;
     b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
-  atualizarR1(); atualizarR2(); atualizarR3(); atualizarEstac(); atualizarBadges();
+  atualizarR1(); atualizarR2(); atualizarR3(); montarObsR4(); atualizarEstac(); atualizarBadges();
   if (G) atualizarGabarito();
 }
 function atualizarR1() {
@@ -924,79 +973,75 @@ function atualizarR1() {
   });
 }
 function atualizarR2() {
-  C.r2.dossies.forEach(d => {
-    const ds = S.d[d.n] || {}, cs = ds.cartas || {};
-    const feitas = d.cartas.filter(c => cs[c.id] && cs[c.id].b1).length;
-    document.getElementById('dprog-' + d.n).textContent = feitas ? feitas + ' de 10 cartas marcadas' : '';
-    document.querySelector(`[data-dossie="${d.n}"]`).classList.toggle('on', String(d.n) === String(S.dossie));
-  });
-  const d = D(); if (!d || !document.getElementById('mural')) return;
-  const ds = dS(), cs = ds.cartas || {}, palp = ds.palpite;
-  // marcas no cabeçalho das cartas e campo "que dado decidiria"
-  d.cartas.forEach(c => {
+  const d = D(), ds = dS(), cs = cartasS(), palp = ds.palpite, n = d.n;
+  document.querySelectorAll('.dossie-bt').forEach(b => b.classList.toggle('on', b.dataset.dossie === String(n)));
+  const mural = noMural(d), cheio = mural.length >= LIMITE;
+  // contador
+  document.getElementById('contador').innerHTML = `<span class="pontos" aria-hidden="true">${Array.from({ length: LIMITE }, (_, i) => `<i class="${i < mural.length ? 'on' : ''}"></i>`).join('')}</span>
+    <b>${mural.length} de ${LIMITE} cartas no mural</b>${mural.length > LIMITE ? '<span class="alerta">Acima do limite: devolvam cartas ao baralho.</span>' : ''}`;
+  // mural em faixas
+  const mini = c => {
     const s = cs[c.id] || {};
-    document.getElementById('marcas-' + c.id).innerHTML = (s.b1 ? '● ' + sigla(s.b1) : '') + (s.b2 ? ' ○ ' + sigla(s.b2) : '');
-    document.querySelector(`[data-alt="${c.id}"]`).hidden = !s.b2;
+    const r = gabMostrar() ? comparar(n, c.id) : null;
+    return `<button type="button" class="mini" data-abrir-carta="${c.id}"><span class="mini-cab"><span class="mini-id">${c.id}</span><span class="carta-tipo t-${esc(c.tipo)}">${esc(c.tipo)}</span>
+      <span class="mini-marcas">${s.b1 ? '● ' + sigla(s.b1) : '<span class="mini-falta">marcar ●</span>'}${s.b2 ? ' ○ ' + sigla(s.b2) : ''}</span></span>
+      <span class="mini-txt">${esc(txt(c.texto))}</span>${r ? `<span class="mini-gab ${r.ponto ? 'sim' : 'nao'}">${r.ponto ? '✓ confere com o gabarito' : '✗ gabarito: passo ' + txt(r.g.passo) + ' · ● ' + r.g.b1}</span>` : ''}</button>`;
+  };
+  const faixas = d.passos.map((ps, i) => ({ k: String(i + 1), cab: `<span class="fn">${i + 1}</span><span>${esc(txt(ps))}${String(i + 1) === palp ? '<span class="q" title="Palpite do grupo">?</span>' : ''}</span>` }));
+  faixas.push({ k: 'todo', cab: '<span class="fn">∞</span><span><strong>Todo o caminho</strong><br>cartas que falam do processo inteiro ou de “quando”</span>', especial: true });
+  document.getElementById('mural').innerHTML = faixas.map(f => {
+    const cartas = d.cartas.filter(c => lugar(cs[c.id]) === f.k);
+    return `<div class="faixa${f.k === palp ? ' palpite' : ''}${f.especial ? ' especial' : ''}${cartas.length ? '' : ' vazia'}"><div class="faixa-cab">${f.cab}</div>
+      <div class="faixa-cartas">${cartas.map(mini).join('') || '<span class="faixa-vazia">—</span>'}</div></div>`;
+  }).join('');
+  // baralho
+  d.cartas.forEach(c => {
+    const k = lugar(cs[c.id]);
+    const el = document.getElementById('carta-' + c.id);
+    el.classList.toggle('no-mural', !!k);
+    document.getElementById('pe-' + c.id).innerHTML = k ? `<span>✓ No mural · ${nomeLugar(d, k)}</span><span>${(cs[c.id] || {}).b1 ? '● ' + sigla(cs[c.id].b1) : ''}</span>` : (cheio ? '<span>Mural cheio</span>' : '<span>Levar ao mural →</span>');
   });
-  // mural
-  const cols = d.passos.map((ps, i) => ({ k: String(i + 1), cab: `<b>${i + 1}${String(i + 1) === palp ? '<span class="q">?</span>' : ''}</b>${esc(txt(ps).slice(0, 70))}`, palpite: String(i + 1) === palp }));
-  cols.push({ k: 'todo', cab: '<b>Todo o caminho</b>', especial: true }, { k: 'fora', cab: '<b>Fora do caminho</b>', especial: true });
-  const mc = c => `<button type="button" class="mcarta" data-ir-carta="${c.id}"><span>${c.id}</span>${sigla((cs[c.id] || {}).b1)}</button>`;
-  document.getElementById('mural').innerHTML = cols.map(col => `<div class="mcol${col.palpite ? ' palpite' : ''}${col.especial ? ' especial' : ''}"><div class="mcol-cab">${col.cab}</div>` +
-    d.cartas.filter(c => ((cs[c.id] || {}).onde || []).includes(col.k)).map(mc).join('') + '</div>').join('');
-  const sem = d.cartas.filter(c => !((cs[c.id] || {}).onde || []).length);
-  document.getElementById('semLugar').innerHTML = sem.length ? '<span>Ainda sem lugar:</span>' + sem.map(mc).join('') : '';
-  // etapas concluídas
-  const feito = [
-    !!(ds.quem || ds.faz || ds.contexto), !!palp, d.cartas.every(c => ((cs[c.id] || {}).onde || []).length),
-    d.cartas.every(c => (cs[c.id] || {}).b1), Object.values(ds.dec || {}).some(x => x && x.decisao === 'principal'),
-    !!(ds.hip && ds.hip.errados), false];
-  document.querySelectorAll('#etapasNav .etapa-bt').forEach((b, i) => b.classList.toggle('feita', feito[i]));
+  // painel da carta aberto
+  if (cartaAberta) {
+    const k = lugar(cs[cartaAberta]);
+    const bloquear = !k && cheio;
+    document.querySelectorAll('#cartaModal [data-c], #cartaModal [data-b]').forEach(b => { b.disabled = bloquear; });
+    document.getElementById('limiteAviso').innerHTML = bloquear ? `<div class="limite-aviso">O mural já tem ${LIMITE} cartas. Para trazer esta, devolvam outra ao baralho.</div>` : '';
+    document.getElementById('btnTirar').hidden = !k;
+    document.getElementById('gabCartaModal').innerHTML = G ? gabCartaHtml(n, cartaAberta) : '';
+  }
+  // passos concluídos
+  const feito = [!!palp, mural.length > 0 && mural.every(c => (cs[c.id] || {}).b1), Object.values(ds.dec || {}).some(x => x && x.decisao === 'principal'), !!(ds.hip && ds.hip.errados)];
+  document.querySelectorAll('#etapasNav .passo-nav').forEach((b, i) => b.classList.toggle('feito', !!feito[i] && Number(b.dataset.etapaIr) !== etapaAtual));
   atualizarDecisao(d, ds, cs); atualizarPalpite(d, ds, cs); atualizarHipotese(ds);
   document.getElementById('fichaTela').innerHTML = fichaHtml();
-  // gabarito na rodada 2
-  d.cartas.forEach(c => {
-    const box = document.getElementById('gabCarta-' + c.id);
-    const r = G ? comparar(d.n, c.id) : null;
-    if (!r) { box.innerHTML = ''; return; }
-    box.innerHTML = `<div class="gab-rot">Gabarito · carta ${esc(c.id)}</div>
-      <div class="conf">${r.vazio ? '<span class="neutro">Carta ainda não marcada</span>' : tag(r.passo, 'Passo', 'Passo') + tag(r.barreira ? true : (r.alt ? 'meio' : false), 'Barreira', 'Barreira', '≈ Coincide com a ○') + tag(r.degrau, 'Degrau', 'Degrau')}</div>
-      Passo ${r.g.passo} · ● ${sigla(r.g.b1)}${r.g.b2 ? ' ○ ' + sigla(r.g.b2) : ''} · ${r.g.degrau_txt}<br>${r.g.porque}`;
-  });
-  const gd = G && G.r2.dossies.find(x => x.n === d.n);
+  const gd = G && G.r2.dossies.find(x => x.n === n);
   document.getElementById('gabDecisao').innerHTML = gd ? `<div class="gab-rot">Gabarito · resultado esperado</div><div class="texto">${gd.resultado}</div>${gd.decisao_tabela}<div class="texto">${gd.apos_decisao}</div>` : '';
   document.getElementById('gabHipotese').innerHTML = gd ? `<div class="gab-rot">Gabarito · ${esc(txt(gd.rotulo_hipotese))}</div><div class="gab-hip">${gd.hipotese}</div><div class="texto">${gd.depois}</div>` : '';
 }
 let assinaturaDecisao = '';
-function barreirasDoMural(d, cs) {
-  const por = {};
-  d.cartas.forEach(c => { const b = (cs[c.id] || {}).b1; if (b && SIG[b]) (por[b] = por[b] || []).push(c); });
-  return por;
-}
 function atualizarDecisao(d, ds, cs) {
   const box = document.getElementById('decisao');
-  const por = barreirasDoMural(d, cs);
+  const por = {};
+  noMural(d).forEach(c => { const b = (cs[c.id] || {}).b1; if (b && SIG[b]) (por[b] = por[b] || []).push(c); });
   const ordem = Object.keys(SIG).filter(s => por[s]).sort((a, b) => por[b].length - por[a].length);
-  const assin = d.n + '|' + ordem.map(s => s + ':' + por[s].map(c => c.id + (cs[c.id].degrau || '')).join(',')).join(';');
-  if (!ordem.length) { box.innerHTML = '<p class="vazio">A tabela de decisão aparece quando as cartas tiverem barreiras ● (etapa 4).</p>'; assinaturaDecisao = ''; return; }
+  const assin = d.n + '|' + ordem.map(s => s + ':' + por[s].map(c => c.id + ((cs[c.id] || {}).degrau || '')).join(',')).join(';');
+  if (!ordem.length) { box.innerHTML = '<p class="vazio">A tabela aparece quando houver cartas com barreira ● no mural (passo 2).</p>'; assinaturaDecisao = ''; return; }
   if (assin !== assinaturaDecisao) {
     assinaturaDecisao = assin;
     const p = 'd.' + d.n + '.dec.';
-    box.innerHTML = `<div class="tab-wrap" style="border:none;background:none"><table class="dec"><thead><tr><th>Barreira</th><th>Evidências ●</th><th>Tipos de fonte</th><th>Contradição?</th><th>Se sumisse, o comportamento aconteceria?</th><th>Decisão</th></tr></thead><tbody>` +
+    box.innerHTML = `<div class="tab-wrap"><table class="tab"><thead><tr><th>Barreira</th><th>Cartas ●</th><th>Tipos de fonte</th><th>Decisão</th></tr></thead><tbody>` +
       ordem.map(s => {
         const cartas = por[s];
         const tipos = [...new Set(cartas.map(c => TIPO_NOME[c.tipo] || c.tipo))];
         const forte = cartas.some(c => ['vi', 'quem'].includes((cs[c.id] || {}).degrau));
         const regraOk = tipos.length >= 2 && forte;
-        return `<tr><td data-label="Barreira">${sigla(s)} ${esc(SIG[s].nome)}</td><td data-label="Evidências ●">${cartas.length} (${cartas.map(c => c.id).join(', ')})</td>
-          <td data-label="Tipos de fonte">${esc(tipos.join(', '))}<div class="${regraOk ? 'ok-txt' : 'alerta'}" data-regra="${s}">${regraOk ? '✓ Pode ser principal (regra 4)' : 'Uma fonte só ou sem degrau forte: “a verificar” (regra 4)'}</div></td>
-          <td data-label="Contradição?">${select(p + s + '.contra', [['nao', 'Não'], ['sim', 'Sim']], '—')}<input type="text" data-b="${p + s}.contraTxt" placeholder="Qual carta?" style="margin-top:0.35rem" aria-label="Qual carta contradiz"></td>
-          <td data-label="Se sumisse, o comportamento aconteceria?">${select(p + s + '.sumisse', [['grande', 'Em grande parte'], ['parte', 'Em parte'], ['nao', 'Não'], ['naosabe', 'Não sabemos']], '—')}</td>
-          <td data-label="Decisão">${select(p + s + '.decisao', [['principal', 'Principal'], ['secundaria', 'Secundária'], ['verificar', 'A verificar']], '—')}<div class="alerta" data-alerta="${s}"></div></td></tr>`;
+        return `<tr><td data-label="Barreira">${sigla(s)} ${esc(SIG[s].nome)}</td><td data-label="Cartas ●">${cartas.length} (${cartas.map(c => c.id).join(', ')})</td>
+          <td data-label="Tipos de fonte">${esc(tipos.join(', '))}<div class="${regraOk ? 'ok-txt' : 'alerta'}">${regraOk ? '✓ Pode ser a principal' : 'Um tipo de fonte só, ou sem degrau forte: “a verificar”'}</div></td>
+          <td data-label="Decisão" style="min-width:170px">${select(p + s + '.decisao', [['principal', 'Principal'], ['secundaria', 'Secundária'], ['verificar', 'A verificar']], '—', 'Decisão sobre ' + s)}<div class="alerta" data-alerta="${s}"></div></td></tr>`;
       }).join('') + '</tbody></table></div>';
     preencher(box);
   }
-  // alertas que dependem das escolhas
   const dec = ds.dec || {};
   const principais = Object.keys(dec).filter(s => dec[s] && dec[s].decisao === 'principal' && por[s]);
   box.querySelectorAll('[data-alerta]').forEach(el => {
@@ -1010,13 +1055,13 @@ function atualizarDecisao(d, ds, cs) {
 }
 function atualizarPalpite(d, ds, cs) {
   const cont = {};
-  d.cartas.forEach(c => { const s = cs[c.id] || {}; if (s.b1 && SIG[s.b1]) (s.onde || []).forEach(k => { if (/^\d+$/.test(k)) cont[k] = (cont[k] || 0) + 1; }); });
+  noMural(d).forEach(c => { const s = cs[c.id] || {}, k = lugar(s); if (s.b1 && SIG[s.b1] && /^\d+$/.test(k)) cont[k] = (cont[k] || 0) + 1; });
   const max = Math.max(0, ...Object.values(cont));
   const top = Object.keys(cont).filter(k => cont[k] === max && max > 0);
-  const nome = k => `passo ${k}: ${esc(txt(d.passos[Number(k) - 1] || '').slice(0, 90))}`;
+  const nome = k => `passo ${k}: ${esc(txt(d.passos[Number(k) - 1] || ''))}`;
   document.getElementById('palpiteComp').innerHTML =
-    `<div><span class="rot">Palpite do grupo (etapa 2)</span>${ds.palpite ? nome(ds.palpite) : '<span class="vazio">Sem palpite</span>'}</div>` +
-    `<div><span class="rot">Onde se concentram as cartas com barreira ●</span>${top.length ? top.map(nome).join('<br>') + ` (${max} carta${max > 1 ? 's' : ''})` : '<span class="vazio">Marquem as barreiras na etapa 4</span>'}</div>`;
+    `<div><span class="r">Palpite do grupo (passo 1)</span>${ds.palpite ? nome(ds.palpite) : '<span class="vazio">Sem palpite</span>'}</div>` +
+    `<div><span class="r">Onde se concentram as barreiras ● do mural</span>${top.length ? top.map(nome).join('<br>') + ` (${max} carta${max > 1 ? 's' : ''})` : '<span class="vazio">Ainda sem barreiras no mural</span>'}</div>`;
 }
 function fraseHipotese(h, html) {
   h = h || {};
@@ -1026,30 +1071,31 @@ function fraseHipotese(h, html) {
 }
 function atualizarHipotese(ds) { document.getElementById('hipPreview').innerHTML = fraseHipotese(ds.hip, true); }
 function atualizarR3() {
-  const ds = S.dossie ? (S.d[S.dossie] || {}) : {};
-  document.getElementById('r3Nossa').innerHTML = S.dossie && ds.hip ? fraseHipotese(ds.hip, true).replace(/<span class="lac">/g, '<span style="opacity:.5">') : 'Escrevam a hipótese na etapa 6 da Rodada 2; ela aparece aqui para a troca.';
+  const ds = S.d[String(D().n)] || {};
+  document.getElementById('r3Nossa').innerHTML = ds.hip && Object.values(ds.hip).some(x => x) ? fraseHipotese(ds.hip, true).replace(/<span class="lac">/g, '<span style="opacity:.5">') : 'Escrevam a hipótese no passo 4 da Rodada 2; ela aparece aqui para a troca.';
 }
+const proxTexto = pr => pr ? (pr.txt || [pr.oque && 'O quê: ' + pr.oque, pr.dequem && 'De quem: ' + pr.dequem, pr.como && 'Como: ' + pr.como].filter(Boolean).join(' | ')) : '';
 function fichaHtml() {
-  const d = D(), ds = dS(), cs = ds.cartas || {}, F = C.ficha;
-  const linha = (i, val) => `<div class="ficha-linha"><div class="ficha-rot">${F.linhas[i][0]}<span class="modelo">${F.linhas[i][1] || ''}</span></div><div class="ficha-val">${val || '<span class="vazio">—</span>'}</div></div>`;
+  const d = D(), ds = dS(), cs = cartasS(), F = C.ficha;
+  const linha = (i, val) => `<div class="ficha-linha"><div class="ficha-rot">${F.linhas[i][0]}</div><div class="ficha-val">${val || '<span class="vazio">—</span>'}</div></div>`;
   const pap = S.papeis || {};
-  const papeis = [['Leitor', pap.leitor], ['Escriba', pap.escriba], ['Guardião', pap.guardiao], ['Advogados do diabo', pap.advogados]].filter(x => x[1]).map(x => x[0] + ': ' + esc(x[1])).join(' · ');
-  const dadosL = d ? d.cartas.map(c => { const s = cs[c.id] || {}; if (!s.b1 && !(s.onde || []).length) return '';
-    return `<li><strong>${c.id}</strong> → ${(s.onde || []).map(k => k === 'todo' ? 'todo o caminho' : k === 'fora' ? 'fora' : 'passo ' + k).join(', ') || '?'} → ● ${s.b1 || '?'}${s.b2 ? ' → ○ ' + s.b2 : ''}${s.degrau ? ' → ' + DEGRAU_NOME[s.degrau] : ''}${s.porque ? ' — ' + esc(s.porque) : ''}</li>`; }).join('') : '';
+  const papeis = PAPEIS.filter(p => pap[p.k]).map(p => p.nome + ': ' + esc(pap[p.k])).join(' · ');
+  const cab = d.cabecalho.filter(l => txt(l[0]) !== 'Frase crua').map(l => `<strong>${txt(l[0])}:</strong> ${esc(txt(l[1]))}`).join('\n');
+  const dados = noMural(d).map(c => { const s = cs[c.id] || {}; return `<li><strong>${c.id}</strong> → ${nomeLugar(d, lugar(s))} → ● ${s.b1 || '?'}${s.b2 ? ' → ○ ' + s.b2 : ''}${s.degrau ? ' → ' + DEGRAU_NOME[s.degrau] : ''}${s.porque ? ' — ' + esc(s.porque) : ''}</li>`; }).join('');
   const dec = ds.dec || {}, decN = { principal: 'principal', secundaria: 'secundária', verificar: 'a verificar' };
-  const decL = Object.keys(dec).filter(s => dec[s] && dec[s].decisao && SIG[s]).map(s => `<li>${s} (${SIG[s].nome}): <strong>${decN[dec[s].decisao]}</strong>${dec[s].contra === 'sim' ? ' · contradição: ' + esc(dec[s].contraTxt || 'sim') : ''}</li>`).join('');
-  const prox = ds.prox || {};
+  const decL = Object.keys(dec).filter(s => dec[s] && dec[s].decisao && SIG[s]).map(s => `<li>${s} (${SIG[s].nome}): <strong>${decN[dec[s].decisao]}</strong></li>`).join('');
   return `<div class="eyebrow"><i></i><span class="cod" style="top:0">E7</span>${esc(C.secoes.E7)}</div>
-    <p class="texto"><strong>Grupo:</strong> ${esc(S.grupo || '—')} · <strong>Dossiê:</strong> ${d ? d.n + ' · ' + esc(txt(d.titulo)) : '—'} · <strong>Papéis:</strong> ${papeis || '—'}</p>
+    <p class="texto"><strong>Grupo:</strong> ${esc(S.grupo || '—')} · <strong>Dossiê:</strong> ${d.n} · ${esc(txt(d.titulo))} · <strong>Papéis:</strong> ${papeis || '—'}</p>
     <div class="ficha-cab"><span>${F.cab[0]}</span><span>${F.cab[1]}</span></div>
-    ${linha(0, d ? ['Quem', 'Faz o quê', 'Em que contexto', 'O que se mede'].map((r, i) => { const v = ds[['quem', 'faz', 'contexto', 'mede'][i]]; return v ? `<strong>${r}:</strong> ${esc(v)}` : ''; }).filter(Boolean).join('\n') : '')}
-    ${linha(1, d && ds.palpite ? 'Passo ' + ds.palpite + ': ' + esc(txt(d.passos[Number(ds.palpite) - 1])) : '')}
-    ${linha(2, dadosL ? '<ul>' + dadosL + '</ul>' : '')}
-    ${linha(3, (decL ? '<ul>' + decL + '</ul>' : '') + (ds.seg ? 'Segmentar: ' + (ds.seg === 'sim' ? 'Sim' + (ds.segTxt ? ' — ' + esc(ds.segTxt) : '') : 'Não') : ''))}
+    ${linha(0, cab)}
+    ${linha(1, ds.palpite ? 'Passo ' + ds.palpite + ': ' + esc(txt(d.passos[Number(ds.palpite) - 1])) : '')}
+    ${linha(2, dados ? '<ul>' + dados + '</ul>' : '')}
+    ${linha(3, decL ? '<ul>' + decL + '</ul>' : '')}
     ${linha(4, esc(ds.palpiteTxt || ''))}
-    ${linha(5, ds.hip ? esc(fraseHipotese(ds.hip, false)) : '')}
-    ${linha(6, [prox.oque && 'O quê: ' + esc(prox.oque), prox.dequem && 'De quem: ' + esc(prox.dequem), prox.como && 'Como: ' + esc(prox.como)].filter(Boolean).join('\n'))}
-    ${linha(7, (S.estac || []).length ? '<ul>' + S.estac.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '')}`;
+    ${linha(5, ds.hip && Object.values(ds.hip).some(x => x) ? esc(fraseHipotese(ds.hip, false)) : '')}
+    ${linha(6, esc(proxTexto(ds.prox)))}
+    ${linha(7, (S.estac || []).length ? '<ul>' + S.estac.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '')}
+    <div class="acoes no-print"><button type="button" class="vd-btn vd-btn-roxo" onclick="imprimirFicha()">Imprimir a ficha</button></div>`;
 }
 function atualizarEstac() {
   document.getElementById('estacN').textContent = (S.estac || []).length;
@@ -1059,10 +1105,9 @@ function atualizarBadges() {
   const b = (id, t) => { const el = document.getElementById('badge-' + id); el.hidden = !t; el.textContent = t || ''; };
   const v = C.r1.casos.filter(c => (S.r1[c.n] || {}).voto).length;
   b('r1', v ? v + '/6' : '');
-  const d = D(); const cs = d ? (dS().cartas || {}) : {};
-  const m = d ? d.cartas.filter(c => (cs[c.id] || {}).b1).length : 0;
-  b('r2', d ? 'D' + d.n + (m ? ' · ' + m + '/10' : '') : '');
-  b('r3', Object.values(S.r3 || {}).some(x => x && String(x).trim()) ? '✓' : '');
+  const m = noMural(D()).length;
+  b('r2', m ? m + '/' + LIMITE : '');
+  b('r3', ['recebida', 'contesta', 'mudou'].some(k => (S.r3[k] || '').trim()) ? '✓' : '');
   b('r4', (S.r4.quem || S.r4.faz || S.r4.cru) ? '✓' : '');
   b('gab', G ? 'aberto' : '');
   document.querySelector('#aba-gab .aba-n').textContent = G ? '🔓' : '🔒';
@@ -1072,16 +1117,16 @@ function atualizarGabarito() {
   G.r1.casos.forEach(c => { const v = (S.r1[c.n] || {}).voto; document.getElementById('gabVoto-' + c.n).innerHTML = v ? sigla(v) + (v === principalR1(c.n) ? ' ✓' : ' ✗') : '—'; });
   G.r2.dossies.forEach(d => d.cartas.forEach(c => {
     const r = comparar(d.n, c.id), el = document.getElementById(`gabMural-${d.n}-${c.id}`);
-    el.innerHTML = r.vazio ? '—' : `${r.s.b1 ? '● ' + sigla(r.s.b1) : ''}${r.s.b2 ? ' ○ ' + sigla(r.s.b2) : ''} ${(r.s.onde || []).join(', ')} ${r.ponto ? '✓' : '✗'}`;
+    el.innerHTML = !r.noMural ? '—' : `${r.s.b1 ? '● ' + sigla(r.s.b1) : ''}${r.s.b2 ? ' ○ ' + sigla(r.s.b2) : ''} ${esc(r.k === 'todo' ? 'todo' : 'passo ' + r.k)} ${r.ponto ? '✓' : '✗'}`;
   }));
-  const n = gabDossie(), gd = G.r2.dossies.find(x => x.n === n);
+  const n = D().n, gd = G.r2.dossies.find(x => x.n === n);
   const r1 = C.r1.casos.filter(c => (S.r1[c.n] || {}).voto === principalR1(c.n)).length;
-  const cartas = gd.cartas.filter(c => comparar(n, c.id).ponto).length;
+  const cartas = Math.min(LIMITE, gd.cartas.filter(c => comparar(n, c.id).ponto).length);
   const dec = (S.d[n] || {}).dec || {};
   const ach = r => Object.keys(dec).find(s => dec[s] && dec[s].decisao === r);
   const ps = ach('principal') === gd.decisao.principal && ach('secundaria') === gd.decisao['secundária'] ? 3 : 0;
   const P = S.pontos || {};
-  const num = (k, max, min) => { const x = Number(P[k]); return isNaN(x) ? 0 : Math.max(min || 0, Math.min(max, x)); };
+  const num = (k, max) => { const x = Number(P[k]); return isNaN(x) ? 0 : Math.max(0, Math.min(max, x)); };
   const total = r1 + cartas + ps + num('hip', 3) + num('contesta', 2) - 2 * num('ruido', 10);
   const placar = document.getElementById('placar');
   if (!placar.dataset.montado) {
@@ -1094,7 +1139,7 @@ function atualizarGabarito() {
     preencher(placar);
   }
   document.getElementById('pR1').textContent = r1;
-  document.getElementById('pCartasRot').textContent = `Cartas no destino certo, Dossiê ${n} (máx. 10)`;
+  document.getElementById('pCartasRot').textContent = `Cartas do mural no lugar certo, Dossiê ${n} (máx. ${LIMITE})`;
   document.getElementById('pCartas').textContent = cartas;
   document.getElementById('pPS').textContent = ps;
   document.getElementById('pTotal').textContent = total;
@@ -1104,40 +1149,34 @@ function atualizarGabarito() {
 document.addEventListener('input', e => {
   const el = e.target.closest('[data-b]'); if (!el) return;
   set(el.dataset.b, el.type === 'checkbox' ? el.checked : el.value);
-  atualizarLeve(el.dataset.b);
+  if (/^d\.\d+\.hip\./.test(el.dataset.b)) { atualizarHipotese(dS()); atualizarR3(); }
+  if (/^r1\./.test(el.dataset.b)) atualizarR1();
+  if (/^pontos\./.test(el.dataset.b) && G) atualizarGabarito();
+  if (/^r[34]\./.test(el.dataset.b)) atualizarBadges();
 });
 document.addEventListener('change', e => {
   const el = e.target.closest('[data-b]'); if (!el) return;
   set(el.dataset.b, el.type === 'checkbox' ? el.checked : el.value);
   atualizar();
 });
-function atualizarLeve(path) {
-  if (/^d\.\d+\.hip\./.test(path)) { atualizarHipotese(dS()); atualizarR3(); }
-  if (/^r1\./.test(path)) atualizarR1();
-  if (/^pontos\./.test(path) && G) atualizarGabarito();
-  if (/^r[34]\./.test(path)) atualizarBadges();
-}
 document.addEventListener('click', e => {
   const ir = e.target.closest('[data-ir]'); if (ir) { irPara(ir.dataset.ir, true); return; }
-  const irc = e.target.closest('[data-ir-carta]');
-  if (irc) {
-    const el = document.getElementById('carta-' + irc.dataset.irCarta);
-    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('realce'); setTimeout(() => el.classList.remove('realce'), 1400); }
-    return;
-  }
+  const et = e.target.closest('#r2Corpo [data-etapa-ir]'); if (et) { irEtapa(Number(et.dataset.etapaIr), true); return; }
+  const ab = e.target.closest('[data-abrir-carta]'); if (ab) { abrirCarta(ab.dataset.abrirCarta); return; }
+  if (e.target.closest('[data-fechar-carta]') || e.target.id === 'cartaModal') { fecharCarta(); return; }
+  const ti = e.target.closest('[data-tirar-carta]');
+  if (ti) { const s = cartasS()[ti.dataset.tirarCarta]; if (s) s.onde = []; fecharCarta(); return; }
   const rem = e.target.closest('[data-estac-rem]');
   if (rem) { S.estac.splice(Number(rem.dataset.estacRem), 1); atualizar(); return; }
-  const b = e.target.closest('[data-c]'); if (!b) return;
+  const b = e.target.closest('[data-c]'); if (!b || b.disabled) return;
   const p = b.dataset.c, v = b.dataset.v;
-  if (b.dataset.m === 'multi') {
-    let cur = Array.isArray(get(p)) ? get(p).slice() : [];
-    if (cur.includes(v)) cur = cur.filter(x => x !== v);
-    else if (v === 'todo' || v === 'fora') cur = [v];
-    else cur = cur.filter(x => x !== 'todo' && x !== 'fora').concat(v);
-    set(p, cur);
+  if (/\.onde$/.test(p)) {
+    // um lugar por carta; no máximo LIMITE cartas no mural
+    const estava = lugar({ onde: get(p) });
+    if (!estava && noMural(D()).length >= LIMITE) { VD.toast('O mural já tem ' + LIMITE + ' cartas. Devolvam uma ao baralho para trazer esta.'); return; }
+    set(p, estava === v ? [] : [v]);
   } else {
     set(p, get(p) === v ? '' : v);
-    // ○ não pode repetir a ●
     const m = p.match(/^(d\.\d+\.cartas\.\w+)\.(b1|b2)$/);
     if (m && get(m[1] + '.b1') && get(m[1] + '.b1') === get(m[1] + '.b2')) set(m[1] + (m[2] === 'b1' ? '.b2' : '.b1'), '');
   }
@@ -1154,9 +1193,13 @@ document.getElementById('estacForm').onsubmit = e => {
   if (!v) return;
   (S.estac = S.estac || []).push(v); inp.value = ''; atualizar(); VD.alterado();
 };
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { const box = document.getElementById('estac'); if (!box.hidden) { box.hidden = true; document.getElementById('btnEstac').setAttribute('aria-expanded', 'false'); } } });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!document.getElementById('cartaModal').hidden) { fecharCarta(); return; }
+  const box = document.getElementById('estac'); if (!box.hidden) { box.hidden = true; document.getElementById('btnEstac').setAttribute('aria-expanded', 'false'); }
+});
 function imprimirFicha() {
-  document.getElementById('impressao').innerHTML = '<h1 style="font-family:Fraunces,serif;color:#402C4F;margin:0 0 0.4rem">Clínica de diagnóstico · Ficha do grupo</h1>' + (S.dossie ? fichaHtml() : '<p>Escolham um dossiê na Rodada 2.</p>');
+  document.getElementById('impressao').innerHTML = '<h1 style="font-family:Fraunces,serif;color:#402C4F;margin:0 0 0.4rem">Clínica de diagnóstico · Ficha do grupo</h1>' + fichaHtml();
   document.body.classList.add('so-ficha');
   window.print();
   setTimeout(() => document.body.classList.remove('so-ficha'), 500);
@@ -1168,31 +1211,33 @@ function resumo(d) {
   const L = [], add = (sec, campo, v) => { if (v != null && String(v).trim()) L.push([sec, campo, String(v).trim()]); };
   add('Grupo', 'Nome do grupo', d.grupo);
   const p = d.papeis || {};
-  add('Grupo', 'Papéis', [['Leitor', p.leitor], ['Escriba', p.escriba], ['Guardião', p.guardiao], ['Advogados do diabo', p.advogados]].filter(x => x[1]).map(x => x[0] + ': ' + x[1]).join(' · '));
+  add('Grupo', 'Papéis', PAPEIS.filter(x => p[x.k]).map(x => x.nome + ': ' + p[x.k]).join(' · '));
   C.r1.casos.forEach(c => { const r = (d.r1 || {})[c.n] || {}; if (r.voto || r.frase) add('Rodada 1 · Relâmpago', 'Caso ' + c.n + ': ' + txt(c.comportamento), (r.voto ? r.voto + ' (' + SIG[r.voto].nome + ')' : '—') + (r.frase ? ' — ' + r.frase : '')); });
   C.r2.dossies.forEach(dd => {
     const ds = (d.d || {})[dd.n]; if (!ds) return;
     const sec = 'Rodada 2 · Dossiê ' + dd.n + ': ' + txt(dd.titulo), cs = ds.cartas || {};
-    add(sec, 'Comportamento-alvo (com as palavras do grupo)', ['quem', 'faz', 'contexto', 'mede'].map((k, i) => ds[k] ? ['Quem', 'Faz o quê', 'Em que contexto', 'O que se mede'][i] + ': ' + ds[k] : '').filter(Boolean).join(' | '));
     if (ds.palpite) add(sec, 'Palpite (passo em que mais se perde)', 'Passo ' + ds.palpite + ': ' + txt(dd.passos[Number(ds.palpite) - 1] || ''));
-    dd.cartas.forEach(c => { const s = cs[c.id]; if (!s || (!s.b1 && !(s.onde || []).length)) return;
-      add(sec, 'Carta ' + c.id, [(s.onde || []).map(k => k === 'todo' ? 'todo o caminho' : k === 'fora' ? 'fora do caminho' : 'passo ' + k).join(', '), s.b1 ? '● ' + s.b1 : '', s.b2 ? '○ ' + s.b2 : '', s.degrau ? DEGRAU_NOME[s.degrau] : '', s.porque || '', s.decide ? 'decidiria: ' + s.decide : ''].filter(Boolean).join(' · ')); });
+    dd.cartas.forEach(c => { const s = cs[c.id]; const k = lugar(s); if (!k) return;
+      add(sec, 'Carta ' + c.id, [k === 'todo' ? 'todo o caminho' : 'passo ' + k, s.b1 ? '● ' + s.b1 : '', s.b2 ? '○ ' + s.b2 : '', s.degrau ? DEGRAU_NOME[s.degrau] : '', s.porque || '', s.decide ? 'decidiria: ' + s.decide : ''].filter(Boolean).join(' · ')); });
     const dec = ds.dec || {};
-    Object.keys(dec).forEach(s => { if (dec[s] && dec[s].decisao && SIG[s]) add(sec, 'Decisão: ' + s, { principal: 'Principal', secundaria: 'Secundária', verificar: 'A verificar' }[dec[s].decisao] + (dec[s].contra === 'sim' ? ' · contradição: ' + (dec[s].contraTxt || 'sim') : '')); });
-    if (ds.seg) add(sec, 'Segmentar?', ds.seg === 'sim' ? 'Sim' + (ds.segTxt ? ' — ' + ds.segTxt : '') : 'Não');
+    Object.keys(dec).forEach(s => { if (dec[s] && dec[s].decisao && SIG[s]) add(sec, 'Decisão: ' + s, { principal: 'Principal', secundaria: 'Secundária', verificar: 'A verificar' }[dec[s].decisao]); });
     add(sec, 'Palpite × dados', ds.palpiteTxt);
     if (ds.hip && Object.values(ds.hip).some(x => x)) add(sec, 'Hipótese', fraseHipotese(ds.hip, false));
-    const pr = ds.prox || {};
-    add(sec, 'Próximo dado', [pr.oque && 'O quê: ' + pr.oque, pr.dequem && 'De quem: ' + pr.dequem, pr.como && 'Como: ' + pr.como].filter(Boolean).join(' | '));
+    add(sec, 'Próximo dado', proxTexto(ds.prox));
   });
   const r3 = d.r3 || {};
-  [['recebida', 'Hipótese que recebemos'], ['carta', 'Carta que enfraquece'], ['troca', 'Marcação que trocaríamos e teste'], ['derruba', 'Dado que derrubaria'], ['critica', 'O que apontaram na nossa'], ['ajuste', 'Ajuste ou evidência'], ['fechamento', 'Frase do fechamento']].forEach(([k, n]) => add('Rodada 3 · Contestação', n, r3[k]));
-  if (r3.resposta) add('Rodada 3 · Contestação', 'Nossa resposta', r3.resposta === 'ajustar' ? 'Aceitamos e ajustamos' : 'Rebatemos com evidência');
+  [['recebida', 'Hipótese que recebemos'], ['contesta', 'Nossa contestação'], ['mudou', 'O que mudou na nossa hipótese'],
+   ['carta', 'Carta que enfraquece'], ['troca', 'Marcação que trocaríamos e teste'], ['derruba', 'Dado que derrubaria'], ['critica', 'O que apontaram na nossa'], ['ajuste', 'Ajuste ou evidência'], ['fechamento', 'Frase do fechamento']]
+    .forEach(([k, n]) => add('Rodada 3 · Contestação', n, r3[k]));
   const r4 = d.r4 || {};
   add('Rodada 4 · Seu desafio', 'Comportamento como estava', r4.cru);
   add('Rodada 4 · Seu desafio', 'Testes que já passam', TESTES_A01.filter((t, i) => (r4.testes || {})['t' + i] === 'ok').join(', '));
   add('Rodada 4 · Seu desafio', 'Comportamento reescrito', ['quem', 'faz', 'contexto', 'medida'].map((k, i) => r4[k] ? ['Quem', 'Faz o quê', 'Em que contexto', 'O que se mede'][i] + ': ' + r4[k] : '').filter(Boolean).join(' | '));
-  add('Rodada 4 · Seu desafio', 'Passos', (r4.passos || []).map((x, i) => x && x.trim() ? (i + 1) + '. ' + x.trim() + (String(i + 1) === r4.perde ? ' (?)' : '') : '').filter(Boolean).join('\n'));
+  (r4.passos || []).forEach((x, i) => {
+    if (!x || !x.trim()) return;
+    const o = (r4.obs || {})[i];
+    add('Rodada 4 · Seu desafio', 'Passo ' + (i + 1) + (String(i + 1) === r4.perde ? ' (?)' : ''), x.trim() + (o && o.trim() ? ' — observamos: ' + o.trim() : ''));
+  });
   [['dado', 'Dado a puxar'], ['observar', 'Quem observar'], ['naoFaz', 'Ouvir quem não faz'], ['jaFaz', 'Ouvir quem faz'], ['convive', 'Ouvir quem convive']].forEach(([k, n]) => add('Rodada 4 · Seu desafio', n, r4[k]));
   (d.estac || []).forEach((x, i) => add('Estacionamento de soluções', 'Ideia ' + (i + 1), x));
   return L;
@@ -1201,14 +1246,17 @@ function resumo(d) {
 /* ---------------- início ---------------- */
 montarAbas(); montarInicio(); montarR1(); montarR2(); montarR3(); montarR4();
 function aplicar(dados) {
-  const base = novoEstado();
-  S = Object.assign(base, dados || {});
-  S.papeis = Object.assign(base.papeis, (dados || {}).papeis || {});
-  S.r4 = Object.assign(novoEstado().r4, (dados || {}).r4 || {});
+  const base = novoEstado(), x = dados || {};
+  S = Object.assign(base, x);
+  S.papeis = Object.assign(novoEstado().papeis, x.papeis || {});
+  S.r4 = Object.assign(novoEstado().r4, x.r4 || {});
   if (!Array.isArray(S.r4.passos) || !S.r4.passos.length) S.r4.passos = ['', '', '', '', '', ''];
+  if (!S.r4.obs || typeof S.r4.obs !== 'object') S.r4.obs = {};
   ['r1', 'd', 'r3', 'pontos'].forEach(k => { if (!S[k] || typeof S[k] !== 'object') S[k] = {}; });
   if (!Array.isArray(S.estac)) S.estac = [];
-  assinaturaDecisao = '';
+  if (!S.dossie || !C.r2.dossies[Number(S.dossie) - 1]) S.dossie = '1';
+  assinaturaDecisao = ''; assinaturaObs = '';
+  if (!document.getElementById('cartaModal').hidden) fecharCarta();
   montarDossie(); montarPassosR4();
   preencher(document);
   atualizar();
