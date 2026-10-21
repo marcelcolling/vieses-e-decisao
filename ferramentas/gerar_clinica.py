@@ -168,6 +168,7 @@ def ler_material():
             cartas.append({"id": mh.group(1), "tipo": mh.group(2), "fonte": inline(mh.group(3) or ""),
                            "texto": inline(" ".join(texto))})
         exigir(len(cartas) == 5, f"Dossiê {n}: cinco cartas")
+        exigir(len(b[3][1]) == 5, f"Dossiê {n}: cinco passos")
         dados["r2"]["dossies"].append({
             "n": int(n), "titulo": inline(m.group(1) if m else d["titulo"]), "publico": inline(m.group(2)) if m else "",
             "caso": html_bloco(b[0]), "cabecalho": [[inline(c) for c in l] for l in linhas_cab],
@@ -197,6 +198,8 @@ SIGLAS = ("CF", "CP", "OF", "OS", "MR", "MA", "F", "L", "RUÍDO")
 
 def ler_passos(txt):
     t = gl.texto_puro(txt).strip().lower()
+    if t in ("—", "-", ""):  # carta que fica no baralho: não tem passo
+        return []
     if t.startswith("todo"):
         return ["todo"]
     if t.startswith("fora"):

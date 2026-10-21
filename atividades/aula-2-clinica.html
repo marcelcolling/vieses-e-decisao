@@ -254,6 +254,9 @@
   .limite-aviso { background:rgba(176,71,90,0.1); color:#8a3446; border-radius:10px; padding:0.55rem 0.8rem; font-size:0.86rem; font-weight:600; margin-top:0.5rem; }
   details.mais { margin-top:0.6rem; }
   details.mais summary { cursor:pointer; font-size:0.82rem; font-weight:600; color:var(--azul); }
+  details.ref { background:var(--fundo-alt); border-radius:10px; padding:0.55rem 0.8rem; margin-top:0.7rem; }
+  details.ref .tab-wrap { margin:0.6rem 0 0.4rem; }
+  details.ref table.tab { font-size:0.8rem; }
 
   /* gabarito sobreposto */
   .gab-box { display:none; margin-top:0.9rem; border-radius:12px; background:rgba(239,185,60,0.12); border:1px solid rgba(185,134,26,0.4); padding:0.7rem 0.85rem; font-size:0.86rem; line-height:1.55; }
@@ -349,17 +352,6 @@
   .placar span { font-size:0.78rem; color:var(--muted); }
   .placar input { width:5rem; margin-top:0.3rem; }
 
-  /* estacionamento */
-  #btnEstac { position:fixed; right:1.6rem; bottom:1.6rem; z-index:350; display:inline-flex; align-items:center; gap:0.5rem; background:var(--amarelo); color:var(--amarelo-ink); border:none; border-radius:12px; padding:0.75rem 1rem; font-family:var(--body); font-weight:700; font-size:0.86rem; cursor:pointer; box-shadow:0 12px 30px -10px rgba(44,30,55,0.5); }
-  #btnEstac .n { background:var(--roxo); color:#fff; border-radius:100px; padding:0.05rem 0.45rem; font-size:0.74rem; }
-  #estac { position:fixed; right:1.6rem; bottom:5.2rem; z-index:350; width:min(400px, calc(100vw - 2rem)); background:#fff; border:1px solid var(--border); border-radius:18px; box-shadow:0 30px 60px -25px rgba(44,30,55,0.6); padding:1.1rem 1.2rem; }
-  #estac[hidden] { display:none; }
-  #estac h3 { margin:0 0 0.3rem; font-size:1.1rem; }
-  #estac p { font-size:0.84rem; color:var(--muted); }
-  #estac form { display:flex; gap:0.4rem; }
-  #estac ul { list-style:none; margin:0.8rem 0 0; padding:0; max-height:40vh; overflow-y:auto; display:flex; flex-direction:column; gap:0.35rem; }
-  #estac li { display:flex; justify-content:space-between; gap:0.5rem; align-items:flex-start; background:var(--fundo-alt); border-radius:10px; padding:0.45rem 0.6rem; font-size:0.88rem; }
-
   .barra-acoes { display:flex; gap:0.7rem; flex-wrap:wrap; margin-top:1.8rem; align-items:center; }
   .btn-salvar { font-family:var(--body); background:var(--roxo); color:#fff; font-weight:600; border:none; border-radius:8px; padding:0.75rem 1.3rem; cursor:pointer; font-size:0.88rem; }
   .btn-salvar:disabled { opacity:0.7; cursor:default; }
@@ -379,15 +371,13 @@
     .ficha-cab span:last-child { display:none; }
     .mini { width:100%; }
     .aba { padding-right:0.75rem; font-size:0.8rem; }
-    #btnEstac { right:1rem; bottom:1rem; }
-    #estac { right:1rem; bottom:4.4rem; }
     .cadeado form { flex-direction:column; }
     .modal { padding:0; align-items:flex-end; }
     .modal-box { border-radius:20px 20px 0 0; max-height:94vh; }
   }
   .impressao { display:none; }
   @media print {
-    .vd-topbar, .abas, #btnEstac, #estac, .no-print, .barra-acoes, .passos-nav, .mini-acoes, .modal { display:none !important; }
+    .vd-topbar, .abas, .no-print, .barra-acoes, .passos-nav, .mini-acoes, .modal { display:none !important; }
     body { background:#fff; }
     body.so-ficha header.hero, body.so-ficha .page { display:none !important; }
     body.so-ficha .impressao { display:block !important; padding:0.5cm; }
@@ -432,14 +422,6 @@
   <div class="modal-box"><button type="button" class="modal-fechar" data-fechar-carta aria-label="Fechar">×</button><div id="cartaModalCorpo"></div></div>
 </div>
 
-<button type="button" id="btnEstac" aria-controls="estac" aria-expanded="false"><span aria-hidden="true">🅿</span> Estacionamento <span class="n" id="estacN">0</span></button>
-<aside id="estac" hidden aria-label="Estacionamento de soluções">
-  <h3>Estacionamento de soluções</h3>
-  <p>Regra 1: nada de solução agora. O Guardião anota aqui as ideias que aparecerem; elas voltam na Aula 03.</p>
-  <form id="estacForm"><input type="text" id="estacNovo" placeholder="Ex.: mandar um lembrete…" autocomplete="off"><button type="submit" class="vd-btn vd-btn-roxo">Guardar</button></form>
-  <ul id="estacLista"></ul>
-</aside>
-
 <div class="impressao" id="impressao"></div>
 
 <script src="../assets/js/config.js"></script>
@@ -478,7 +460,7 @@ const PAPEIS = [
     faz: ['Registra o que o grupo decide: votos, cartas no mural, hipótese.', 'Não decide sozinho: escreve só o que o grupo combinou.'],
     frase: '“O que eu anoto?”' },
   { k: 'guardiao', ico: '⏱️', nome: 'Guardião', quando: 'Cuida do tempo e do foco',
-    faz: ['Controla o tempo de cada rodada e avisa quando faltar pouco.', 'Quando surgir uma solução, anota no Estacionamento e traz o grupo de volta.', 'Exige que cada marcação aponte para uma carta.'],
+    faz: ['Controla o tempo de cada rodada e avisa quando faltar pouco.', 'Quando surgir uma solução, lembra que ela fica para a Aula 03 e traz o grupo de volta ao diagnóstico.', 'Exige que cada marcação aponte para uma carta.'],
     frase: '“Qual carta mostra isso?”' },
   { k: 'advogados', ico: '🤔', nome: 'Advogados do diabo', quando: 'Só em grupos de 5 (o 4º e o 5º)',
     faz: ['Para cada marcação, propõem outra leitura possível.', 'Ajudam a decidir entre ● e ○ com um dos cinco testes.'],
@@ -507,7 +489,7 @@ const ls = {
 /* ---------------- estado ---------------- */
 function novoEstado() {
   return { v: 3, grupo: '', papeis: { leitor: '', escriba: '', guardiao: '', advogados: '' }, r1: {}, dossie: '1', m: {},
-    r3: {}, r4: { passos: ['', '', '', '', '', ''], testes: {}, obs: {} }, estac: [], pontos: {} };
+    r3: {}, r4: { passos: ['', '', '', '', ''], testes: {}, obs: {} }, pontos: {} };
 }
 let S = novoEstado();
 function get(p) { return p.split('.').reduce((o, k) => (o == null ? undefined : o[k]), S); }
@@ -520,10 +502,10 @@ const D = () => C.r2.dossies[(Number(S.dossie) || 1) - 1];
 /* Rodada 2 em S.m (desde a versão com 5 cartas); S.d, se existir, é da versão anterior e fica intocado */
 const dS = () => { const n = String(D().n); if (!S.m[n]) S.m[n] = {}; return S.m[n]; };
 const cartasS = () => { const ds = dS(); if (!ds.cartas) ds.cartas = {}; return ds.cartas; };
-/* posição da carta no mural: um passo ('1'…'7') ou 'todo'; vazio (ou 'fora', de versões antigas) = no baralho */
-const lugar = s => { const o = (s && s.onde) || []; const v = o.find(x => x !== 'fora'); return v || ''; };
+/* posição da carta no mural: o número do passo; vazio = no baralho ('todo'/'fora' de versões antigas também contam como baralho) */
+const lugar = s => { const o = (s && s.onde) || []; const v = o.find(x => /^\d+$/.test(x)); return v || ''; };
 const noMural = d => d.cartas.filter(c => lugar((cartasS())[c.id]));
-const nomeLugar = (d, k) => k === 'todo' ? 'Todo o caminho' : 'Passo ' + k;
+const nomeLugar = (d, k) => 'Passo ' + k;
 
 /* ---------------- peças de interface ---------------- */
 function chip(path, val, label, opts = {}) {
@@ -546,6 +528,19 @@ function select(path, opcoes, vazio, rotulo) {
   return `<select data-b="${path}" aria-label="${esc(rotulo || vazio || '')}"><option value="">${esc(vazio || '—')}</option>` +
     opcoes.map(o => `<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('') + '</select>';
 }
+const REFERENCIA = `<details class="mais ref"><summary>Em dúvida? As seis barreiras e os cinco testes</summary>
+  <div class="tab-wrap"><table class="tab"><thead><tr><th>Sigla</th><th>Pergunta em linguagem simples</th></tr></thead><tbody>
+  ${[['CF', 'capacidade física', 'O corpo ou os sentidos <em>dessa pessoa</em> dão conta?'], ['CP', 'capacidade psicológica', 'Ela sabe como fazer, mesmo com calma?'],
+     ['OF', 'oportunidade física', 'Tempo, recurso, acesso, ferramenta e processo permitem?'], ['OS', 'oportunidade social', 'O grupo e a chefia ajudam ou atrapalham, pelo exemplo?'],
+     ['MR', 'motivação reflexiva', 'Ela avaliou e acha que vale a pena?'], ['MA', 'motivação automática', 'No hábito, na pressa ou no desconforto, ela faz?']]
+    .map(([s, n, q]) => `<tr><td data-label="Sigla">${sigla(s)} ${n}</td><td data-label="Pergunta">${q}</td></tr>`).join('')}</tbody></table></div>
+  <div class="tab-wrap"><table class="tab"><thead><tr><th>Dúvida entre…</th><th>Teste</th><th>Resultado</th></tr></thead><tbody>
+  ${[['CF e OF', '<strong>Troca de pessoa:</strong> se outra pessoa normal ocupasse esse lugar, o problema sumiria?', 'Não some: <strong>OF</strong>. Some: <strong>CF</strong>'],
+     ['CP e MA', '<strong>Calma:</strong> peça agora, sem pressão, que a pessoa explique ou faça', 'Faz certo: <strong>MA</strong>. Não faz: <strong>CP</strong>'],
+     ['OS e MA', '<strong>Privado:</strong> o comportamento muda quando ninguém vê?', 'Muda: <strong>OS</strong>. Não muda: <strong>MA</strong>'],
+     ['MR e MA', '<strong>Remover a razão:</strong> neutralize a razão apresentada', 'A razão se sustenta: <strong>MR</strong>. É trocada por outra: <strong>MA</strong>'],
+     ['OF e MR/MA (“falta de tempo”)', '<strong>Espaço protegido:</strong> garanta tempo e recurso de verdade', 'Acontece: <strong>OF</strong>. Não acontece: <strong>M</strong>']]
+    .map(([a, b, c]) => `<tr><td data-label="Dúvida entre">${a}</td><td data-label="Teste">${b}</td><td data-label="Resultado">${c}</td></tr>`).join('')}</tbody></table></div></details>`;
 const instr = (n, html) => `<div class="instr"><span class="n">${n}</span><p>${html}</p></div>`;
 
 /* ---------------- abas ---------------- */
@@ -666,7 +661,7 @@ function montarDossie() {
     </div>
 
     <div class="etapa-painel" data-e="1">
-      ${instr(2, `<strong>Escolham ${LIMITE} das 5 cartas</strong>: as que explicam por que o comportamento não acontece. Toquem numa carta para levá-la ao mural: digam de qual passo ela fala e o que ela mostra (uma barreira ●, algo que localiza <strong>L</strong> ou algo que já funciona <strong>F</strong>). As outras duas ficam no baralho.`)}
+      ${instr(2, `<strong>Escolham ${LIMITE} das 5 cartas</strong>: as que explicam por que o comportamento não acontece. Toquem numa carta para levá-la ao mural: digam de qual passo ela fala e qual barreira ela mostra. As outras duas não explicam a falha e ficam no baralho.`)}
       <div class="contador" id="contador"></div>
       <div class="mural" id="mural"></div>
       <h3 class="sub">Baralho <span class="ajuda" style="font-family:var(--body)">(5 cartas · toquem para ler e marcar)</span></h3>
@@ -740,16 +735,17 @@ function abrirCarta(id) {
     <div class="carta-txt">${c.texto}</div>
     <span class="rot"><b>1.</b> De qual passo esta carta fala?</span>
     <div class="passo-escolha">${d.passos.map((ps, i) => `<button type="button" class="chip" data-c="${cp}.onde" data-v="${i + 1}" aria-pressed="false"><span class="pn">${i + 1}</span><span>${esc(txt(ps))}</span></button>`).join('')}
-      <button type="button" class="chip" data-c="${cp}.onde" data-v="todo" aria-pressed="false"><span class="pn">∞</span><span>Todo o caminho (fala do processo inteiro ou de “quando”)</span></button></div>
+</div>
     <div id="limiteAviso"></div>
-    <span class="rot"><b>2.</b> O que ela mostra? <span style="text-transform:none;letter-spacing:0;font-weight:500">(● a barreira mais provável, ou L, ou F)</span></span>
-    ${chipsSiglas(cp + '.b1', ['L', 'F'])}
+    <span class="rot"><b>2.</b> Qual barreira ela mostra? <span style="text-transform:none;letter-spacing:0;font-weight:500">(● a mais provável)</span></span>
+    ${chipsSiglas(cp + '.b1')}
+    ${REFERENCIA}
     <span class="rot"><b>3.</b> Degrau da escada de evidência</span>
     <div class="chips">${DEGRAUS.map(g => chip(cp + '.degrau', g[0], g[1])).join('')}</div>
     <span class="rot"><b>4.</b> Por quê, em uma frase (regra 2)</span>
     <input type="text" data-b="${cp}.porque" placeholder="Marcamos … porque …" aria-label="Por quê">
     <details class="mais"><summary>Ficaram em dúvida entre duas barreiras? Marquem a ○ (opcional)</summary>
-      <span class="rot">○ Outra barreira possível</span>${chipsSiglas(cp + '.b2', ['L'])}
+      <span class="rot">○ Outra barreira possível</span>${chipsSiglas(cp + '.b2')}
       <span class="rot">Que dado decidiria entre ● e ○?</span><input type="text" data-b="${cp}.decide" placeholder="Ex.: teste da calma com dois atendentes" aria-label="Que dado decidiria"></details>
     <div class="gab-box" id="gabCartaModal"></div>
     <div class="modal-rodape"><button type="button" class="vd-btn vd-btn-ghost" data-tirar-carta="${id}" id="btnTirar">Devolver ao baralho</button><button type="button" class="vd-btn vd-btn-roxo" data-fechar-carta>Pronto</button></div>`;
@@ -790,7 +786,7 @@ function montarR4() {
       <span class="rot">Os cinco testes (toquem nos que já passam)</span>
       <div class="chips">${TESTES_A01.map((t, i) => chip('r4.testes.t' + i, 'ok', '✓ ' + esc(t))).join('')}</div>
       <div class="campos-4" style="margin-top:0.9rem">${campo('r4.quem', 'Quem')}${campo('r4.faz', 'Faz o quê')}${campo('r4.contexto', 'Em que contexto')}${campo('r4.medida', 'O que se mede')}</div></div>
-    <div class="bloco"><h3>2. Passos</h3><p class="texto">Desenhem o caminho em 6 a 8 passos, do gatilho até o comportamento concluído. Marquem com <strong>?</strong> o passo em que acham que se perde.</p>
+    <div class="bloco"><h3>2. Passos</h3><p class="texto">Desenhem o caminho em 5 passos, como nos dossiês: do gatilho até o comportamento concluído (se precisarem, acrescentem mais). Marquem com <strong>?</strong> o passo em que acham que se perde.</p>
       <div class="passos-edit" id="r4Passos"></div>
       <div class="mini-acoes" style="margin-top:0.7rem"><button type="button" class="vd-btn vd-btn-ghost" id="r4MaisPasso">+ Acrescentar passo</button></div></div>
     <div class="bloco"><h3>3. O que observamos nos passos</h3><p class="texto">Para cada passo, anotem o que vocês já veem acontecer hoje: onde trava, quanto tempo leva, o que as pessoas fazem no lugar, que improvisos aparecem. Se ainda não sabem, escrevam o que precisariam observar.</p>
@@ -798,7 +794,7 @@ function montarR4() {
     <aside class="cta-final"><div><span class="eyebrow">Depois da Clínica</span><h3>Atividade principal da aula</h3>
       <p>Leve o comportamento do grupo para o levantamento, a triangulação e a priorização de barreiras.</p></div>
       <a class="vd-btn vd-btn-amarelo" href="aula-2-barreiras.html">Abrir a atividade →</a></aside>`;
-  document.getElementById('r4MaisPasso').onclick = () => { if (S.r4.passos.length >= 10) return; S.r4.passos.push(''); montarPassosR4(); atualizar(); VD.alterado(); };
+  document.getElementById('r4MaisPasso').onclick = () => { if (S.r4.passos.length >= 8) return; S.r4.passos.push(''); montarPassosR4(); atualizar(); VD.alterado(); };
   document.getElementById('r4Trazer').onclick = trazerDaAula1;
 }
 function montarPassosR4() {
@@ -934,7 +930,7 @@ function gabCartaHtml(n, id) {
   else if (!g.sobe) conf = '<span class="nao">✗ Esta carta deveria ficar no baralho</span>';
   else conf = '<span class="sim">✓ Carta certa para o mural</span>' + tag(r.barreira, 'Barreira', 'Barreira') + tag(r.passo, 'Passo', 'Passo') + tag(r.degrau, 'Degrau', 'Degrau');
   return `<div class="gab-rot">Gabarito · carta ${esc(id)}</div><div class="conf">${conf}</div>
-    <strong>${g.sobe ? 'Sobe ao mural' : 'Fica no baralho'}</strong> · ${sigla(g.b1)} ${esc(nome)}${g.b1 === 'RUÍDO' ? '' : ' · ' + (/^\d/.test(txt(g.passo)) ? 'passo ' : '') + g.passo} · ${g.degrau_txt}
+    <strong>${g.sobe ? 'Sobe ao mural' : 'Fica no baralho'}</strong> · ${g.sobe ? sigla(g.b1) + ' ' + esc(nome) + ' · passo ' + g.passo : 'não é barreira (' + esc(nome) + ')'} · ${g.degrau_txt}
     <p style="margin:0.45rem 0 0"><strong>Por quê:</strong> ${g.porque}</p>`;
 }
 
@@ -953,7 +949,7 @@ function atualizar() {
     const on = Array.isArray(v) ? v.includes(b.dataset.v) : v === b.dataset.v;
     b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
-  atualizarR1(); atualizarR2(); atualizarR3(); montarObsR4(); atualizarEstac(); atualizarBadges();
+  atualizarR1(); atualizarR2(); atualizarR3(); montarObsR4(); atualizarBadges();
   if (G) atualizarGabarito();
 }
 function atualizarR1() {
@@ -992,7 +988,6 @@ function atualizarR2() {
       <span class="mini-txt">${esc(txt(c.texto))}</span>${r ? `<span class="mini-gab ${r.ponto ? 'sim' : 'nao'}">${r.ponto ? '✓ confere com o gabarito' : (!r.g.sobe ? '✗ esta carta fica no baralho' : '✗ gabarito: ' + r.g.b1 + ' (' + TODAS[r.g.b1].nome + ')')}</span>` : ''}</button>`;
   };
   const faixas = d.passos.map((ps, i) => ({ k: String(i + 1), cab: `<span class="fn">${i + 1}</span><span>${esc(txt(ps))}${String(i + 1) === palp ? '<span class="q" title="Palpite do grupo">?</span>' : ''}</span>` }));
-  faixas.push({ k: 'todo', cab: '<span class="fn">∞</span><span><strong>Todo o caminho</strong><br>cartas que falam do processo inteiro ou de “quando”</span>', especial: true });
   document.getElementById('mural').innerHTML = faixas.map(f => {
     const cartas = d.cartas.filter(c => lugar(cs[c.id]) === f.k);
     return `<div class="faixa${f.k === palp ? ' palpite' : ''}${f.especial ? ' especial' : ''}${cartas.length ? '' : ' vazia'}"><div class="faixa-cab">${f.cab}</div>
@@ -1042,7 +1037,7 @@ function atualizarDecisao(d, ds, cs) {
         const forte = cartas.some(c => ['vi', 'quem'].includes((cs[c.id] || {}).degrau));
         const regraOk = tipos.length >= 2 && forte;
         return `<tr><td data-label="Barreira">${sigla(s)} ${esc(SIG[s].nome)}</td><td data-label="Cartas ●">${cartas.length} (${cartas.map(c => c.id).join(', ')})</td>
-          <td data-label="Tipos de fonte">${esc(tipos.join(', '))}<div class="${regraOk ? 'ok-txt' : 'alerta'}">${regraOk ? '✓ Pode ser a principal' : 'Um tipo de fonte só, ou sem degrau forte: “a verificar”'}</div></td>
+          <td data-label="Tipos de fonte">${esc(tipos.join(', '))}<div class="${regraOk ? 'ok-txt' : 'ajuda'}" style="margin:0.3rem 0 0">${regraOk ? '✓ Pode ser a principal (dois tipos de fonte)' : 'Uma fonte só: pode ser secundária ou a verificar, não a principal (regra 4)'}</div></td>
           <td data-label="Decisão" style="min-width:170px">${select(p + s + '.decisao', [['principal', 'Principal'], ['secundaria', 'Secundária'], ['verificar', 'A verificar']], '—', 'Decisão sobre ' + s)}<div class="alerta" data-alerta="${s}"></div></td></tr>`;
       }).join('') + '</tbody></table></div>';
     preencher(box);
@@ -1060,13 +1055,12 @@ function atualizarDecisao(d, ds, cs) {
 }
 function atualizarPalpite(d, ds, cs) {
   const cont = {};
-  noMural(d).forEach(c => { const s = cs[c.id] || {}, k = lugar(s); if (s.b1 && SIG[s.b1] && /^\d+$/.test(k)) cont[k] = (cont[k] || 0) + 1; });
-  const max = Math.max(0, ...Object.values(cont));
-  const top = Object.keys(cont).filter(k => cont[k] === max && max > 0);
+  noMural(d).forEach(c => { const s = cs[c.id] || {}, k = lugar(s); if (s.b1 && SIG[s.b1] && k) cont[k] = (cont[k] || 0) + 1; });
+  const passos = Object.keys(cont).sort((a, b) => cont[b] - cont[a] || a - b);
   const nome = k => `passo ${k}: ${esc(txt(d.passos[Number(k) - 1] || ''))}`;
   document.getElementById('palpiteComp').innerHTML =
     `<div><span class="r">Palpite do grupo (passo 1)</span>${ds.palpite ? nome(ds.palpite) : '<span class="vazio">Sem palpite</span>'}</div>` +
-    `<div><span class="r">Onde se concentram as barreiras ● do mural</span>${top.length ? top.map(nome).join('<br>') + ` (${max} carta${max > 1 ? 's' : ''})` : '<span class="vazio">Ainda sem barreiras no mural</span>'}</div>`;
+    `<div><span class="r">Em que passos estão as barreiras do mural</span>${passos.length ? passos.map(k => nome(k) + ` <strong>(${cont[k]} carta${cont[k] > 1 ? 's' : ''})</strong>`).join('<br>') : '<span class="vazio">Ainda sem barreiras no mural</span>'}</div>`;
 }
 function fraseHipotese(h, html) {
   h = h || {};
@@ -1099,12 +1093,7 @@ function fichaHtml() {
     ${linha(4, esc(ds.palpiteTxt || ''))}
     ${linha(5, ds.hip && Object.values(ds.hip).some(x => x) ? esc(fraseHipotese(ds.hip, false)) : '')}
     ${linha(6, esc(proxTexto(ds.prox)))}
-    ${linha(7, (S.estac || []).length ? '<ul>' + S.estac.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '')}
     <div class="acoes no-print"><button type="button" class="vd-btn vd-btn-roxo" onclick="imprimirFicha()">Imprimir a ficha</button></div>`;
-}
-function atualizarEstac() {
-  document.getElementById('estacN').textContent = (S.estac || []).length;
-  document.getElementById('estacLista').innerHTML = (S.estac || []).map((x, i) => `<li><span>${esc(x)}</span><button type="button" class="rem" data-estac-rem="${i}" aria-label="Remover">×</button></li>`).join('') || '<li class="vazio" style="background:none">Nada estacionado ainda.</li>';
 }
 function atualizarBadges() {
   const b = (id, t) => { const el = document.getElementById('badge-' + id); el.hidden = !t; el.textContent = t || ''; };
@@ -1173,8 +1162,6 @@ document.addEventListener('click', e => {
   if (e.target.closest('[data-fechar-carta]') || e.target.id === 'cartaModal') { fecharCarta(); return; }
   const ti = e.target.closest('[data-tirar-carta]');
   if (ti) { const s = cartasS()[ti.dataset.tirarCarta]; if (s) s.onde = []; fecharCarta(); return; }
-  const rem = e.target.closest('[data-estac-rem]');
-  if (rem) { S.estac.splice(Number(rem.dataset.estacRem), 1); atualizar(); return; }
   const b = e.target.closest('[data-c]'); if (!b || b.disabled) return;
   const p = b.dataset.c, v = b.dataset.v;
   if (/\.onde$/.test(p)) {
@@ -1189,21 +1176,9 @@ document.addEventListener('click', e => {
   }
   atualizar();
 });
-document.getElementById('btnEstac').onclick = () => {
-  const box = document.getElementById('estac'); box.hidden = !box.hidden;
-  document.getElementById('btnEstac').setAttribute('aria-expanded', String(!box.hidden));
-  if (!box.hidden) document.getElementById('estacNovo').focus();
-};
-document.getElementById('estacForm').onsubmit = e => {
-  e.preventDefault();
-  const inp = document.getElementById('estacNovo'), v = inp.value.trim();
-  if (!v) return;
-  (S.estac = S.estac || []).push(v); inp.value = ''; atualizar(); VD.alterado();
-};
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (!document.getElementById('cartaModal').hidden) { fecharCarta(); return; }
-  const box = document.getElementById('estac'); if (!box.hidden) { box.hidden = true; document.getElementById('btnEstac').setAttribute('aria-expanded', 'false'); }
+  if (!document.getElementById('cartaModal').hidden) fecharCarta();
 });
 function imprimirFicha() {
   document.getElementById('impressao').innerHTML = '<h1 style="font-family:Fraunces,serif;color:#402C4F;margin:0 0 0.4rem">Clínica de diagnóstico · Ficha do grupo</h1>' + fichaHtml();
@@ -1225,7 +1200,7 @@ function resumo(d) {
     const sec = 'Rodada 2 · Dossiê ' + dd.n + ': ' + txt(dd.titulo), cs = ds.cartas || {};
     if (ds.palpite) add(sec, 'Palpite (passo em que mais se perde)', 'Passo ' + ds.palpite + ': ' + txt(dd.passos[Number(ds.palpite) - 1] || ''));
     dd.cartas.forEach(c => { const s = cs[c.id]; const k = lugar(s); if (!k) return;
-      add(sec, 'Carta ' + c.id, [k === 'todo' ? 'todo o caminho' : 'passo ' + k, s.b1 ? '● ' + s.b1 : '', s.b2 ? '○ ' + s.b2 : '', s.degrau ? DEGRAU_NOME[s.degrau] : '', s.porque || '', s.decide ? 'decidiria: ' + s.decide : ''].filter(Boolean).join(' · ')); });
+      add(sec, 'Carta ' + c.id, ['passo ' + k, s.b1 ? '● ' + s.b1 : '', s.b2 ? '○ ' + s.b2 : '', s.degrau ? DEGRAU_NOME[s.degrau] : '', s.porque || '', s.decide ? 'decidiria: ' + s.decide : ''].filter(Boolean).join(' · ')); });
     const dec = ds.dec || {};
     Object.keys(dec).forEach(s => { if (dec[s] && dec[s].decisao && SIG[s]) add(sec, 'Decisão: ' + s, { principal: 'Principal', secundaria: 'Secundária', verificar: 'A verificar' }[dec[s].decisao]); });
     add(sec, 'Palpite × dados', ds.palpiteTxt);
@@ -1246,7 +1221,6 @@ function resumo(d) {
     add('Rodada 4 · Seu desafio', 'Passo ' + (i + 1) + (String(i + 1) === r4.perde ? ' (?)' : ''), x.trim() + (o && o.trim() ? ' — observamos: ' + o.trim() : ''));
   });
   [['dado', 'Dado a puxar'], ['observar', 'Quem observar'], ['naoFaz', 'Ouvir quem não faz'], ['jaFaz', 'Ouvir quem faz'], ['convive', 'Ouvir quem convive']].forEach(([k, n]) => add('Rodada 4 · Seu desafio', n, r4[k]));
-  (d.estac || []).forEach((x, i) => add('Estacionamento de soluções', 'Ideia ' + (i + 1), x));
   return L;
 }
 
@@ -1257,10 +1231,9 @@ function aplicar(dados) {
   S = Object.assign(base, x);
   S.papeis = Object.assign(novoEstado().papeis, x.papeis || {});
   S.r4 = Object.assign(novoEstado().r4, x.r4 || {});
-  if (!Array.isArray(S.r4.passos) || !S.r4.passos.length) S.r4.passos = ['', '', '', '', '', ''];
+  if (!Array.isArray(S.r4.passos) || !S.r4.passos.length) S.r4.passos = ['', '', '', '', ''];
   if (!S.r4.obs || typeof S.r4.obs !== 'object') S.r4.obs = {};
   ['r1', 'm', 'r3', 'pontos'].forEach(k => { if (!S[k] || typeof S[k] !== 'object') S[k] = {}; });
-  if (!Array.isArray(S.estac)) S.estac = [];
   if (!S.dossie || !C.r2.dossies[Number(S.dossie) - 1]) S.dossie = '1';
   assinaturaDecisao = ''; assinaturaObs = '';
   if (!document.getElementById('cartaModal').hidden) fecharCarta();

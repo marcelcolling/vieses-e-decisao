@@ -11,11 +11,11 @@ A Clínica é um treino com **casos prontos**. Cada grupo atua como equipe de di
 | **3. Contestação** | Grupos trocam hipóteses e tentam derrubá-las | 15 min |
 | **4. Seu desafio** | Cada grupo aplica o formato e o caminho ao próprio comportamento | 20 min |
 
-**Papéis (3 por grupo; a cada rodada, troquem):** o **Leitor** lê cada carta e pergunta "isso fala do comportamento?"; o **Escriba** preenche a ficha; o **Guardião** cuida do tempo, anota as soluções no estacionamento e pergunta "qual carta mostra isso?". Em grupo de 5, o quarto e o quinto são **Advogados do diabo**, que propõem uma leitura alternativa para cada marcação.
+**Papéis (3 por grupo; a cada rodada, troquem):** o **Leitor** lê cada carta e pergunta "isso fala do comportamento?"; o **Escriba** preenche a ficha; o **Guardião** cuida do tempo, lembra que solução fica para a Aula 03 e pergunta "qual carta mostra isso?". Em grupo de 5, o quarto e o quinto são **Advogados do diabo**, que propõem uma leitura alternativa para cada marcação.
 
 ## E2. Cinco regras
 
-1. **Nada de solução.** Se alguém disser "então é só mandar um lembrete", a ideia vai para o estacionamento.
+1. **Nada de solução.** Se alguém disser "então é só mandar um lembrete", a ideia fica para a Aula 03; agora o foco é o diagnóstico.
 2. **Toda marcação tem um porquê** em uma frase: "Marcamos OF porque…".
 3. **Uma carta pode ter duas barreiras:** ● para a mais provável, ○ para a outra possível. Em dúvida, usem um dos cinco testes do cartão de bolso e digam o que ele concluiria com os dados da carta.
 4. **A barreira principal precisa de dois tipos de fonte.** Barreira com uma fonte só entra como "a verificar".
@@ -85,13 +85,11 @@ Terminado o tempo, o professor revela o gabarito e cada grupo compara o seu mura
 
 **Os passos do comportamento:**
 
-1. O professor fecha a prova (versão final).
-2. Envia a prova à coordenação para revisão (em 2 dos 6 cursos a prova só segue depois da revisão).
-3. Recebe o arquivo revisado.
-4. Acessa o sistema da Reprografia.
-5. Preenche o pedido (arquivo, turma, número de cópias).
-6. **Envia o pedido** *(comportamento-alvo)*.
-7. A Reprografia confirma e imprime.
+1. O professor fecha a versão final da prova.
+2. Acessa o sistema da Reprografia.
+3. Preenche o pedido (arquivo, turma, número de cópias).
+4. **Envia o pedido** *(comportamento-alvo)*.
+5. A Reprografia confirma e imprime.
 
 **Os dados:**
 
@@ -99,7 +97,7 @@ Terminado o tempo, o professor revela o gabarito e cada grupo compara o seu mura
 "Quando entrei, os colegas me disseram que o prazo de três dias é de enfeite: ninguém manda antes, e quem manda é chamado de 'o certinho'. Eu sei usar o sistema e consigo fechar a prova com antecedência, mas acabo mandando na véspera, como todo mundo."
 
 **1B** · `DOCUMENTO`
-E-mail da coordenação geral à Reprografia, no semestre passado: "Atendam sempre os pedidos de última hora. A prova do aluno vem em primeiro lugar." Desde então, a Reprografia não recusou nenhum pedido fora do prazo.
+E-mail da coordenação geral à Reprografia, no semestre passado: "Atendam sempre os pedidos de última hora. A prova do aluno vem em primeiro lugar." Desde então, a Reprografia não recusou nenhum pedido fora do prazo, e entre os professores o recado virou "prova de véspera sempre passa".
 
 **1C** · `OBSERVAÇÃO`
 Acompanhamos 4 professores, todos já acostumados com o sistema da Reprografia, tentando enviar pedidos com antecedência. O sistema exige um login próprio, diferente do sistema acadêmico, e a senha expira a cada 30 dias. Três deles ficaram bloqueados na senha e mandaram o arquivo por e-mail, que a Reprografia só abre na manhã seguinte.
@@ -126,12 +124,10 @@ Acompanhamos 4 professores, todos já acostumados com o sistema da Reprografia, 
 **Os passos do comportamento:**
 
 1. Surge a necessidade de mudança (de sala, horário ou turma).
-2. O coordenador consulta o outro setor ou o professor.
-3. Decide a mudança.
-4. Aguarda a confirmação final do outro setor.
-5. Identifica quais setores são afetados.
-6. **Registra no Mural, marcando os setores** *(comportamento-alvo)*.
-7. Os setores leem o aviso e se ajustam.
+2. O coordenador decide a mudança, depois de consultar o outro setor ou o professor.
+3. Aguarda a confirmação final do outro setor.
+4. Identifica quais setores são afetados.
+5. **Registra no Mural, marcando os setores** *(comportamento-alvo)*.
 
 **Os dados:**
 
@@ -170,7 +166,6 @@ Na pesquisa de clima, 64% dos funcionários concordam que "a comunicação inter
 3. Prepara a conversa (o que vai perguntar).
 4. Mantém o horário marcado (urgências aparecem).
 5. **Conduz a conversa** *(comportamento-alvo)*: começa, escuta, registra.
-6. Encaminha o que o novo pediu.
 
 **Os dados:**
 
@@ -205,11 +200,10 @@ No setor de Tecnologia, o RH agenda a conversa no calendário do gestor no dia d
 **Os passos do comportamento:**
 
 1. O aluno pede o cancelamento no aplicativo.
-2. O sistema processa o pedido (automático).
+2. O sistema processa o pedido em 24 horas (automático).
 3. A lista de pedidos chega à Central (planilha).
 4. O atendente escolhe a ordem das ligações.
 5. **Liga e pergunta o motivo** *(comportamento-alvo)*.
-6. Registra o motivo e o resultado.
 
 **Os dados:**
 
@@ -263,4 +257,3 @@ O que não terminar fica como trabalho para os próximos dias.
 | **5. Palpite × dados** | O palpite se confirmou? O que mudou? |
 | **6. Hipótese** | Acreditamos que, para ______, a barreira principal é ______, porque ______ e ______. A secundária é ______. Estaremos errados se ______. |
 | **7. Próximo dado** | O quê: ___ De quem: ___ Como: ___ |
-| **8. Estacionamento de soluções** | |
