@@ -53,7 +53,7 @@ Cada grupo recebe **um dossiê**. Todos têm a mesma estrutura, que acompanha os
 1. **O caso:** a organização, o objetivo, o indicador e a situação atual.
 2. **O comportamento-alvo:** a frase crua e o comportamento reescrito em *Quem – faz o quê – em que contexto*.
 3. **Os passos do comportamento.**
-4. **Os dados:** 10 cartas de evidência, de fontes e pesos diferentes.
+4. **Os dados:** 5 cartas de evidência, de fontes e pesos diferentes.
 
 **Monte o mural.** Em uma folha grande, desenhem uma faixa horizontal com os **passos** do comportamento, um por coluna, e acrescentem duas colunas: **Todo o caminho** (para cartas que falam do processo inteiro ou de "quando") e **Fora do caminho** (para cartas que não falam deste comportamento).
 
@@ -66,7 +66,7 @@ Cada grupo recebe **um dossiê**. Todos têm a mesma estrutura, que acompanha os
 5. **Prioridade (5 min).** Preencham a tabela de decisão da Ficha (seção C3): contem as evidências ● por barreira, confiram os tipos de fonte e as contradições, perguntem "se sumisse, o comportamento aconteceria?". Definam a **principal**, a **secundária** e as **a verificar**. Se houver grupos de pessoas com barreiras diferentes, **segmentem**. Comparem com o palpite do passo 2.
 6. **Hipótese e próximo dado (10 min).** Escrevam a frase do cartão de bolso e indiquem **uma** informação que pediriam a seguir: o quê, de quem e como.
 
-> Nos dossiês há cartas que parecem fortes e não são, cartas que parecem fracas e são decisivas, cartas que podem apontar para duas barreiras e pelo menos uma fonte única que ainda não decide nada. É proposital.
+> Em cada dossiê, três cartas explicam por que o comportamento não acontece e duas não explicam: uma localiza ou mostra o que já funciona, e a outra é ruído. Cabe ao grupo descobrir quais são.
 
 Terminado o tempo, o professor revela o gabarito e cada grupo compara o seu mural com ele. As diferenças são a parte mais útil da aula.
 
@@ -95,35 +95,20 @@ Terminado o tempo, o professor revela o gabarito e cada grupo compara o seu mura
 
 **Os dados:**
 
-**1A** · `OBSERVAÇÃO`
-A equipe da Reprografia registrou duas semanas de pedidos. Chegaram 41 com menos de 24 horas de antecedência. Os 41 foram atendidos a tempo. Nenhum foi recusado ou devolvido.
+**1A** · `ENTREVISTA` · professor com 7 anos de casa
+"Quando entrei, os colegas me disseram que o prazo de três dias é de enfeite: ninguém manda antes, e quem manda é chamado de 'o certinho'. Eu sei usar o sistema e consigo fechar a prova com antecedência, mas acabo mandando na véspera, como todo mundo."
 
-**1B** · `ENTREVISTA` · professor com 7 anos de casa
-"Quando entrei, os colegas me disseram que o prazo de três dias é de enfeite. Se eu mandasse antes, seria o único. Ninguém liga se você manda na véspera."
+**1B** · `DOCUMENTO`
+E-mail da coordenação geral à Reprografia, no semestre passado: "Atendam sempre os pedidos de última hora. A prova do aluno vem em primeiro lugar." Desde então, a Reprografia não recusou nenhum pedido fora do prazo.
 
-**1C** · `DOCUMENTO`
-E-mail da coordenação geral à Reprografia, no semestre passado: "Atendam sempre os pedidos de última hora. A prova do aluno vem em primeiro lugar."
+**1C** · `OBSERVAÇÃO`
+Acompanhamos 4 professores, todos já acostumados com o sistema da Reprografia, tentando enviar pedidos com antecedência. O sistema exige um login próprio, diferente do sistema acadêmico, e a senha expira a cada 30 dias. Três deles ficaram bloqueados na senha e mandaram o arquivo por e-mail, que a Reprografia só abre na manhã seguinte.
 
-**1D** · `OBSERVAÇÃO`
-Acompanhamos 4 professores enviando pedidos. O sistema da Reprografia exige um login próprio, diferente do sistema acadêmico. Três deles desistiram e mandaram o arquivo por e-mail, que a Reprografia só abre pela manhã.
-
-**1E** · `ENTREVISTA` · coordenadora de curso
-"No meu curso, a prova só pode ir para a Reprografia depois da minha revisão, que leva quatro dias. Se o professor entrega com cinco, o arquivo final só fica pronto na véspera." (Dois dos seis cursos têm essa regra de revisão.)
-
-**1F** · `ENTREVISTA` · professor (única conversa sobre o tema)
-"Prova é o que eu deixo para o fim. Todo semestre prometo adiantar e todo semestre fecho na véspera."
-
-**1G** · `DADO`
-No curso de Enfermagem, que mantém um calendário de provas com data de envio por turma, controlado pela coordenadora, 83% dos pedidos chegam com 3 dias ou mais. A média dos outros cursos é 38%.
-
-**1H** · `DADO`
+**1D** · `DADO`
 81% dos pedidos urgentes chegam nas duas semanas de provas bimestrais. Fora delas, 24% dos pedidos são urgentes.
 
-**1I** · `OPINIÃO` · gerente da Reprografia
+**1E** · `OPINIÃO` · gerente da Reprografia
 "Professor é desorganizado por natureza."
-
-**1J** · `DADO`
-A Reprografia imprimiu 1,2 milhão de páginas no semestre, 9% a mais que no semestre anterior.
 
 ---
 
@@ -151,34 +136,19 @@ A Reprografia imprimiu 1,2 milhão de páginas no semestre, 9% a mais que no sem
 **Os dados:**
 
 **2A** · `ENTREVISTA` · coordenadora
-"Só aviso quando está tudo fechado. Uma vez avisei algo que não se confirmou e o Financeiro refez a cobrança duas vezes. Se aviso antes e depois muda, vira e-mail em cascata e confusão. Prefiro esperar."
+"Sei registrar no Mural e tenho tempo para isso. Só registro quando está tudo fechado: uma vez avisei uma mudança que não se confirmou e o Financeiro refez a cobrança dos alunos duas vezes. Para mim, avisar antes gera mais confusão do que ajuda."
 
-**2B** · `DADO`
-O registro no Mural acontece, em mediana, 3 dias depois da decisão. A confirmação final com o outro setor também leva, em mediana, 3 dias.
+**2B** · `OBSERVAÇÃO`
+A equipe de Qualidade criou no Mural uma marcação "A CONFIRMAR" para mudanças ainda não fechadas e apresentou a três coordenadores. Os três recusaram usar, com o mesmo argumento: "aviso que pode mudar só confunde os setores". A marcação estava pronta e não dava trabalho extra.
 
 **2C** · `OBSERVAÇÃO`
-A equipe de Qualidade propôs marcar as mudanças ainda não confirmadas como "A CONFIRMAR" no próprio Mural. Três coordenadores foram consultados e os três recusaram: "ninguém lê isso", "vai dar confusão do mesmo jeito". A razão se manteve nos três.
+O Mural é uma planilha sem coluna de setores afetados, e nenhum documento da instituição diz quais setores cada tipo de mudança atinge. Em 3 de 5 registros acompanhados, o coordenador perguntou "quem eu preciso avisar nesse caso?" e ninguém na sala soube responder.
 
-**2D** · `OBSERVAÇÃO`
-O Mural é uma planilha sem coluna de setores afetados. Em 3 de 5 registros acompanhados, o coordenador perguntou "quem eu preciso avisar nesse caso?" e ninguém soube responder: a lista muda conforme o tipo de mudança.
-
-**2E** · `DADO`
-Os avisos circulam por três canais (e-mail, grupo de mensagens e planilha). Em 6 das últimas 10 mudanças, ao menos um setor afetado só soube pelo aluno.
-
-**2F** · `ENTREVISTA` · coordenador (única conversa sobre o tema)
-"Às vezes eu decido e esqueço de registrar. Só lembro quando alguém liga reclamando."
-
-**2G** · `OBSERVAÇÃO`
-Na Engenharia, o assistente envia todo dia às 17h um e-mail fixo com as mudanças do dia, inclusive as "a confirmar". Os setores dizem que leem. 90% das mudanças do curso são comunicadas no mesmo dia.
-
-**2H** · `DADO`
+**2D** · `DADO`
 75% dos avisos atrasados concentram-se nas duas semanas anteriores ao início de cada semestre.
 
-**2I** · `OPINIÃO` · diretor
-"Falta cultura de colaboração entre os setores."
-
-**2J** · `DADO`
-Na pesquisa de clima, 64% concordam que "a comunicação interna é boa".
+**2E** · `DADO`
+Na pesquisa de clima, 64% dos funcionários concordam que "a comunicação interna é boa".
 
 ---
 
@@ -204,35 +174,20 @@ Na pesquisa de clima, 64% concordam que "a comunicação interna é boa".
 
 **Os dados:**
 
-**3A** · `ENTREVISTA` · gestor
-"Eu marco, aparece alguma coisa e desmarco. E tem outra coisa: não sei como começar. Dá um desconforto, parece interrogatório. Vou empurrando."
+**3A** · `ENTREVISTA` · gestor com 6 anos no cargo
+"Sei que essa conversa é importante; já perdi gente por não fazer. Se você me perguntar agora, digo exatamente o que perguntaria. Mas marco, chega o dia, aparece qualquer coisa e eu desmarco quase sem pensar. Depois me arrependo."
 
-**3B** · `ENTREVISTA` · gestor
-"Sei que é importante. Já perdi gente por isso. Se você me perguntar agora, sei exatamente o que perguntaria. Nesta semana bloqueei uma hora para isso e usei para apagar um incêndio."
+**3B** · `DADO` · agendas dos gestores
+Dos 12 convites criados para a conversa, 8 foram reagendados ao menos uma vez e nenhum foi cancelado. Em 6 desses 8, o horário original continuava livre na agenda e foi usado para tarefas que podiam esperar, como responder e-mails.
 
-**3C** · `DADO` · agendas dos gestores
-Dos 12 convites criados pelos gestores para a conversa, 8 foram reagendados ao menos uma vez e 5, duas vezes. Nenhum foi cancelado.
+**3C** · `ENTREVISTA` · gestora promovida há 2 meses
+"Nunca recebi roteiro para essa conversa. Quando sento para preparar, não sei o que perguntar além de 'está tudo bem?', nem o que fazer se o novo disser que está perdido. Tentei explicar a uma colega como eu conduziria e travei."
 
-**3D** · `ENTREVISTA` · gestor
-"Não sei o que perguntar nem o que fazer se o novo disser que está perdido. Nunca recebi roteiro."
+**3D** · `DADO`
+No setor de Tecnologia, o RH agenda a conversa no calendário do gestor no dia da admissão e anexa um roteiro de cinco perguntas. Lá, 88% das conversas acontecem na segunda semana.
 
-**3E** · `DOCUMENTO`
-O manual de integração do RH dedica uma linha ao assunto: "o gestor deve acompanhar o colaborador novo". Sem roteiro, duração ou data.
-
-**3F** · `TERCEIRO` · analista de RH
-"Tem gestor que acha que o novo tem que se virar sozinho, porque foi assim com ele."
-
-**3G** · `DADO`
-No setor de Tecnologia, o RH agenda a conversa no calendário do gestor no dia da admissão e anexa um roteiro de cinco perguntas. 88% das conversas acontecem na segunda semana.
-
-**3H** · `DADO`
-7 dos 10 desligamentos recentes ocorreram nos primeiros 90 dias. 6 deles em dois setores: Atendimento e Secretaria.
-
-**3I** · `OPINIÃO` · diretor
+**3E** · `OPINIÃO` · diretor
 "Os jovens de hoje não têm comprometimento. É questão de geração."
-
-**3J** · `DADO`
-A pesquisa de clima aponta 81% de satisfação com a empresa.
 
 ---
 
@@ -259,34 +214,19 @@ A pesquisa de clima aponta 81% de satisfação com a empresa.
 **Os dados:**
 
 **4A** · `OBSERVAÇÃO`
-O aluno pede o cancelamento pelo aplicativo e o pedido é processado automaticamente em 24 horas. A lista de pedidos chega à Central por planilha, na manhã seguinte ao processamento.
+O aluno pede o cancelamento pelo aplicativo e o pedido é processado automaticamente em 24 horas. A lista de pedidos só chega à Central por planilha na manhã seguinte ao processamento: quando o atendente vê o nome, o cancelamento já foi feito.
 
-**4B** · `DADO`
-Dos pedidos de cancelamento do último trimestre, 61% já estavam processados quando entraram na lista da Central.
+**4B** · `ENTREVISTA` · atendente
+"Quando a lista chega, são 40 a 50 nomes para uma pessoa só de plantão, além das outras filas. Ligando sem parar, consigo falar com uns 15 por dia."
 
-**4C** · `ENTREVISTA` · atendente
-"Quando a lista chega, são 40, 50 nomes para quem está de plantão. Eu ligo para os primeiros e o resto já foi embora."
+**4C** · `OBSERVAÇÃO`
+Em 3 turnos acompanhados, com a lista ainda dentro do prazo, os atendentes começaram sempre pelas pendências financeiras e deixaram os cancelamentos para o fim do dia. Perguntados, disseram que concordam que os cancelamentos são prioridade e que ninguém mandou fazer assim: "ligar para quem quer cancelar é desagradável, a gente vai empurrando".
 
-**4D** · `ENTREVISTA` · atendente
-"Ligar para quem acabou de cancelar é desagradável, o aluno geralmente está irritado. Deixo essas por último e começo pelas pendências financeiras, que são mais leves. Ninguém me mandou fazer assim."
-
-**4E** · `OBSERVAÇÃO`
-Em 3 turnos acompanhados, a ordem das ligações foi sempre a mesma: pendências financeiras primeiro, cancelamentos depois. As ligações de cancelamento começaram, em média, às 14h.
-
-**4F** · `ENTREVISTA` · 1 de 4 atendentes ouvidos
-"Quem pede cancelamento já decidiu. Ligar não adianta."
-
-**4G** · `DADO`
-Na unidade Centro, o cancelamento exige aprovação da coordenação e leva 2 dias para ser processado. Lá, a Central liga em 74% dos pedidos e reverte 22% deles.
-
-**4H** · `DADO`
+**4D** · `DADO`
 Os pedidos de cancelamento se concentram na primeira semana de cada mês (vencimento da mensalidade) e nos 30 dias depois da divulgação das notas.
 
-**4I** · `OPINIÃO` · diretor financeiro
+**4E** · `OPINIÃO` · diretor financeiro
 "O problema é a concorrência de cursos mais baratos."
-
-**4J** · `DADO`
-A página de cursos recebeu 5.300 visitas na última semana. NPS institucional: 62.
 
 ---
 

@@ -167,7 +167,7 @@ def ler_material():
             exigir(texto, f"Dossiê {n}: texto da carta {mh.group(1)}")
             cartas.append({"id": mh.group(1), "tipo": mh.group(2), "fonte": inline(mh.group(3) or ""),
                            "texto": inline(" ".join(texto))})
-        exigir(len(cartas) == 10, f"Dossiê {n}: dez cartas")
+        exigir(len(cartas) == 5, f"Dossiê {n}: cinco cartas")
         dados["r2"]["dossies"].append({
             "n": int(n), "titulo": inline(m.group(1) if m else d["titulo"]), "publico": inline(m.group(2)) if m else "",
             "caso": html_bloco(b[0]), "cabecalho": [[inline(c) for c in l] for l in linhas_cab],
@@ -249,12 +249,19 @@ def ler_gabarito(caminho):
         i_tab = next(i for i, x in enumerate(b) if x[0] == "table")
         cab, corpo = tabela(b[i_tab][1])
         exigir(gl.texto_puro(cab[0]) == "Carta", f"gabarito do Dossiê {n}: tabela de cartas")
+        # colunas pelo nome: Carta | Mural? | Passo | Barreira | Degrau | Por que é essa barreira
+        nomes = [gl.texto_puro(c).strip().lower() for c in cab]
+        col = lambda inicio: next((j for j, c in enumerate(nomes) if c.startswith(inicio)), None)
+        jm, jp, jb, jd, jq = col("mural"), col("passo"), col("barreira"), col("degrau"), col("por que")
+        exigir(None not in (jm, jp, jb, jd, jq), f"gabarito do Dossiê {n}: colunas Mural?, Passo, Barreira, Degrau e Por que")
         cartas = []
         for l in corpo:
-            b1, b2 = ler_marca(l[2])
-            cartas.append({"id": gl.texto_puro(l[0]).strip(), "passo": inline(l[1]), "passos": ler_passos(l[1]),
-                           "b1": b1, "b2": b2, "degrau": ler_degrau(l[3]), "degrau_txt": inline(l[3]),
-                           "porque": inline(l[4])})
+            b1, b2 = ler_marca(l[jb])
+            cartas.append({"id": gl.texto_puro(l[0]).strip(), "sobe": gl.texto_puro(l[jm]).strip().lower().startswith("sobe"),
+                           "passo": inline(l[jp]), "passos": ler_passos(l[jp]), "b1": b1, "b2": b2,
+                           "degrau": ler_degrau(l[jd]), "degrau_txt": inline(l[jd]), "porque": inline(l[jq]),
+                           "celulas": [inline(c) for c in l]})
+        exigir(len(cartas) == 5 and sum(c["sobe"] for c in cartas) == 3, f"gabarito do Dossiê {n}: 5 cartas, 3 sobem ao mural")
         resto = b[i_tab + 1:]
         i_dec = next(i for i, x in enumerate(resto) if x[0] == "table")
         _, dec = tabela(resto[i_dec][1])

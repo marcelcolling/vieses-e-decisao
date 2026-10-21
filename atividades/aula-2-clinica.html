@@ -450,7 +450,7 @@
 'use strict';
 const C = window.CLINICA;
 const esc = VD.esc;
-const LIMITE = 5;
+const LIMITE = 3;  // cartas que o grupo leva ao mural (de 5 por dossiê)
 
 /* ---------------- vocabulário ---------------- */
 const SIG = {
@@ -486,7 +486,7 @@ const PAPEIS = [
 ];
 const ENTREGAS = [
   '6 votos, cada um com a frase do caso que o justifica',
-  'Um mural com até 5 cartas e a hipótese do grupo',
+  'Um mural com 3 cartas e a hipótese do grupo',
   'Uma contestação à hipótese de outro grupo e o ajuste da sua',
   'O comportamento do grupo reescrito e o que observar em cada passo'
 ];
@@ -506,7 +506,7 @@ const ls = {
 
 /* ---------------- estado ---------------- */
 function novoEstado() {
-  return { v: 2, grupo: '', papeis: { leitor: '', escriba: '', guardiao: '', advogados: '' }, r1: {}, dossie: '1', d: {},
+  return { v: 3, grupo: '', papeis: { leitor: '', escriba: '', guardiao: '', advogados: '' }, r1: {}, dossie: '1', m: {},
     r3: {}, r4: { passos: ['', '', '', '', '', ''], testes: {}, obs: {} }, estac: [], pontos: {} };
 }
 let S = novoEstado();
@@ -517,7 +517,8 @@ function set(p, v) {
   o[ks[ks.length - 1]] = v;
 }
 const D = () => C.r2.dossies[(Number(S.dossie) || 1) - 1];
-const dS = () => { const n = String(D().n); if (!S.d[n]) S.d[n] = {}; return S.d[n]; };
+/* Rodada 2 em S.m (desde a versão com 5 cartas); S.d, se existir, é da versão anterior e fica intocado */
+const dS = () => { const n = String(D().n); if (!S.m[n]) S.m[n] = {}; return S.m[n]; };
 const cartasS = () => { const ds = dS(); if (!ds.cartas) ds.cartas = {}; return ds.cartas; };
 /* posição da carta no mural: um passo ('1'…'7') ou 'todo'; vazio (ou 'fora', de versões antigas) = no baralho */
 const lugar = s => { const o = (s && s.onde) || []; const v = o.find(x => x !== 'fora'); return v || ''; };
@@ -628,7 +629,7 @@ function montarR2() {
   document.getElementById('p-r2').innerHTML = `
     <div class="eyebrow"><i></i>Rodada 2 · 45 min</div>
     <h2 class="tit"><span class="cod">E4</span>${esc(C.secoes.E4)}</h2>
-    <p class="lead">Todos os grupos começam pelo mesmo dossiê. Em quatro passos, o grupo lê o caso, monta o mural com <strong>até ${LIMITE} cartas</strong>, decide qual barreira priorizar e escreve a hipótese.</p>
+    <p class="lead">Todos os grupos começam pelo mesmo dossiê. Em quatro passos, o grupo lê o caso, escolhe <strong>${LIMITE} das 5 cartas</strong> para o mural, decide qual barreira priorizar e escreve a hipótese.</p>
     <div class="dossie-barra">
       <div class="dossie-atual"><span class="dn" id="dossieN"></span><span class="dt" id="dossieT"></span></div>
       <div class="dossie-outros no-print"><span>Se houver tempo:</span>${C.r2.dossies.map(d => `<button type="button" class="dossie-bt" data-dossie="${d.n}">Dossiê ${d.n}</button>`).join('')}</div>
@@ -644,7 +645,7 @@ function montarR2() {
 }
 
 function montarDossie() {
-  const d = D(), n = d.n, p = 'd.' + n;
+  const d = D(), n = d.n, p = 'm.' + n;
   document.getElementById('dossieN').textContent = 'Dossiê ' + n + ' · ' + txt(d.publico);
   document.getElementById('dossieT').innerHTML = d.titulo;
   const cab = d.cabecalho.map(l => `<div class="cd-item${txt(l[0]) === 'Frase crua' ? ' cd-cru' : ''}"><span class="cd-rot">${l[0]}</span>${l[1]}</div>`).join('');
@@ -665,10 +666,10 @@ function montarDossie() {
     </div>
 
     <div class="etapa-painel" data-e="1">
-      ${instr(2, `<strong>Escolham até ${LIMITE} cartas</strong>, as que mais ajudam a explicar por que o comportamento não acontece. Toquem numa carta para levá-la ao mural: digam de qual passo ela fala e o que ela mostra (uma barreira ●, algo que localiza <strong>L</strong> ou algo que já funciona <strong>F</strong>). Cartas que não falam deste comportamento ficam no baralho.`)}
+      ${instr(2, `<strong>Escolham ${LIMITE} das 5 cartas</strong>: as que explicam por que o comportamento não acontece. Toquem numa carta para levá-la ao mural: digam de qual passo ela fala e o que ela mostra (uma barreira ●, algo que localiza <strong>L</strong> ou algo que já funciona <strong>F</strong>). As outras duas ficam no baralho.`)}
       <div class="contador" id="contador"></div>
       <div class="mural" id="mural"></div>
-      <h3 class="sub">Baralho <span class="ajuda" style="font-family:var(--body)">(10 cartas · toquem para ler e marcar)</span></h3>
+      <h3 class="sub">Baralho <span class="ajuda" style="font-family:var(--body)">(5 cartas · toquem para ler e marcar)</span></h3>
       <div class="baralho">${baralho}</div>
       <div class="acoes no-print"><button type="button" class="vd-btn vd-btn-roxo" data-etapa-ir="2">Decidir a barreira →</button></div>
     </div>
@@ -733,7 +734,7 @@ let cartaAberta = null;
 function abrirCarta(id) {
   const d = D(), c = d.cartas.find(x => x.id === id); if (!c) return;
   cartaAberta = id;
-  const cp = `d.${d.n}.cartas.${id}`;
+  const cp = `m.${d.n}.cartas.${id}`;
   document.getElementById('cartaModalCorpo').innerHTML = `
     <div class="carta-cab" style="padding-right:2.6rem"><span class="carta-id" id="cartaModalTit">${c.id}</span><span class="carta-tipo t-${esc(c.tipo)}">${esc(c.tipo)}</span>${c.fonte ? `<span class="carta-fonte">${c.fonte}</span>` : ''}</div>
     <div class="carta-txt">${c.texto}</div>
@@ -883,15 +884,13 @@ function montarGabarito() {
       <div class="texto">${G.r1.depois}</div></div>
     ${G.r2.dossies.map(d => `<div class="gab-sec" data-gs="d${d.n}"><h2 class="tit">${esc(G.titulos['5'])}</h2>
       <div class="texto">${G.r2.intro}</div><h3>Dossiê ${d.n}: ${d.titulo}</h3><div class="texto">${d.antes}</div>
-      <div class="tab-wrap"><table class="tab"><thead><tr>${d.cab.map(c => `<th>${c}</th>`).join('')}<th>Mural do grupo</th></tr></thead><tbody>
-      ${d.cartas.map(c => `<tr><td data-label="${esc(txt(d.cab[0]))}">${esc(c.id)}</td><td data-label="${esc(txt(d.cab[1]))}">${c.passo}</td>
-        <td data-label="${esc(txt(d.cab[2]))}">● ${sigla(c.b1)}${c.b2 ? ' ○ ' + sigla(c.b2) : ''}</td><td data-label="${esc(txt(d.cab[3]))}">${c.degrau_txt}</td>
-        <td data-label="${esc(txt(d.cab[4]))}">${c.porque}</td><td data-label="Mural do grupo" id="gabMural-${d.n}-${esc(c.id)}"></td></tr>`).join('')}
+      <div class="tab-wrap"><table class="tab"><thead><tr>${d.cab.map(c => `<th>${c}</th>`).join('')}<th>O grupo fez</th></tr></thead><tbody>
+      ${d.cartas.map(c => `<tr>${c.celulas.map((x, j) => `<td data-label="${esc(txt(d.cab[j] || ''))}">${/^barreira/i.test(txt(d.cab[j] || '')) ? sigla(c.b1) : x}</td>`).join('')}<td data-label="O grupo fez" id="gabMural-${d.n}-${esc(c.id)}"></td></tr>`).join('')}
       </tbody></table></div>
       <div class="texto">${d.resultado}</div>${d.decisao_tabela}<div class="texto">${d.apos_decisao}</div>
       <p class="texto"><strong>${txt(d.rotulo_hipotese)}</strong></p><div class="gab-hip">${d.hipotese}</div><div class="texto">${d.depois}</div></div>`).join('')}
     <div class="gab-sec" data-gs="pts"><h2 class="tit">Pontuação do grupo</h2>
-      <p class="ajuda">A pontuação mostra onde a leitura do grupo divergiu do gabarito; não declara vencedor. Os itens automáticos usam o que o grupo marcou nesta página. No mural, vale 1 ponto por carta no passo certo com a barreira certa (até ${LIMITE}).</p>
+      <p class="ajuda">A pontuação mostra onde a leitura do grupo divergiu do gabarito; não declara vencedor. Os itens automáticos usam o que o grupo marcou nesta página. No mural, vale 1 ponto por carta certa (uma das ${LIMITE} do gabarito) marcada com a barreira certa.</p>
       <div class="placar" id="placar"></div>
       <h2 class="tit" style="margin-top:1.6rem">${esc(G.titulos['6'])}</h2><div class="texto">${G.pontuacao}</div></div>`;
   const sub = document.getElementById('gabSub');
@@ -919,19 +918,24 @@ const principalR1 = n => { const c = G && G.r1.casos.find(x => x.n === n); retur
 function gabCarta(n, id) { const d = G && G.r2.dossies.find(x => x.n === Number(n)); return d ? d.cartas.find(c => c.id === id) : null; }
 function comparar(n, id) {
   const g = gabCarta(n, id); if (!g) return null;
-  const s = ((S.d[n] || {}).cartas || {})[id] || {};
+  const s = ((S.m[n] || {}).cartas || {})[id] || {};
   const k = lugar(s);
   const passo = !!k && g.passos.some(x => String(x) === k);
   const barreira = !!s.b1 && (s.b1 === g.b1 || s.b2 === g.b1);
   const alt = !barreira && !!g.b2 && (s.b1 === g.b2 || s.b2 === g.b2);
-  return { g, s, k, passo, barreira, alt, degrau: !!s.degrau && s.degrau === g.degrau, ponto: passo && barreira, noMural: !!k };
+  return { g, s, k, passo, barreira, alt, degrau: !!s.degrau && s.degrau === g.degrau, ponto: !!k && g.sobe && barreira, noMural: !!k };
 }
 const tag = (ok, sim, nao, meio) => ok === 'meio' ? `<span class="meio">${meio}</span>` : ok ? `<span class="sim">✓ ${sim}</span>` : `<span class="nao">✗ ${nao}</span>`;
 function gabCartaHtml(n, id) {
   const r = comparar(n, id); if (!r) return '';
-  return `<div class="gab-rot">Gabarito · carta ${esc(id)}</div>
-    <div class="conf">${!r.noMural ? '<span class="neutro">Carta fora do mural do grupo</span>' : tag(r.passo, 'Passo', 'Passo') + tag(r.barreira ? true : (r.alt ? 'meio' : false), 'Barreira', 'Barreira', '≈ Coincide com a ○') + tag(r.degrau, 'Degrau', 'Degrau')}</div>
-    Passo ${r.g.passo} · ● ${sigla(r.g.b1)}${r.g.b2 ? ' ○ ' + sigla(r.g.b2) : ''} · ${r.g.degrau_txt}<br>${r.g.porque}`;
+  const g = r.g, nome = TODAS[g.b1] ? TODAS[g.b1].nome : '';
+  let conf;
+  if (!r.noMural) conf = g.sobe ? '<span class="nao">✗ Esta carta deveria subir ao mural</span>' : '<span class="sim">✓ Ficou no baralho, como devia</span>';
+  else if (!g.sobe) conf = '<span class="nao">✗ Esta carta deveria ficar no baralho</span>';
+  else conf = '<span class="sim">✓ Carta certa para o mural</span>' + tag(r.barreira, 'Barreira', 'Barreira') + tag(r.passo, 'Passo', 'Passo') + tag(r.degrau, 'Degrau', 'Degrau');
+  return `<div class="gab-rot">Gabarito · carta ${esc(id)}</div><div class="conf">${conf}</div>
+    <strong>${g.sobe ? 'Sobe ao mural' : 'Fica no baralho'}</strong> · ${sigla(g.b1)} ${esc(nome)}${g.b1 === 'RUÍDO' ? '' : ' · ' + (/^\d/.test(txt(g.passo)) ? 'passo ' : '') + g.passo} · ${g.degrau_txt}
+    <p style="margin:0.45rem 0 0"><strong>Por quê:</strong> ${g.porque}</p>`;
 }
 
 /* ---------------- atualizar a tela ---------------- */
@@ -978,14 +982,14 @@ function atualizarR2() {
   const mural = noMural(d), cheio = mural.length >= LIMITE;
   // contador
   document.getElementById('contador').innerHTML = `<span class="pontos" aria-hidden="true">${Array.from({ length: LIMITE }, (_, i) => `<i class="${i < mural.length ? 'on' : ''}"></i>`).join('')}</span>
-    <b>${mural.length} de ${LIMITE} cartas no mural</b>${mural.length > LIMITE ? '<span class="alerta">Acima do limite: devolvam cartas ao baralho.</span>' : ''}`;
+    <b>${mural.length} de ${LIMITE} cartas no mural</b>${mural.length > LIMITE ? '<span class="alerta">Acima do limite: devolvam cartas ao baralho.</span>' : (mural.length < LIMITE ? `<span class="ajuda" style="margin:0">faltam ${LIMITE - mural.length}</span>` : '')}`;
   // mural em faixas
   const mini = c => {
     const s = cs[c.id] || {};
     const r = gabMostrar() ? comparar(n, c.id) : null;
     return `<button type="button" class="mini" data-abrir-carta="${c.id}"><span class="mini-cab"><span class="mini-id">${c.id}</span><span class="carta-tipo t-${esc(c.tipo)}">${esc(c.tipo)}</span>
       <span class="mini-marcas">${s.b1 ? '● ' + sigla(s.b1) : '<span class="mini-falta">marcar ●</span>'}${s.b2 ? ' ○ ' + sigla(s.b2) : ''}</span></span>
-      <span class="mini-txt">${esc(txt(c.texto))}</span>${r ? `<span class="mini-gab ${r.ponto ? 'sim' : 'nao'}">${r.ponto ? '✓ confere com o gabarito' : '✗ gabarito: passo ' + txt(r.g.passo) + ' · ● ' + r.g.b1}</span>` : ''}</button>`;
+      <span class="mini-txt">${esc(txt(c.texto))}</span>${r ? `<span class="mini-gab ${r.ponto ? 'sim' : 'nao'}">${r.ponto ? '✓ confere com o gabarito' : (!r.g.sobe ? '✗ esta carta fica no baralho' : '✗ gabarito: ' + r.g.b1 + ' (' + TODAS[r.g.b1].nome + ')')}</span>` : ''}</button>`;
   };
   const faixas = d.passos.map((ps, i) => ({ k: String(i + 1), cab: `<span class="fn">${i + 1}</span><span>${esc(txt(ps))}${String(i + 1) === palp ? '<span class="q" title="Palpite do grupo">?</span>' : ''}</span>` }));
   faixas.push({ k: 'todo', cab: '<span class="fn">∞</span><span><strong>Todo o caminho</strong><br>cartas que falam do processo inteiro ou de “quando”</span>', especial: true });
@@ -1011,7 +1015,7 @@ function atualizarR2() {
     document.getElementById('gabCartaModal').innerHTML = G ? gabCartaHtml(n, cartaAberta) : '';
   }
   // passos concluídos
-  const feito = [!!palp, mural.length > 0 && mural.every(c => (cs[c.id] || {}).b1), Object.values(ds.dec || {}).some(x => x && x.decisao === 'principal'), !!(ds.hip && ds.hip.errados)];
+  const feito = [!!palp, mural.length === LIMITE && mural.every(c => (cs[c.id] || {}).b1), Object.values(ds.dec || {}).some(x => x && x.decisao === 'principal'), !!(ds.hip && ds.hip.errados)];
   document.querySelectorAll('#etapasNav .passo-nav').forEach((b, i) => b.classList.toggle('feito', !!feito[i] && Number(b.dataset.etapaIr) !== etapaAtual));
   atualizarDecisao(d, ds, cs); atualizarPalpite(d, ds, cs); atualizarHipotese(ds);
   document.getElementById('fichaTela').innerHTML = fichaHtml();
@@ -1025,12 +1029,13 @@ function atualizarDecisao(d, ds, cs) {
   const por = {};
   noMural(d).forEach(c => { const b = (cs[c.id] || {}).b1; if (b && SIG[b]) (por[b] = por[b] || []).push(c); });
   const ordem = Object.keys(SIG).filter(s => por[s]).sort((a, b) => por[b].length - por[a].length);
-  const assin = d.n + '|' + ordem.map(s => s + ':' + por[s].map(c => c.id + ((cs[c.id] || {}).degrau || '')).join(',')).join(';');
-  if (!ordem.length) { box.innerHTML = '<p class="vazio">A tabela aparece quando houver cartas com barreira ● no mural (passo 2).</p>'; assinaturaDecisao = ''; return; }
+  const assin = noMural(d).length + '|' + d.n + '|' + ordem.map(s => s + ':' + por[s].map(c => c.id + ((cs[c.id] || {}).degrau || '')).join(',')).join(';');
+  const aviso = noMural(d).length < LIMITE ? `<p class="alerta" style="font-size:0.86rem">O mural tem ${noMural(d).length} de ${LIMITE} cartas. Completem o mural (passo 2) antes de decidir.</p>` : '';
+  if (!ordem.length) { box.innerHTML = aviso + '<p class="vazio">A tabela aparece quando houver cartas com barreira ● no mural (passo 2).</p>'; assinaturaDecisao = ''; return; }
   if (assin !== assinaturaDecisao) {
     assinaturaDecisao = assin;
-    const p = 'd.' + d.n + '.dec.';
-    box.innerHTML = `<div class="tab-wrap"><table class="tab"><thead><tr><th>Barreira</th><th>Cartas ●</th><th>Tipos de fonte</th><th>Decisão</th></tr></thead><tbody>` +
+    const p = 'm.' + d.n + '.dec.';
+    box.innerHTML = aviso + `<div class="tab-wrap"><table class="tab"><thead><tr><th>Barreira</th><th>Cartas ●</th><th>Tipos de fonte</th><th>Decisão</th></tr></thead><tbody>` +
       ordem.map(s => {
         const cartas = por[s];
         const tipos = [...new Set(cartas.map(c => TIPO_NOME[c.tipo] || c.tipo))];
@@ -1071,7 +1076,7 @@ function fraseHipotese(h, html) {
 }
 function atualizarHipotese(ds) { document.getElementById('hipPreview').innerHTML = fraseHipotese(ds.hip, true); }
 function atualizarR3() {
-  const ds = S.d[String(D().n)] || {};
+  const ds = S.m[String(D().n)] || {};
   document.getElementById('r3Nossa').innerHTML = ds.hip && Object.values(ds.hip).some(x => x) ? fraseHipotese(ds.hip, true).replace(/<span class="lac">/g, '<span style="opacity:.5">') : 'Escrevam a hipótese no passo 4 da Rodada 2; ela aparece aqui para a troca.';
 }
 const proxTexto = pr => pr ? (pr.txt || [pr.oque && 'O quê: ' + pr.oque, pr.dequem && 'De quem: ' + pr.dequem, pr.como && 'Como: ' + pr.como].filter(Boolean).join(' | ')) : '';
@@ -1117,17 +1122,18 @@ function atualizarGabarito() {
   G.r1.casos.forEach(c => { const v = (S.r1[c.n] || {}).voto; document.getElementById('gabVoto-' + c.n).innerHTML = v ? sigla(v) + (v === principalR1(c.n) ? ' ✓' : ' ✗') : '—'; });
   G.r2.dossies.forEach(d => d.cartas.forEach(c => {
     const r = comparar(d.n, c.id), el = document.getElementById(`gabMural-${d.n}-${c.id}`);
-    el.innerHTML = !r.noMural ? '—' : `${r.s.b1 ? '● ' + sigla(r.s.b1) : ''}${r.s.b2 ? ' ○ ' + sigla(r.s.b2) : ''} ${esc(r.k === 'todo' ? 'todo' : 'passo ' + r.k)} ${r.ponto ? '✓' : '✗'}`;
+    el.innerHTML = !r.noMural ? (r.g.sobe ? 'Deixou no baralho ✗' : 'Deixou no baralho ✓') : `Levou ao mural${r.s.b1 ? ': ' + sigla(r.s.b1) : ''} ${r.ponto ? '✓' : '✗'}`;
   }));
   const n = D().n, gd = G.r2.dossies.find(x => x.n === n);
   const r1 = C.r1.casos.filter(c => (S.r1[c.n] || {}).voto === principalR1(c.n)).length;
   const cartas = Math.min(LIMITE, gd.cartas.filter(c => comparar(n, c.id).ponto).length);
-  const dec = (S.d[n] || {}).dec || {};
+  const ruido = gd.cartas.filter(c => c.b1 === 'RUÍDO' && comparar(n, c.id).noMural).length;
+  const dec = (S.m[n] || {}).dec || {};
   const ach = r => Object.keys(dec).find(s => dec[s] && dec[s].decisao === r);
   const ps = ach('principal') === gd.decisao.principal && ach('secundaria') === gd.decisao['secundária'] ? 3 : 0;
   const P = S.pontos || {};
   const num = (k, max) => { const x = Number(P[k]); return isNaN(x) ? 0 : Math.max(0, Math.min(max, x)); };
-  const total = r1 + cartas + ps + num('hip', 3) + num('contesta', 2) - 2 * num('ruido', 10);
+  const total = r1 + cartas + ps + num('hip', 3) + num('contesta', 2) - 2 * ruido;
   const placar = document.getElementById('placar');
   if (!placar.dataset.montado) {
     placar.dataset.montado = '1';
@@ -1135,13 +1141,14 @@ function atualizarGabarito() {
       <div><span>Principal e secundária (3)</span><b id="pPS"></b></div><div><span>Total</span><b id="pTotal"></b></div>
       <div><span>Hipótese passa na conferência (0 ou 3)</span><input type="text" inputmode="numeric" data-b="pontos.hip" aria-label="Pontos da hipótese"></div>
       <div><span>Contestação (0 a 2)</span><input type="text" inputmode="numeric" data-b="pontos.contesta" aria-label="Pontos da contestação"></div>
-      <div><span>Cartas de RUÍDO usadas como apoio (−2 cada)</span><input type="text" inputmode="numeric" data-b="pontos.ruido" aria-label="Cartas de ruído usadas"></div>`;
+      <div><span>Cartas de RUÍDO no mural (−2 cada)</span><b id="pRuido"></b></div>`;
     preencher(placar);
   }
   document.getElementById('pR1').textContent = r1;
-  document.getElementById('pCartasRot').textContent = `Cartas do mural no lugar certo, Dossiê ${n} (máx. ${LIMITE})`;
+  document.getElementById('pCartasRot').textContent = `Cartas certas no mural com a barreira certa, Dossiê ${n} (máx. ${LIMITE})`;
   document.getElementById('pCartas').textContent = cartas;
   document.getElementById('pPS').textContent = ps;
+  document.getElementById('pRuido').textContent = ruido ? '−' + 2 * ruido : '0';
   document.getElementById('pTotal').textContent = total;
 }
 
@@ -1149,7 +1156,7 @@ function atualizarGabarito() {
 document.addEventListener('input', e => {
   const el = e.target.closest('[data-b]'); if (!el) return;
   set(el.dataset.b, el.type === 'checkbox' ? el.checked : el.value);
-  if (/^d\.\d+\.hip\./.test(el.dataset.b)) { atualizarHipotese(dS()); atualizarR3(); }
+  if (/^m\.\d+\.hip\./.test(el.dataset.b)) { atualizarHipotese(dS()); atualizarR3(); }
   if (/^r1\./.test(el.dataset.b)) atualizarR1();
   if (/^pontos\./.test(el.dataset.b) && G) atualizarGabarito();
   if (/^r[34]\./.test(el.dataset.b)) atualizarBadges();
@@ -1177,7 +1184,7 @@ document.addEventListener('click', e => {
     set(p, estava === v ? [] : [v]);
   } else {
     set(p, get(p) === v ? '' : v);
-    const m = p.match(/^(d\.\d+\.cartas\.\w+)\.(b1|b2)$/);
+    const m = p.match(/^(m\.\d+\.cartas\.\w+)\.(b1|b2)$/);
     if (m && get(m[1] + '.b1') && get(m[1] + '.b1') === get(m[1] + '.b2')) set(m[1] + (m[2] === 'b1' ? '.b2' : '.b1'), '');
   }
   atualizar();
@@ -1214,7 +1221,7 @@ function resumo(d) {
   add('Grupo', 'Papéis', PAPEIS.filter(x => p[x.k]).map(x => x.nome + ': ' + p[x.k]).join(' · '));
   C.r1.casos.forEach(c => { const r = (d.r1 || {})[c.n] || {}; if (r.voto || r.frase) add('Rodada 1 · Relâmpago', 'Caso ' + c.n + ': ' + txt(c.comportamento), (r.voto ? r.voto + ' (' + SIG[r.voto].nome + ')' : '—') + (r.frase ? ' — ' + r.frase : '')); });
   C.r2.dossies.forEach(dd => {
-    const ds = (d.d || {})[dd.n]; if (!ds) return;
+    const ds = (d.m || {})[dd.n]; if (!ds) return;
     const sec = 'Rodada 2 · Dossiê ' + dd.n + ': ' + txt(dd.titulo), cs = ds.cartas || {};
     if (ds.palpite) add(sec, 'Palpite (passo em que mais se perde)', 'Passo ' + ds.palpite + ': ' + txt(dd.passos[Number(ds.palpite) - 1] || ''));
     dd.cartas.forEach(c => { const s = cs[c.id]; const k = lugar(s); if (!k) return;
@@ -1252,7 +1259,7 @@ function aplicar(dados) {
   S.r4 = Object.assign(novoEstado().r4, x.r4 || {});
   if (!Array.isArray(S.r4.passos) || !S.r4.passos.length) S.r4.passos = ['', '', '', '', '', ''];
   if (!S.r4.obs || typeof S.r4.obs !== 'object') S.r4.obs = {};
-  ['r1', 'd', 'r3', 'pontos'].forEach(k => { if (!S[k] || typeof S[k] !== 'object') S[k] = {}; });
+  ['r1', 'm', 'r3', 'pontos'].forEach(k => { if (!S[k] || typeof S[k] !== 'object') S[k] = {}; });
   if (!Array.isArray(S.estac)) S.estac = [];
   if (!S.dossie || !C.r2.dossies[Number(S.dossie) - 1]) S.dossie = '1';
   assinaturaDecisao = ''; assinaturaObs = '';
